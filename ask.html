@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Задай вопрос — Тихая гавань</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand: #f5f0e8;
+      --sand-dark: #e8e0d0;
+      --stone: #8a8278;
+      --stone-dark: #5c5650;
+      --sea: #4a7c8e;
+      --sea-light: #6a9cae;
+      --sea-pale: #d6e8ed;
+      --text: #3a3530;
+      --text-light: #6b6560;
+      --white: #fdfcfa;
+      --terracotta: #a0614a;
+    }
+
+    html { font-size: clamp(15px, 1.1vw, 18px); }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      background: var(--sand);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--sand-dark);
+      padding: 0 2rem;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 8px rgba(74,124,142,0.06);
+    }
+    .header-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      height: 72px; gap: 2rem;
+    }
+    .logo { text-decoration: none; display: flex; flex-direction: column; line-height: 1.1; }
+    .logo-name { font-weight: 700; font-size: 1.45rem; color: var(--sea); letter-spacing: 0.1em; text-transform: uppercase; }
+    .logo-tagline { font-size: 0.65rem; color: var(--stone); letter-spacing: 0.12em; text-transform: uppercase; }
+    nav ul { list-style: none; display: flex; gap: 0.25rem; }
+    nav a {
+      display: block; padding: 0.45rem 0.85rem; text-decoration: none;
+      color: var(--text-light); font-size: 0.88rem; font-weight: 400;
+      border-radius: 6px; transition: color 0.2s, background 0.2s;
+    }
+    nav a:hover { color: var(--sea); background: var(--sea-pale); }
+    nav a.active { color: var(--sea); font-weight: 600; }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem clamp(1rem, 3vw, 2rem) 2rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page-title {
+      font-size: 1.5rem; font-weight: 600;
+      color: var(--sea); margin-bottom: 0.2rem;
+    }
+    .page-subtitle {
+      font-size: 0.88rem; color: var(--text-light);
+      margin-bottom: 1.25rem; line-height: 1.5;
+    }
+
+    /* ── CHAT WINDOW ── */
+    .chat-window {
+      flex: 1;
+      background: var(--white);
+      border: 1px solid var(--sand-dark);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 520px;
+      box-shadow: 0 2px 16px rgba(74,124,142,0.06);
+    }
+
+    .chat-header {
+      padding: 0.85rem 1.25rem;
+      background: var(--sea-pale);
+      border-bottom: 1px solid var(--sand-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .chat-avatar {
+      width: 36px; height: 36px;
+      background: var(--sea);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: white; flex-shrink: 0;
+    }
+    .chat-header-text h3 { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+    .chat-header-text p { font-size: 0.75rem; color: var(--text-light); }
+    .chat-status {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.72rem; color: #4caf50;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      background: #4caf50; border-radius: 50%;
+    }
+
+    /* ── MESSAGES ── */
+    .messages {
+      flex: 1;
+      padding: 1.25rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      display: flex;
+      gap: 0.65rem;
+      max-width: 85%;
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .message.user { align-self: flex-end; flex-direction: row-reverse; }
+    .message.bot { align-self: flex-start; }
+
+    .msg-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;
+    }
+    .message.bot .msg-avatar { background: var(--sea); color: white; }
+    .message.user .msg-avatar { background: var(--terracotta); color: white; }
+
+    .msg-bubble {
+      padding: 0.75rem 1rem;
+      border-radius: 14px;
+      font-size: 0.92rem;
+      line-height: 1.65;
+    }
+    .message.bot .msg-bubble {
+      background: var(--sand);
+      border: 1px solid var(--sand-dark);
+      border-bottom-left-radius: 4px;
+      color: var(--text);
+    }
+    .message.user .msg-bubble {
+      background: var(--sea);
+      border-bottom-right-radius: 4px;
+      color: white;
+    }
+
+    .msg-time {
+      font-size: 0.65rem;
+      color: var(--stone);
+      margin-top: 0.25rem;
+      text-align: right;
+    }
+    .message.bot .msg-time { text-align: left; }
+
+    /* typing indicator */
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      padding: 0.65rem 1rem;
+      background: var(--sand);
+      border: 1px solid var(--sand-dark);
+      border-radius: 14px;
+      border-bottom-left-radius: 4px;
+      gap: 4px;
+      align-items: center;
+    }
+    .typing-indicator.show { display: flex; }
+    .typing-dot {
+      width: 7px; height: 7px;
+      background: var(--stone);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+
+    /* ── INPUT AREA ── */
+    .input-area {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--sand-dark);
+      background: var(--white);
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+    .input-wrap { flex: 1; position: relative; }
+    textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--sand-dark);
+      border-radius: 10px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 300;
+      color: var(--text);
+      background: var(--sand);
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      line-height: 1.5;
+      min-height: 48px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    textarea:focus { border-color: var(--sea-light); background: var(--white); }
+    textarea::placeholder { color: var(--stone); }
+
+    .send-btn {
+      width: 48px; height: 48px;
+      border-radius: 10px;
+      background: var(--sea);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.1rem;
+      transition: background 0.2s, transform 0.1s;
+      flex-shrink: 0;
+    }
+    .send-btn:hover { background: var(--sea-light); }
+    .send-btn:active { transform: scale(0.95); }
+    .send-btn:disabled { background: var(--stone); cursor: not-allowed; transform: none; }
+
+    .clear-btn {
+      font-size: 0.72rem; color: var(--stone);
+      background: none; border: none;
+      cursor: pointer; padding: 0.2rem 0.4rem;
+      border-radius: 4px; transition: color 0.2s;
+      align-self: center;
+    }
+    .clear-btn:hover { color: var(--sea); }
+
+    /* ── SUGGESTIONS ── */
+    .suggestions {
+      padding: 0.75rem 1.25rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .suggestion-label {
+      font-size: 0.72rem;
+      color: var(--stone);
+      width: 100%;
+      margin-bottom: 0.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .suggestion-chip {
+      padding: 0.35rem 0.85rem;
+      background: var(--sea-pale);
+      border: 1px solid var(--sea-light);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--sea);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      font-family: 'Jost', sans-serif;
+    }
+    .suggestion-chip:hover { background: var(--sea); color: white; transform: scale(1.03); }
+
+    /* ── INFO BLOCK ── */
+    .info-block {
+      margin-top: 1rem;
+      background: var(--white);
+      border: 1px solid var(--sand-dark);
+      border-left: 4px solid var(--sea);
+      border-radius: 0 10px 10px 0;
+      padding: 0.85rem 1.1rem;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--white);
+      border-top: 1px solid var(--sand-dark);
+      padding: 1.5rem 2rem;
+      margin-top: 1rem;
+    }
+    .footer-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .footer-copy { font-size: 0.78rem; color: var(--stone); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: 0.78rem; color: var(--stone); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--sea); }
+    .footer-email { font-size: 0.78rem; color: var(--stone); }
+    .footer-email a { color: var(--sea); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <span class="logo-name">Тихая гавань</span>
+      <span class="logo-tagline">Место для вашего досуга</span>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="/crosswords">Кроссворды</a></li>
+        <li><a href="/ask" class="active">Задай вопрос</a></li>
+        <li><a href="/reading">Чтиво</a></li>
+        <li><a href="/videos">Видео</a></li>
+        <li><a href="/games">Игры</a></li>
+        <li><a href="/support">Поддержка</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-title">Задай вопрос</div>
+  <div class="page-subtitle">Спросите всё что угодно — без регистрации и подписки. Отвечает искусственный интеллект.</div>
+
+  <div class="chat-window">
+    <div class="chat-header">
+      <div class="chat-avatar">🤖</div>
+      <div class="chat-header-text">
+        <h3>Помощник Тихой гавани</h3>
+        <p>На базе Claude AI · отвечает на любые вопросы</p>
+      </div>
+      <div class="chat-status">
+        <div class="status-dot"></div>
+        Онлайн
+      </div>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="message bot">
+        <div class="msg-avatar">🤖</div>
+        <div>
+          <div class="msg-bubble">Здравствуйте! Я готов ответить на любой ваш вопрос — о здоровье, истории, кулинарии, технике, путешествиях или чём угодно ещё. Спрашивайте смело!</div>
+          <div class="msg-time">Сейчас</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="typing-indicator" id="typing">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+
+    <div class="suggestions" id="suggestions">
+      <div class="suggestion-label">Попробуйте спросить:</div>
+      <button class="suggestion-chip" onclick="useSuggestion(this)">Как снизить давление без таблеток?</button>
+      <button class="suggestion-chip" onclick="useSuggestion(this)">Что посмотреть интересного в Канаде?</button>
+      <button class="suggestion-chip" onclick="useSuggestion(this)">Расскажи рецепт борща</button>
+      <button class="suggestion-chip" onclick="useSuggestion(this)">Как пользоваться WhatsApp?</button>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrap">
+        <textarea
+          id="user-input"
+          placeholder="Напишите ваш вопрос..."
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+      </div>
+      <button class="clear-btn" onclick="clearChat()" title="Очистить чат">🗑</button>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Отправить">➤</button>
+    </div>
+  </div>
+
+  <div class="info-block">
+    Ваши вопросы не сохраняются и не передаются третьим лицам. История переписки исчезает при закрытии страницы.
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">© 2025 Тихая гавань</span>
+    <div class="footer-links">
+      <a href="/privacy">Политика конфиденциальности</a>
+      <a href="/terms">Условия</a>
+    </div>
+    <span class="footer-email">Написать нам: <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a></span>
+  </div>
+</footer>
+
+<script>
+  const SYSTEM_PROMPT = `Ты — дружелюбный помощник на сайте "Тихая гавань" — платформе досуга для пожилых людей. 
+Отвечай по-русски, тепло и понятно. Избегай сложных терминов. 
+Если нужны технические объяснения — давай их простыми словами с примерами.
+Будь кратким, но содержательным. Не используй markdown-разметку — только обычный текст.`;
+
+  let history = [];
+  let isLoading = false;
+
+  function getTime() {
+    return new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function addMessage(role, text) {
+    const messages = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = `message ${role === 'user' ? 'user' : 'bot'}`;
+    const avatar = role === 'user' ? '👤' : '🤖';
+    div.innerHTML = `
+      <div class="msg-avatar">${avatar}</div>
+      <div>
+        <div class="msg-bubble">${escapeHtml(text)}</div>
+        <div class="msg-time">${getTime()}</div>
+      </div>`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\n/g, '<br>');
+  }
+
+  function setLoading(val) {
+    isLoading = val;
+    document.getElementById('send-btn').disabled = val;
+    const typing = document.getElementById('typing');
+    typing.classList.toggle('show', val);
+    if (val) {
+      const messages = document.getElementById('messages');
+      messages.scrollTop = messages.scrollHeight;
+    }
+  }
+
+  function hideSuggestions() {
+    const s = document.getElementById('suggestions');
+    if (s) s.style.display = 'none';
+  }
+
+  function useSuggestion(btn) {
+    document.getElementById('user-input').value = btn.textContent;
+    sendMessage();
+  }
+
+  async function sendMessage() {
+    if (isLoading) return;
+    const input = document.getElementById('user-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    hideSuggestions();
+    input.value = '';
+    input.style.height = 'auto';
+
+    addMessage('user', text);
+    history.push({ role: 'user', content: text });
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: SYSTEM_PROMPT,
+          messages: history
+        })
+      });
+
+      const data = await response.json();
+      const reply = data.content?.[0]?.text || 'Извините, не удалось получить ответ. Попробуйте ещё раз.';
+
+      history.push({ role: 'assistant', content: reply });
+      addMessage('bot', reply);
+
+    } catch (err) {
+      addMessage('bot', 'Произошла ошибка соединения. Пожалуйста, попробуйте позже.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function clearChat() {
+    if (!confirm('Очистить историю переписки?')) return;
+    history = [];
+    const messages = document.getElementById('messages');
+    messages.innerHTML = `
+      <div class="message bot">
+        <div class="msg-avatar">🤖</div>
+        <div>
+          <div class="msg-bubble">Здравствуйте! Я готов ответить на любой ваш вопрос — о здоровье, истории, кулинарии, технике, путешествиях или чём угодно ещё. Спрашивайте смело!</div>
+          <div class="msg-time">Сейчас</div>
+        </div>
+      </div>`;
+    document.getElementById('suggestions').style.display = 'flex';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+  }
+</script>
+</body>
+</html>

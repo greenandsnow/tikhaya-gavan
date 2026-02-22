@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тихая гавань</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --sand: #f5f0e8;
+      --sand-dark: #e8e0d0;
+      --stone: #8a8278;
+      --stone-dark: #5c5650;
+      --sea: #4a7c8e;
+      --sea-light: #6a9cae;
+      --sea-pale: #d6e8ed;
+      --text: #3a3530;
+      --text-light: #6b6560;
+      --white: #fdfcfa;
+    }
+
+    html {
+      font-size: clamp(15px, 1.1vw, 18px);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      background-color: var(--sand);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background-color: var(--white);
+      border-bottom: 1px solid var(--sand-dark);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 8px rgba(74,124,142,0.06);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      height: 72px;
+    }
+
+    .logo {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-name {
+      font-family: 'Jost', sans-serif;
+      font-weight: 700;
+      font-size: 1.45rem;
+      color: var(--sea);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .logo-tagline {
+      font-size: 0.65rem;
+      color: var(--stone);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ─── NAV ─── */
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+    }
+
+    nav a {
+      display: block;
+      padding: 0.45rem 0.85rem;
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.88rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--sea);
+      background: var(--sea-pale);
+    }
+
+    nav a.active {
+      color: var(--sea);
+      font-weight: 600;
+    }
+
+    /* Hamburger */
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .burger span {
+      display: block;
+      width: 26px;
+      height: 2px;
+      background: var(--stone-dark);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* ─── MAIN ─── */
+    main {
+      flex: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem clamp(1.5rem, 4vw, 4rem) 4rem;
+      width: 100%;
+    }
+
+    /* Hero placeholder */
+    .hero {
+      text-align: center;
+      padding: 2.5rem 1rem 1.5rem;
+    }
+
+    .hero h1 {
+      font-family: 'Jost', sans-serif;
+      font-weight: 600;
+      font-size: clamp(1rem, 1.4vw, 1.3rem);
+      color: #a0614a;
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .hero p {
+      color: var(--text-light);
+      font-size: 1rem;
+      max-width: 520px;
+      margin: 0 auto 0.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-wave {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--stone);
+      margin-bottom: 0.8rem;
+    }
+
+    .about-block {
+      max-width: 860px;
+      margin: 1.5rem auto 0;
+      text-align: left;
+      color: var(--text-light);
+      font-size: 1.05rem;
+      line-height: 1.9;
+    }
+
+    /* Cards grid — fluid: 3 col on desktop, adapts down */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(1rem, 1.5vw, 1.5rem);
+      margin-top: 2.5rem;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--sand-dark);
+      border-radius: 12px;
+      padding: 2.25rem 2rem;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 24px rgba(74,124,142,0.1);
+      border-color: var(--sea-light);
+    }
+
+    .card-icon {
+      margin-bottom: 0.4rem;
+    }
+
+    .card-icon svg {
+      display: block;
+    }
+
+    .card h2 {
+      font-family: 'Jost', sans-serif;
+      font-weight: 500;
+      font-size: 1.25rem;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background-color: var(--white);
+      border-top: 1px solid var(--sand-dark);
+      padding: 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: var(--stone);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .footer-links a {
+      font-size: 0.78rem;
+      color: var(--stone);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--sea);
+    }
+
+    .footer-email {
+      font-size: 0.78rem;
+      color: var(--stone);
+    }
+
+    .footer-email a {
+      color: var(--sea);
+      text-decoration: none;
+    }
+
+    .footer-email a:hover {
+      text-decoration: underline;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .burger { display: flex; }
+
+      nav {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        background: var(--white);
+        border-bottom: 1px solid var(--sand-dark);
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      }
+
+      nav.open { display: block; }
+
+      nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+
+      nav a {
+        font-size: 1rem;
+        padding: 0.6rem 0.5rem;
+        width: 100%;
+      }
+
+      .hero h1 { font-size: 1.8rem; }
+      .cards { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <span class="logo-name">Тихая гавань</span>
+        <span class="logo-tagline">Место для вашего досуга</span>
+      </a>
+
+      <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav id="main-nav">
+        <ul>
+          <li><a href="/crosswords">Кроссворды</a></li>
+          <li><a href="/ask">Задай вопрос</a></li>
+          <li><a href="/reading">Чтиво</a></li>
+          <li><a href="/videos">Видео</a></li>
+          <li><a href="/games">Игры</a></li>
+          <li><a href="/support">Поддержка</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <main>
+    <section class="hero">
+      <h1>Ваш уголок в сети</h1>
+      <p class="hero-wave">— место, где приятно провести время —</p>
+      <p>Кроссворды, интересное чтение, видео и игры.<br>Всё в одном месте, без лишней суеты.</p>
+      <div class="about-block">
+        Этот проект создан для тех, кто ценит спокойный и вдумчивый досуг. Здесь вы найдёте кроссворды для тренировки памяти, подборки интересного чтения, познавательные видео и лёгкие игры — всё собрано в одном месте, без лишней рекламы и суеты. Мы верим, что хорошо проведённое время делает жизнь богаче. Заходите, когда захочется отдохнуть, узнать что-то новое или просто скоротать приятный вечер. Будем рады вашим вопросам и пожеланиям — раздел «Поддержка» всегда открыт.
+      </div>
+    </section>
+
+    <div class="cards">
+      <a href="/crosswords" class="card">
+        <div class="card-icon">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="52" height="52" rx="10" fill="#e8e0d0"/>
+            <rect x="2" y="2" width="48" height="48" rx="9" fill="white" opacity="0.6"/>
+            <!-- crossword grid 4x4, cell 7px, gap 1px, centered -->
+            <!-- row 1 -->
+            <rect x="10" y="10" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <rect x="19" y="10" width="7" height="7" rx="0.5" fill="#4a7c8e"/>
+            <rect x="28" y="10" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <rect x="37" y="10" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <!-- row 2 -->
+            <rect x="10" y="19" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <rect x="19" y="19" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <rect x="28" y="19" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <rect x="37" y="19" width="7" height="7" rx="0.5" fill="#4a7c8e"/>
+            <!-- row 3 -->
+            <rect x="10" y="28" width="7" height="7" rx="0.5" fill="#4a7c8e"/>
+            <rect x="19" y="28" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <rect x="28" y="28" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <rect x="37" y="28" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <!-- row 4 -->
+            <rect x="10" y="37" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <rect x="19" y="37" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+            <rect x="28" y="37" width="7" height="7" rx="0.5" fill="#4a7c8e"/>
+            <rect x="37" y="37" width="7" height="7" rx="0.5" fill="white" stroke="#4a7c8e" stroke-width="0.8"/>
+          </svg>
+        </div>
+        <h2>Кроссворды</h2>
+        <p>Тренируйте память и получайте удовольствие от разгадывания.</p>
+      </a>
+      <a href="/ask" class="card">
+        <div class="card-icon">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="52" height="52" rx="10" fill="#e8e0d0"/>
+            <rect x="2" y="2" width="48" height="48" rx="9" fill="white" opacity="0.6"/>
+            <rect x="9" y="10" width="34" height="24" rx="5" fill="#4a7c8e"/>
+            <polygon points="14,34 14,43 23,34" fill="#4a7c8e"/>
+            <text x="26" y="27" text-anchor="middle" font-family="Jost,sans-serif" font-size="14" font-weight="700" fill="white">?</text>
+          </svg>
+        </div>
+        <h2>Задай вопрос</h2>
+        <p>Есть вопрос? Задайте — мы постараемся помочь.</p>
+      </a>
+      <a href="/reading" class="card">
+        <div class="card-icon">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="52" height="52" rx="10" fill="#e8e0d0"/>
+            <rect x="2" y="2" width="48" height="48" rx="9" fill="white" opacity="0.6"/>
+            <!-- open book -->
+            <path d="M26 16 C20 14 11 15 9 17 L9 38 C11 36 20 35 26 37 C32 35 41 36 43 38 L43 17 C41 15 32 14 26 16Z" fill="#4a7c8e"/>
+            <line x1="26" y1="16" x2="26" y2="37" stroke="white" stroke-width="1.5"/>
+            <line x1="13" y1="21" x2="23" y2="20" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+            <line x1="13" y1="25" x2="23" y2="24" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+            <line x1="13" y1="29" x2="23" y2="28" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+            <line x1="29" y1="20" x2="39" y2="21" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+            <line x1="29" y1="24" x2="39" y2="25" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+            <line x1="29" y1="28" x2="39" y2="29" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+          </svg>
+        </div>
+        <h2>Чтиво</h2>
+        <p>Интересные статьи, истории и заметки для приятного чтения.</p>
+      </a>
+      <a href="/videos" class="card">
+        <div class="card-icon">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="52" height="52" rx="10" fill="#e8e0d0"/>
+            <rect x="2" y="2" width="48" height="48" rx="9" fill="white" opacity="0.6"/>
+            <rect x="8" y="14" width="36" height="24" rx="4" fill="#4a7c8e"/>
+            <polygon points="22,20 22,32 34,26" fill="white"/>
+          </svg>
+        </div>
+        <h2>Видео</h2>
+        <p>Познавательные и душевные видеоматериалы на любой вкус.</p>
+      </a>
+      <a href="/games" class="card">
+        <div class="card-icon">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="52" height="52" rx="10" fill="#e8e0d0"/>
+            <rect x="2" y="2" width="48" height="48" rx="9" fill="white" opacity="0.6"/>
+            <!-- gamepad body -->
+            <path d="M10 22 Q10 16 18 16 L34 16 Q42 16 42 22 L42 30 Q42 36 34 36 L18 36 Q10 36 10 30 Z" fill="#4a7c8e"/>
+            <!-- dpad -->
+            <rect x="16" y="23" width="3" height="6" rx="1" fill="white"/>
+            <rect x="13" y="26" width="9" height="3" rx="1" fill="white"/>
+            <!-- buttons -->
+            <circle cx="35" cy="24" r="2.5" fill="white" opacity="0.7"/>
+            <circle cx="35" cy="31" r="2.5" fill="white" opacity="0.7"/>
+            <circle cx="38.5" cy="27.5" r="2.5" fill="white" opacity="0.7"/>
+            <circle cx="31.5" cy="27.5" r="2.5" fill="white" opacity="0.7"/>
+          </svg>
+        </div>
+        <h2>Игры</h2>
+        <p>Лёгкие игры для хорошего настроения и бодрости ума.</p>
+      </a>
+      <a href="/support" class="card">
+        <div class="card-icon">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="52" height="52" rx="10" fill="#e8e0d0"/>
+            <rect x="2" y="2" width="48" height="48" rx="9" fill="white" opacity="0.6"/>
+            <!-- headset -->
+            <path d="M14 26 C14 18 38 18 38 26" stroke="#4a7c8e" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <rect x="10" y="25" width="6" height="10" rx="3" fill="#4a7c8e"/>
+            <rect x="36" y="25" width="6" height="10" rx="3" fill="#4a7c8e"/>
+            <path d="M38 33 Q38 39 30 39 L26 39" stroke="#4a7c8e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <rect x="22" y="37" width="8" height="4" rx="2" fill="#4a7c8e"/>
+          </svg>
+        </div>
+        <h2>Поддержка</h2>
+        <p>Нужна помощь? Мы рядом.</p>
+      </a>
+    </div>
+  </main>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-copy">© 2025 Тихая гавань</span>
+      <div class="footer-links">
+        <a href="/privacy">Политика конфиденциальности</a>
+        <a href="/terms">Условия</a>
+      </div>
+      <span class="footer-email">Написать нам: <a href="/cdn-cgi/l/email-protection#b4c7c1c4c4dbc6c0f4d3c6d1d1dad5dad0c7dadbc3c7c0c1d0dddb9ad7dbd9"><span class="__cf_email__" data-cfemail="562523262639242216312433333837383225383921252223323f397835393b">[email&#160;protected]</span></a></span>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // Burger menu
+    const burger = document.getElementById('burger');
+    const nav = document.getElementById('main-nav');
+
+    burger.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      burger.setAttribute('aria-expanded', open);
+    });
+
+    // Close nav on link click (mobile)
+    nav.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        nav.classList.remove('open');
+        burger.setAttribu
