@@ -508,19 +508,20 @@ function selectGenre(btn, genre) {
 function submitBook() {
   if (!selectedGenre) { alert('Пожалуйста, выберите жанр.'); return; }
 
-  var formData = new FormData();
-  formData.append('title', document.getElementById('book-title').value.trim());
-  formData.append('author_name', document.getElementById('author-name').value.trim());
-  formData.append('author_email', document.getElementById('author-email').value.trim());
-  formData.append('annotation', document.getElementById('book-annotation').value.trim());
-  formData.append('genre', selectedGenre);
-  formData.append('type', document.getElementById('book-type').value);
-  formData.append('ai_summary', document.getElementById('ai-summary').textContent);
-  if (selectedFile) formData.append('file', selectedFile);
+  var payload = {
+    title: document.getElementById('book-title').value.trim(),
+    author_name: document.getElementById('author-name').value.trim(),
+    author_email: document.getElementById('author-email').value.trim(),
+    annotation: document.getElementById('book-annotation').value.trim(),
+    genre: selectedGenre,
+    type: document.getElementById('book-type').value,
+    ai_summary: document.getElementById('ai-summary').textContent
+  };
 
   fetch('/api/publish', {
     method: 'POST',
-    body: formData
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
