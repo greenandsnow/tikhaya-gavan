@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Библиотека — Тихая гавань</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;--terra:#a0614a;--ink:#2a2420;--green:#1e4d2b;--green-light:#2d6040}
+html{font-size:clamp(15px,1.1vw,18px)}
+body{font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;position:sticky;top:0;z-index:100}
+.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:2rem}
+.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.1}
+.logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
+.logo-tag{font-size:.65rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
+nav ul{list-style:none;display:flex;gap:.25rem}
+nav a{display:block;padding:.45rem .85rem;text-decoration:none;color:var(--text-light);font-size:.88rem;border-radius:6px;transition:color .2s,background .2s}
+nav a:hover{color:var(--sea);background:var(--sea-pale)}
+nav a.active{color:var(--sea);font-weight:600}
+
+main{flex:1;padding:2.5rem 2rem 4rem}
+.container{max-width:1100px;margin:0 auto}
+
+/* HERO */
+.lib-hero{display:flex;align-items:center;justify-content:space-between;gap:2rem;margin-bottom:2rem;flex-wrap:wrap}
+.lib-hero-text h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);color:var(--ink);margin-bottom:.3rem}
+.lib-hero-text p{font-size:.88rem;color:var(--text-light)}
+.lib-hero-link{text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.25rem;background:var(--green);color:white;border-radius:8px;font-size:.82rem;font-weight:600;transition:background .2s}
+.lib-hero-link:hover{background:var(--green-light)}
+
+/* SEARCH & FILTERS */
+.controls{display:flex;gap:.75rem;margin-bottom:1.75rem;flex-wrap:wrap;align-items:center}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap input{width:100%;padding:.65rem 1rem .65rem 2.5rem;border:1.5px solid var(--sand-dark);border-radius:8px;font-family:'Jost',sans-serif;font-size:.88rem;background:var(--white);color:var(--text);outline:none;transition:border-color .2s}
+.search-wrap input:focus{border-color:var(--sea-light)}
+.search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--stone);font-size:.9rem;pointer-events:none}
+.filters{display:flex;gap:.4rem;flex-wrap:wrap}
+.filter-btn{padding:.4rem .85rem;border:1.5px solid var(--sand-dark);border-radius:20px;background:var(--white);font-family:'Jost',sans-serif;font-size:.78rem;color:var(--text-light);cursor:pointer;transition:all .2s}
+.filter-btn:hover{border-color:var(--sea-light);color:var(--sea)}
+.filter-btn.active{background:var(--green);border-color:var(--green);color:white;font-weight:500}
+
+/* SORT */
+.sort-wrap{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--stone)}
+.sort-wrap select{padding:.4rem .7rem;border:1.5px solid var(--sand-dark);border-radius:6px;font-family:'Jost',sans-serif;font-size:.78rem;background:var(--white);color:var(--text);outline:none;cursor:pointer}
+
+/* BOOKS GRID */
+.books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem}
+
+/* BOOK CARD */
+.book-card{background:var(--white);border:1px solid var(--sand-dark);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none;display:flex;flex-direction:column}
+.book-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.1)}
+.book-cover{height:160px;position:relative;overflow:hidden;flex-shrink:0}
+.book-cover-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3.5rem}
+.book-cover-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,0.4) 100%)}
+.book-genre-badge{position:absolute;top:.6rem;right:.6rem;padding:.2rem .6rem;border-radius:12px;font-size:.65rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.book-body{padding:1rem;flex:1;display:flex;flex-direction:column}
+.book-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:.25rem;line-height:1.3}
+.book-author{font-size:.75rem;color:var(--stone);margin-bottom:.6rem}
+.book-desc{font-size:.78rem;color:var(--text-light);line-height:1.6;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.book-footer{padding:.75rem 1rem;border-top:1px solid var(--sand-dark);display:flex;align-items:center;justify-content:space-between}
+.book-rating{display:flex;align-items:center;gap:.3rem;font-size:.75rem;color:var(--text-light)}
+.rating-stars{color:#d4a017;font-size:.8rem}
+.book-type{font-size:.68rem;color:var(--stone);text-transform:uppercase;letter-spacing:.08em}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:4rem 2rem;color:var(--text-light)}
+.empty-icon{font-size:3rem;margin-bottom:1rem}
+.empty h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--ink);margin-bottom:.5rem}
+.empty p{font-size:.88rem;line-height:1.7}
+
+/* LOADING */
+.loading-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem}
+.skeleton{background:var(--white);border:1px solid var(--sand-dark);border-radius:12px;overflow:hidden;animation:pulse 1.5s ease infinite}
+.skeleton-cover{height:160px;background:var(--sand-dark)}
+.skeleton-body{padding:1rem}
+.skeleton-line{height:12px;background:var(--sand-dark);border-radius:4px;margin-bottom:.6rem}
+.skeleton-line.short{width:60%}
+.skeleton-line.medium{width:80%}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* STATS BAR */
+.stats-bar{display:flex;gap:1.5rem;margin-bottom:1.5rem;font-size:.78rem;color:var(--stone)}
+.stat{display:flex;align-items:center;gap:.3rem}
+
+footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5rem 2rem;margin-top:auto}
+.fi{max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem}
+.fi span,.fi a{font-size:.78rem;color:var(--stone);text-decoration:none}
+.fi a:hover{color:var(--sea)}
+.fl{display:flex;gap:1.5rem}
+
+/* GENRE COLORS */
+.genre-fiction{background:rgba(74,124,142,0.15);color:#2d6878}
+.genre-fantasy{background:rgba(107,48,139,0.15);color:#6b308b}
+.genre-detective{background:rgba(160,97,74,0.15);color:#a0614a}
+.genre-romance{background:rgba(180,60,80,0.15);color:#b43c50}
+.genre-adventure{background:rgba(46,125,50,0.15);color:#2e7d32}
+.genre-history{background:rgba(121,85,72,0.15);color:#795548}
+.genre-other{background:rgba(138,130,120,0.15);color:#8a8278}
+
+.cover-fiction{background:linear-gradient(135deg,#1a4a5a,#2d7a9a)}
+.cover-fantasy{background:linear-gradient(135deg,#3d1a5c,#6b308b)}
+.cover-detective{background:linear-gradient(135deg,#3a2010,#8b4e2a)}
+.cover-romance{background:linear-gradient(135deg,#5c1a2a,#b43c50)}
+.cover-adventure{background:linear-gradient(135deg,#1a3a1a,#2e7d32)}
+.cover-history{background:linear-gradient(135deg,#3a2a1a,#795548)}
+.cover-other{background:linear-gradient(135deg,#2a2a2a,#5a5a5a)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hi">
+    <a href="/" class="logo"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></a>
+    <nav><ul>
+      <li><a href="/crosswords">Кроссворды</a></li>
+      <li><a href="/ask">Задай вопрос</a></li>
+      <li><a href="/reading" class="active">Чтиво</a></li>
+      <li><a href="/videos">Видео</a></li>
+      <li><a href="/games">Игры</a></li>
+      <li><a href="/support">Поддержка</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <div class="lib-hero">
+      <div class="lib-hero-text">
+        <h1>Библиотека</h1>
+        <p>Произведения новых авторов на русском языке</p>
+      </div>
+      <a href="/publisher" class="lib-hero-link">✒️ Опубликовать книгу</a>
+    </div>
+
+    <div class="controls">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search" placeholder="Поиск по названию или автору..." oninput="filterBooks()"/>
+      </div>
+      <div class="sort-wrap">
+        <span>Сортировка:</span>
+        <select id="sort" onchange="filterBooks()">
+          <option value="rating">По рейтингу</option>
+          <option value="date">По дате</option>
+          <option value="title">По названию</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filters" id="filters">
+      <button class="filter-btn active" onclick="setFilter('all',this)">Все</button>
+      <button class="filter-btn" onclick="setFilter('Фантастика',this)">🚀 Фантастика</button>
+      <button class="filter-btn" onclick="setFilter('Фэнтези',this)">🧙 Фэнтези</button>
+      <button class="filter-btn" onclick="setFilter('Детектив',this)">🔍 Детектив</button>
+      <button class="filter-btn" onclick="setFilter('Любовный роман',this)">💕 Роман</button>
+      <button class="filter-btn" onclick="setFilter('Приключения',this)">🗺️ Приключения</button>
+      <button class="filter-btn" onclick="setFilter('Исторический',this)">📜 Исторический</button>
+      <button class="filter-btn" onclick="setFilter('Биография',this)">👤 Биография</button>
+      <button class="filter-btn" onclick="setFilter('Юмор',this)">😄 Юмор</button>
+      <button class="filter-btn" onclick="setFilter('Драма',this)">🎭 Драма</button>
+      <button class="filter-btn" onclick="setFilter('Лирика',this)">🌸 Лирика</button>
+      <button class="filter-btn" onclick="setFilter('poetry',this)">📝 Поэзия</button>
+    </div>
+
+    <div class="stats-bar" id="stats-bar"></div>
+
+    <div id="books-container">
+      <div class="loading-grid" id="loading">
+        ${[1,2,3,4,5,6].map(()=>`<div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>`).join('')}
+      </div>
+      <div class="books-grid" id="books-grid" style="display:none"></div>
+      <div class="empty" id="empty" style="display:none">
+        <div class="empty-icon">📭</div>
+        <h3>Ничего не найдено</h3>
+        <p>Попробуйте изменить фильтр или поисковый запрос</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="fi">
+    <span>© 2025 Тихая гавань</span>
+    <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
+    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
+  </div>
+</footer>
+
+<script>
+var allBooks = [];
+var currentFilter = 'all';
+
+var genreIcons = {
+  'Фантастика':'🚀','Фэнтези':'🧙','Детектив':'🔍','Любовный роман':'💕',
+  'Приключения':'🗺️','Исторический':'📜','Биография':'👤','Юмор':'😄',
+  'Драма':'🎭','Лирика':'🌸','Другое':'📚'
+};
+var genreColors = {
+  'Фантастика':'cover-fiction','Фэнтези':'cover-fantasy','Детектив':'cover-detective',
+  'Любовный роман':'cover-romance','Приключения':'cover-adventure',
+  'Исторический':'cover-history'
+};
+var badgeColors = {
+  'Фантастика':'genre-fiction','Фэнтези':'genre-fantasy','Детектив':'genre-detective',
+  'Любовный роман':'genre-romance','Приключения':'genre-adventure',
+  'Исторический':'genre-history'
+};
+
+function getCoverClass(genre){ return genreColors[genre]||'cover-other'; }
+function getBadgeClass(genre){ return badgeColors[genre]||'genre-other'; }
+function getIcon(genre,type){ return type==='poetry'?'📝':(genreIcons[genre]||'📚'); }
+
+function ratingStars(r){
+  if(!r||r===0) return '<span style="color:var(--stone);font-size:.72rem">нет оценок</span>';
+  var n=Math.round(r/2);
+  return '★'.repeat(n)+'☆'.repeat(5-n);
+}
+
+async function loadBooks(){
+  try {
+    const r = await fetch('/api/books');
+    const data = await r.json();
+    allBooks = Array.isArray(data) ? data : [];
+  } catch(e) {
+    allBooks = [];
+  }
+  document.getElementById('loading').style.display='none';
+  document.getElementById('books-grid').style.display='grid';
+  filterBooks();
+}
+
+function setFilter(f, btn){
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  filterBooks();
+}
+
+function filterBooks(){
+  var search = document.getElementById('search').value.toLowerCase();
+  var sort = document.getElementById('sort').value;
+
+  var filtered = allBooks.filter(function(b){
+    if(currentFilter !== 'all'){
+      if(currentFilter === 'poetry' && b.type !== 'poetry') return false;
+      if(currentFilter !== 'poetry' && b.genre !== currentFilter) return false;
+    }
+    if(search){
+      var inTitle = (b.title||'').toLowerCase().includes(search);
+      var inAuthor = (b.author_name||'').toLowerCase().includes(search);
+      if(!inTitle && !inAuthor) return false;
+    }
+    return true;
+  });
+
+  // Sort
+  filtered.sort(function(a,b){
+    if(sort==='rating') return ((b.rating_plot+b.rating_style)/2||0) - ((a.rating_plot+a.rating_style)/2||0);
+    if(sort==='date') return new Date(b.published_at) - new Date(a.published_at);
+    if(sort==='title') return (a.title||'').localeCompare(b.title||'','ru');
+    return 0;
+  });
+
+  // Stats
+  document.getElementById('stats-bar').innerHTML =
+    '<div class="stat">📚 Книг: <strong>'+allBooks.length+'</strong></div>' +
+    '<div class="stat">🔍 Найдено: <strong>'+filtered.length+'</strong></div>';
+
+  var grid = document.getElementById('books-grid');
+  var empty = document.getElementById('empty');
+
+  if(filtered.length === 0){
+    grid.style.display='none';
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+  grid.style.display='grid';
+
+  grid.innerHTML = filtered.map(function(b){
+    var rating = b.votes_count > 0 ? ((b.rating_plot + b.rating_style) / 2).toFixed(1) : 0;
+    var coverClass = getCoverClass(b.genre);
+    var badgeClass = getBadgeClass(b.genre);
+    var icon = getIcon(b.genre, b.type);
+    var date = b.published_at ? new Date(b.published_at).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}) : '';
+    return '<a href="/book/'+b.id+'" class="book-card">'+
+      '<div class="book-cover"><div class="book-cover-bg '+coverClass+'">'+icon+'</div>'+
+      '<div class="book-cover-overlay"></div>'+
+      '<span class="book-genre-badge '+badgeClass+'">'+(b.genre||b.type==='poetry'?'Поэзия':'Проза')+'</span></div>'+
+      '<div class="book-body">'+
+      '<div class="book-title">'+escHtml(b.title)+'</div>'+
+      '<div class="book-author">'+escHtml(b.author_name||'Автор')+'</div>'+
+      '<div class="book-desc">'+escHtml(b.description||b.ai_summary||'')+'</div>'+
+      '</div>'+
+      '<div class="book-footer">'+
+      '<div class="book-rating"><span class="rating-stars">'+ratingStars(rating)+'</span>'+(rating>0?'<span>'+rating+'</span>':'')+'</div>'+
+      '<div class="book-type">'+date+'</div>'+
+      '</div></a>';
+  }).join('');
+}
+
+function escHtml(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Expose for inline handlers
+window.setFilter = setFilter;
+window.filterBooks = filterBooks;
+
+loadBooks();
+</script>
+</body>
+</html>
