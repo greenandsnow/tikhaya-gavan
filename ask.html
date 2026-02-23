@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Задай вопрос — Тихая гавань</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/ask.css" />
+</head>
+<body>
+<header>
+  <div class="hi">
+    <a href="/" class="logo"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></a>
+    <nav><ul>
+      <li><a href="/crosswords">Кроссворды</a></li>
+      <li><a href="/ask" class="active">Задай вопрос</a></li>
+      <li><a href="/reading">Чтиво</a></li>
+      <li><a href="/videos">Видео</a></li>
+      <li><a href="/games">Игры</a></li>
+      <li><a href="/support">Поддержка</a></li>
+    </ul></nav>
+  </div>
+</header>
+<main>
+  <div class="pt">Задай вопрос</div>
+  <div class="ps">Спросите всё что угодно — без регистрации. Отвечает искусственный интеллект.</div>
+  <div class="cw">
+    <div class="ch">
+      <div class="ca">🤖</div>
+      <div><h3>Помощник Тихой гавани</h3><p>На базе Claude AI</p></div>
+      <div class="cs"><div class="sd"></div>Онлайн</div>
+    </div>
+    <div class="msgs" id="msgs">
+      <div class="msg bot">
+        <div class="ma">🤖</div>
+        <div><div class="mb">Здравствуйте! Я готов ответить на любой ваш вопрос — о здоровье, истории, кулинарии, технике, путешествиях или чём угодно ещё. Спрашивайте смело!</div><div class="mt">Сейчас</div></div>
+      </div>
+    </div>
+    <div class="ti" id="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div>
+    <div class="sugg" id="sugg">
+      <div class="sl">Попробуйте спросить:</div>
+      <button class="sc" onclick="useSug(this)">Как снизить давление без таблеток?</button>
+      <button class="sc" onclick="useSug(this)">Что посмотреть в Канаде?</button>
+      <button class="sc" onclick="useSug(this)">Расскажи рецепт борща</button>
+      <button class="sc" onclick="useSug(this)">Как пользоваться WhatsApp?</button>
+    </div>
+    <div class="ia">
+      <div class="iw"><textarea id="inp" placeholder="Напишите ваш вопрос..." rows="1" onkeydown="handleKey(event)" oninput="resize(this)"></textarea></div>
+      <button class="cb" onclick="clearChat()">🗑</button>
+      <button class="sb" id="sbtn" onclick="send()">➤</button>
+    </div>
+  </div>
+  <div class="ib">Ваши вопросы не сохраняются и не передаются третьим лицам.</div>
+</main>
+<footer>
+  <div class="fi2">
+    <span>© 2025 Тихая гавань</span>
+    <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
+    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
+  </div>
+</footer>
+<script src="/ask.js"></script>
+</body>
+</html>
