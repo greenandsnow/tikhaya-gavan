@@ -178,23 +178,20 @@ var RANK_CODES = {A:'A','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8',
 var SUIT_CODES = {'♠':'S','♥':'H','♦':'D','♣':'C'};
 function cardImg(rank,suit){return 'https://deckofcardsapi.com/static/img/'+RANK_CODES[rank]+SUIT_CODES[suit]+'.png';}
 function backImg(){
-  // Classic plaid card back - SVG as data URL
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="100" height="140"><rect width="100" height="140" fill="#f5f0e0" rx="4"/><rect width="100" height="140" fill="#f5f0e0" rx="4"/>';
-  // Green diagonal lines
-  for(var i=-140;i<200;i+=12){svg+='<line x1="'+i+'" y1="0" x2="'+(i+140)+'" y2="140" stroke="#6a9e6a" stroke-width="1.5" opacity="0.7"/>';}
-  // Red diagonal lines
-  for(var i=-140;i<200;i+=24){svg+='<line x1="'+i+'" y1="0" x2="'+(i+140)+'" y2="140" stroke="#c0392b" stroke-width="2" opacity="0.8"/>';}
-  // Dark brown thin lines
-  for(var i=-140;i<200;i+=24){svg+='<line x1="'+(i+6)+'" y1="0" x2="'+(i+146)+'" y2="140" stroke="#5a3a1a" stroke-width="0.8" opacity="0.5"/>';}
-  // Perpendicular green
-  for(var i=-140;i<200;i+=12){svg+='<line x1="0" y1="'+i+'" x2="100" y2="'+(i+100)+'" stroke="#6a9e6a" stroke-width="1" opacity="0.4"/>';}
-  // Perpendicular red
-  for(var i=-140;i<200;i+=24){svg+='<line x1="0" y1="'+i+'" x2="100" y2="'+(i+100)+'" stroke="#c0392b" stroke-width="1.5" opacity="0.5"/>';}
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="100" height="140"><rect width="100" height="140" fill="#f5f0e0" rx="4"/>';
+  // Lines: top-left to bottom-right
+  for(var i=-140;i<200;i+=12){svg+='<line x1="'+i+'" y1="0" x2="'+(i+140)+'" y2="140" stroke="#6a9e6a" stroke-width="1" opacity="0.6"/>';}
+  for(var i=-140;i<200;i+=24){svg+='<line x1="'+i+'" y1="0" x2="'+(i+140)+'" y2="140" stroke="#c0392b" stroke-width="2" opacity="0.75"/>';}
+  for(var i=-140;i<200;i+=24){svg+='<line x1="'+(i+6)+'" y1="0" x2="'+(i+146)+'" y2="140" stroke="#5a3a1a" stroke-width="0.8" opacity="0.4"/>';}
+  // Lines: top-right to bottom-left (crossing)
+  for(var i=-140;i<200;i+=12){svg+='<line x1="'+(100-i)+'" y1="0" x2="'+(100-i-140)+'" y2="140" stroke="#6a9e6a" stroke-width="1" opacity="0.5"/>';}
+  for(var i=-140;i<200;i+=24){svg+='<line x1="'+(100-i)+'" y1="0" x2="'+(100-i-140)+'" y2="140" stroke="#c0392b" stroke-width="1.5" opacity="0.6"/>';}
+  for(var i=-140;i<200;i+=24){svg+='<line x1="'+(100-i-6)+'" y1="0" x2="'+(100-i-146)+'" y2="140" stroke="#5a3a1a" stroke-width="0.8" opacity="0.35"/>';}
   svg+='<rect width="100" height="140" fill="none" stroke="#8a7a5a" stroke-width="3" rx="4"/></svg>';
   return 'data:image/svg+xml;base64,'+btoa(svg);
 }
 
-var currentSuits=1,gameColumns=[],stockPile=[],foundations=0,selected=null,moves=0,seconds=0,timerInterval=null,undoStack=[];
+var currentSuits=1,gameColumns=[],stockPile=[],foundations=0,completedSuits=[],selected=null,moves=0,seconds=0,timerInterval=null,undoStack=[];
 var RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 var RANK_VAL={A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q:12,K:13};
 
@@ -222,7 +219,7 @@ function makeDeck(n){
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
 
 function startGame(suits){
-  currentSuits=suits;gameColumns=[];stockPile=[];foundations=0;selected=null;moves=0;seconds=0;undoStack=[];dragState=null;
+  currentSuits=suits;gameColumns=[];stockPile=[];foundations=0;completedSuits=[];selected=null;moves=0;seconds=0;undoStack=[];dragState=null;
   clearInterval(timerInterval);
   document.getElementById('welcome').style.display='none';
   document.getElementById('game-screen').style.display='flex';
@@ -254,9 +251,9 @@ function render(){
   for(var i=0;i<8;i++){
     var d=document.createElement('div');
     d.className='foundation'+(i<foundations?' complete':'');
-    if(i<foundations){
+    if(i<foundations && completedSuits[i]){
       var img=document.createElement('img');
-      img.src=cardImg('A', currentSuits===1?'♠':'♠');
+      img.src=cardImg('A', completedSuits[i]);
       img.style.width='100%';img.style.height='100%';img.style.borderRadius='6px';
       d.appendChild(img);
     }
@@ -319,12 +316,13 @@ function render(){
   var packs=Math.floor(stockPile.length/10);
   if(stockPile.length>0){
     stockEl.className='stock-pile has-cards';
-    stockEl.innerHTML='<img src="'+backImg()+'" style="width:100%;height:100%;border-radius:6px;object-fit:cover"/><span class="stock-count" style="position:absolute;bottom:4px;left:0;right:0;text-align:center;color:white;font-size:.65rem;text-shadow:0 1px 3px rgba(0,0,0,0.8)">'+packs+' раздач</span>';
     stockEl.style.position='relative';stockEl.style.overflow='hidden';
+    stockEl.innerHTML='<img src="'+backImg()+'" style="width:100%;height:100%;border-radius:6px;object-fit:cover;position:absolute;inset:0"/>'
+      +'<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:700;color:rgba(255,255,255,0.85);text-shadow:0 2px 6px rgba(0,0,0,0.7)">'+packs+'</span>';
   } else {
     stockEl.className='stock-pile';
-    stockEl.innerHTML='<span>🂠</span><span class="stock-count">пусто</span>';
-    stockEl.style.position='';
+    stockEl.innerHTML='<span style="font-size:.8rem;color:rgba(255,255,255,0.4)">пусто</span>';
+    stockEl.style.position='';stockEl.style.overflow='';
   }
 }
 
@@ -379,7 +377,7 @@ function tryMove(fromCol,fromIdx,toCol){
   var targetCol=gameColumns[toCol];
   var canPlace=targetCol.length===0||(targetCol[targetCol.length-1].faceUp&&RANK_VAL[targetCol[targetCol.length-1].rank]===RANK_VAL[movingCards[0].rank]+1);
   if(!canPlace)return false;
-  undoStack.push({cols:JSON.parse(JSON.stringify(gameColumns)),stock:JSON.parse(JSON.stringify(stockPile)),foundations:foundations,moves:moves});
+  undoStack.push({cols:JSON.parse(JSON.stringify(gameColumns)),stock:JSON.parse(JSON.stringify(stockPile)),completedSuits:completedSuits.slice(),foundations:foundations,moves:moves});
   if(undoStack.length>50)undoStack.shift();
   gameColumns[fromCol].splice(fromIdx);
   for(var i=0;i<movingCards.length;i++)gameColumns[toCol].push(movingCards[i]);
@@ -399,11 +397,12 @@ function checkCompletions(){
       if(valid){
         col.splice(top,13);
         if(col.length>0)col[col.length-1].faceUp=true;
+        completedSuits.push(suit);
         foundations++;
         document.getElementById('complete-val').textContent=foundations;
         found=true;
         if(foundations===8){setTimeout(showWin,400);return;}
-        break; // restart loop after change
+        break;
       }
     }
   }
@@ -423,6 +422,7 @@ function undoMove(){
   var state=undoStack.pop();
   gameColumns=state.cols;
   stockPile=state.stock||stockPile;
+  completedSuits=state.completedSuits||[];
   foundations=state.foundations;
   moves=state.moves;
   selected=null;
