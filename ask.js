@@ -1,5 +1,5 @@
 console.log('ask.js loaded');
-var history = [];
+var chatHistory = [];
 var isLoading = false;
 
 function getTime() {
@@ -44,17 +44,17 @@ function send() {
   inp.value = '';
   inp.style.height = 'auto';
   addMessage('user', text);
-  history.push({ role: 'user', content: text });
+  chatHistory.push({ role: 'user', content: text });
   setLoading(true);
   fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages: history })
+    body: JSON.stringify({ messages: chatHistory })
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
     var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Извините, не удалось получить ответ.';
-    history.push({ role: 'assistant', content: reply });
+    chatHistory.push({ role: 'assistant', content: reply });
     addMessage('bot', reply);
   })
   .catch(function() {
@@ -67,7 +67,7 @@ function send() {
 
 function clearChat() {
   if (!confirm('Очистить историю?')) return;
-  history = [];
+  chatHistory = [];
   document.getElementById('msgs').innerHTML = '<div class="msg bot"><div class="ma">🤖</div><div><div class="mb">Здравствуйте! Задайте любой вопрос.</div><div class="mt">Сейчас</div></div></div>';
   document.getElementById('sugg').style.display = 'flex';
 }
