@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Чтиво — Тихая гавань</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;
+  --sea:#4a7c8e;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;
+  --white:#fdfcfa;--terra:#a0614a;--ink:#2a2420;
+}
+html{font-size:clamp(15px,1.1vw,18px)}
+body{font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* HEADER */
+header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;position:sticky;top:0;z-index:100}
+.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:2rem}
+.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.1}
+.logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
+.logo-tag{font-size:.65rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
+nav ul{list-style:none;display:flex;gap:.25rem}
+nav a{display:block;padding:.45rem .85rem;text-decoration:none;color:var(--text-light);font-size:.88rem;border-radius:6px;transition:color .2s,background .2s}
+nav a:hover{color:var(--sea);background:var(--sea-pale)}
+nav a.active{color:var(--sea);font-weight:600}
+
+/* HERO */
+main{flex:1}
+.hero{padding:4rem 2rem 2rem;text-align:center;background:linear-gradient(180deg,var(--white) 0%,var(--sand) 100%)}
+.eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);margin-bottom:1rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,4.5vw,3.2rem);color:var(--ink);line-height:1.18;margin-bottom:1.25rem}
+.hero h1 em{font-style:italic;color:var(--terra)}
+.hero-sub{font-size:.95rem;color:var(--text-light);line-height:1.9}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:1rem;margin:2.5rem auto;max-width:360px;padding:0 2rem}
+.dl{flex:1;height:1px;background:var(--sand-dark)}
+.do{font-size:1.1rem;color:var(--stone)}
+
+/* BOOKS GRID */
+.doors{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2.5rem;
+  max-width:820px;
+  margin:0 auto;
+  padding:0 2rem 5rem;
+}
+
+/* BOOK CARD */
+.book{
+  text-decoration:none;
+  display:flex;flex-direction:column;
+  border-radius:8px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform .3s ease, box-shadow .3s ease;
+  box-shadow:0 8px 24px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.1);
+}
+.book:hover{
+  transform:translateY(-8px);
+  box-shadow:0 20px 48px rgba(0,0,0,0.28), 0 6px 12px rgba(0,0,0,0.15);
+}
+.book-green{background:linear-gradient(160deg,#336b45 0%,#1e4d2b 55%,#122d18 100%)}
+.book-brown{background:linear-gradient(160deg,#7a3f20 0%,#5c2a0e 55%,#3d1a06 100%)}
+
+/* LEATHER TEXTURE */
+.book-body{
+  position:relative;
+  flex:1;
+  padding:2.5rem 2rem 2rem;
+  display:flex;flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+.book-body::before{
+  content:'';
+  position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 3px),
+    repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(0,0,0,0.015) 2px,rgba(0,0,0,0.015) 3px);
+  pointer-events:none;
+}
+
+/* GOLD BORDER EMBOSSING */
+.book-body::after{
+  content:'';
+  position:absolute;
+  inset:14px;
+  border:1.5px solid rgba(212,170,60,0.4);
+  border-radius:4px;
+  box-shadow:inset 0 0 0 4px rgba(212,170,60,0.08);
+  pointer-events:none;
+}
+
+.book-icon{font-size:3rem;margin-bottom:1.2rem;position:relative;z-index:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.3))}
+.book-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.5rem;font-weight:700;
+  color:rgba(255,255,255,0.95);
+  text-transform:uppercase;letter-spacing:.07em;
+  margin-bottom:.65rem;line-height:1.2;
+  position:relative;z-index:1;
+  text-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+.book-desc{
+  font-size:.82rem;color:rgba(255,255,255,0.65);
+  line-height:1.7;margin-bottom:1.5rem;
+  position:relative;z-index:1;flex:1;
+}
+.book-list{
+  list-style:none;width:100%;margin-bottom:1.75rem;
+  text-align:left;position:relative;z-index:1;
+}
+.book-list li{
+  font-size:.77rem;color:rgba(255,255,255,0.58);
+  padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,0.07);
+  display:flex;align-items:center;gap:.55rem;
+}
+.book-list li::before{content:'';width:4px;height:4px;border-radius:50%;background:rgba(212,170,60,0.65);flex-shrink:0}
+
+/* BOOK FOOTER / BUTTON AREA */
+.book-foot{
+  padding:1rem 2rem 1.75rem;
+  display:flex;justify-content:center;
+  position:relative;z-index:1;
+}
+.book-btn{
+  display:inline-block;
+  padding:.65rem 1.8rem;
+  border-radius:5px;
+  font-family:'Playfair Display',serif;
+  font-size:.8rem;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,0.9);
+  border:1.5px solid rgba(212,170,60,0.5);
+  background:rgba(212,170,60,0.12);
+  text-shadow:0 1px 4px rgba(0,0,0,0.3);
+  transition:background .2s,border-color .2s;
+}
+.book:hover .book-btn{
+  background:rgba(212,170,60,0.25);
+  border-color:rgba(212,170,60,0.75);
+}
+
+/* BOTTOM NOTE */
+.note{text-align:center;padding:1.5rem 2rem;font-size:.75rem;color:var(--stone);border-top:1px solid var(--sand-dark);background:var(--white)}
+
+/* FOOTER */
+footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5rem 2rem}
+.fi{max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem}
+.fi span,.fi a{font-size:.78rem;color:var(--stone);text-decoration:none}
+.fi a:hover{color:var(--sea)}
+.fl{display:flex;gap:1.5rem}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.hero{animation:fadeUp .4s ease both}
+.book{animation:fadeUp .6s ease both}
+.book:nth-child(2){animation-delay:.15s}
+
+/* MOBILE */
+@media(max-width:620px){
+  .doors{grid-template-columns:1fr;gap:2rem;padding:0 1.25rem 3rem}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="hi">
+    <a href="/" class="logo">
+      <span class="logo-name">Тихая гавань</span>
+      <span class="logo-tag">Место для вашего досуга</span>
+    </a>
+    <nav><ul>
+      <li><a href="/crosswords">Кроссворды</a></li>
+      <li><a href="/ask">Задай вопрос</a></li>
+      <li><a href="/reading" class="active">Чтиво</a></li>
+      <li><a href="/videos">Видео</a></li>
+      <li><a href="/games">Игры</a></li>
+      <li><a href="/support">Поддержка</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow">Библиотека · Издательство</div>
+    <h1>Место, где рождаются <em>истории</em></h1>
+    <div class="hero-sub">
+      Читайте книги новых авторов — или поделитесь своей.<br>
+      Здесь каждый голос имеет значение.
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="dl"></div>
+    <div class="do">❧</div>
+    <div class="dl"></div>
+  </div>
+
+  <div class="doors">
+    <a href="/library" class="book book-green">
+      <div class="book-body">
+        <div class="book-icon">📚</div>
+        <div class="book-title">Библиотека</div>
+        <div class="book-desc">Откройте для себя новых авторов. Проза и поэзия — отобранные, оценённые читателями произведения на русском языке.</div>
+        <ul class="book-list">
+          <li>Проза и поэзия по жанрам</li>
+          <li>Рейтинги от читателей</li>
+          <li>Поиск по названию и автору</li>
+          <li>Сохранение прогресса чтения</li>
+        </ul>
+      </div>
+      <div class="book-foot"><div class="book-btn">БИБЛИОТЕКА</div></div>
+    </a>
+
+    <a href="/publisher" class="book book-brown">
+      <div class="book-body">
+        <div class="book-icon">📝</div>
+        <div class="book-title">Издательство</div>
+        <div class="book-desc">Вы написали книгу? Опубликуйте её здесь. Бесплатно. Честно. С поддержкой искусственного интеллекта.</div>
+        <ul class="book-list">
+          <li>Бесплатная публикация</li>
+          <li>AI-модерация и резюме</li>
+          <li>Фиксация авторства с датой</li>
+          <li>Консультация по авторским правам</li>
+        </ul>
+      </div>
+      <div class="book-foot"><div class="book-btn">ИЗДАТЕЛЬСТВО</div></div>
+    </a>
+  </div>
+
+  <div class="note">
+    Все произведения проходят автоматическую модерацию. Публикация бесплатна. Авторские права сохраняются за автором.
+  </div>
+</main>
+
+<footer>
+  <div class="fi">
+    <span>© 2025 Тихая гавань</span>
+    <div class="fl">
+      <a href="/privacy">Политика конфиденциальности</a>
+      <a href="/terms">Условия</a>
+    </div>
+    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
+  </div>
+</footer>
+</body>
+</html>
