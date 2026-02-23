@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Паук — Тихая гавань</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;--terra:#a0614a;--felt:#1e4d2b;--felt-dark:#163d22;--gold:#d4a017}
+html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text)}
+body{display:flex;flex-direction:column}
+
+/* HEADER */
+header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 1.5rem;flex-shrink:0}
+.hi{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:1.5rem}
+.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.1}
+.logo-name{font-weight:700;font-size:1.3rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
+.logo-tag{font-size:.6rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
+nav ul{list-style:none;display:flex;gap:.2rem}
+nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-light);font-size:.82rem;border-radius:6px;transition:color .2s,background .2s}
+nav a:hover{color:var(--sea);background:var(--sea-pale)}
+nav a.active{color:var(--sea);font-weight:600}
+
+/* WELCOME */
+.welcome{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem}
+.welcome-box{background:var(--white);border:1px solid var(--sand-dark);border-radius:18px;padding:2.5rem 2rem;max-width:460px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+.welcome-icon{font-size:3rem;margin-bottom:.75rem}
+.welcome-box h1{font-size:1.7rem;font-weight:700;color:var(--sea);margin-bottom:.4rem}
+.welcome-box p{font-size:.9rem;color:var(--text-light);margin-bottom:1.75rem;line-height:1.6}
+.mode-buttons{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1.25rem}
+.mode-btn{padding:1.1rem .85rem;border:2px solid var(--sand-dark);border-radius:12px;background:var(--white);cursor:pointer;font-family:'Jost',sans-serif;transition:all .2s;text-align:center}
+.mode-btn:hover{border-color:var(--sea);background:var(--sea-pale);transform:translateY(-2px)}
+.mode-icon{font-size:1.6rem;margin-bottom:.3rem}
+.mode-name{font-size:.95rem;font-weight:600;color:var(--text);display:block}
+.mode-desc{font-size:.72rem;color:var(--text-light)}
+.rules-toggle{font-size:.78rem;color:var(--sea);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'Jost',sans-serif}
+.rules-box{display:none;text-align:left;background:var(--sand);border-radius:10px;padding:.85rem;margin-top:.6rem;font-size:.78rem;color:var(--text-light);line-height:1.7}
+.rules-box ul{padding-left:1.1rem}
+.rules-box li{margin-bottom:.25rem}
+
+/* GAME */
+.game-screen{display:none;flex:1;flex-direction:column;min-height:0}
+.game-bar{background:rgba(0,0,0,0.35);padding:.5rem 1.2rem;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;flex-shrink:0}
+.gstat{display:flex;align-items:center;gap:.35rem;font-size:.78rem;color:rgba(255,255,255,0.9)}
+.gstat-label{color:rgba(255,255,255,0.5);text-transform:uppercase;font-size:.62rem;letter-spacing:.08em}
+.gstat-val{font-weight:600}
+.gdiv{width:1px;height:20px;background:rgba(255,255,255,0.15)}
+.gbar-spacer{flex:1}
+.gbtn{padding:.35rem .8rem;border-radius:6px;font-family:'Jost',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.9);background:rgba(255,255,255,0.1);transition:all .2s}
+.gbtn:hover{background:rgba(255,255,255,0.25)}
+
+/* FELT */
+.felt-area{flex:1;background:radial-gradient(ellipse at center, #266b3a 0%, var(--felt) 50%, var(--felt-dark) 100%);padding:.75rem 1rem;display:flex;flex-direction:column;gap:.4rem;min-height:0;position:relative;overflow:hidden}
+/* felt texture */
+.felt-area::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3L3 1' stroke='rgba(0,0,0,0.05)' stroke-width='1'/%3E%3C/svg%3E");pointer-events:none}
+
+.foundations-row{display:flex;gap:.4rem;justify-content:flex-end;flex-shrink:0}
+.foundation{width:var(--cw);height:var(--ch);border:2px dashed rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:1.2rem;flex-shrink:0;transition:all .3s}
+.foundation.complete{border-color:var(--gold);background:rgba(212,160,23,0.15);color:var(--gold)}
+
+.columns-row{display:flex;gap:.4rem;flex:1;align-items:flex-start;min-height:0}
+.column{flex:1;min-width:0;position:relative}
+.column-inner{position:relative}
+
+/* CARDS */
+--cw:70px;--ch:98px;
+.card{position:absolute;width:var(--cw);height:var(--ch);border-radius:7px;cursor:pointer;user-select:none;transition:filter .15s;box-shadow:0 2px 8px rgba(0,0,0,0.35),0 1px 3px rgba(0,0,0,0.2)}
+.card img{width:100%;height:100%;border-radius:6px;display:block;pointer-events:none}
+.card.selected{filter:brightness(1.15);box-shadow:0 0 0 3px #ffd700,0 4px 16px rgba(0,0,0,0.4)!important;transform:translateY(-4px)}
+.card.face-down img{content:url('https://deckofcardsapi.com/static/img/back.png')}
+.empty-col{width:var(--cw);height:var(--ch);border:2px dashed rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.15);font-size:.7rem;cursor:pointer}
+
+.stock-area{position:absolute;bottom:.75rem;right:1rem;display:flex;gap:.5rem;align-items:center}
+.stock-pile{width:var(--cw);height:var(--ch);border-radius:8px;border:2px dashed rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-size:.75rem;cursor:pointer;transition:all .2s;flex-direction:column;gap:.2rem;text-align:center;padding:.3rem}
+.stock-pile.has-cards{background:linear-gradient(135deg,#1a4a6b,#2d7a9a);border-color:#2d7a9a;color:white;cursor:pointer}
+.stock-pile.has-cards:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(0,0,0,0.4)}
+.stock-count{font-size:.65rem;opacity:.8}
+
+/* WIN */
+.win-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center}
+.win-overlay.show{display:flex}
+.win-box{background:var(--white);border-radius:18px;padding:2.5rem;text-align:center;max-width:360px;width:90%;animation:pop .4s ease}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.win-box h2{font-size:1.9rem;font-weight:700;color:#2d7a3a;margin-bottom:.4rem}
+.win-box p{color:var(--text-light);margin-bottom:1.25rem}
+.win-buttons{display:flex;gap:.6rem;justify-content:center}
+.wbtn{padding:.5rem 1.1rem;border-radius:8px;font-family:'Jost',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border:1.5px solid var(--sea);color:var(--sea);background:transparent;transition:all .2s}
+.wbtn:hover{background:var(--sea);color:white}
+.wbtn.primary{background:var(--sea);color:white}
+.wbtn.primary:hover{background:var(--sea-light)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hi">
+    <a href="/" class="logo"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></a>
+    <nav><ul>
+      <li><a href="/crosswords">Кроссворды</a></li>
+      <li><a href="/ask">Задай вопрос</a></li>
+      <li><a href="/reading">Чтиво</a></li>
+      <li><a href="/videos">Видео</a></li>
+      <li><a href="/games" class="active">Игры</a></li>
+      <li><a href="/support">Поддержка</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<!-- WELCOME -->
+<div class="welcome" id="welcome">
+  <div class="welcome-box">
+    <div class="welcome-icon">🕷️</div>
+    <h1>Паук</h1>
+    <p>Классический пасьянс. Соберите все масти от туза до короля и уберите их со стола.</p>
+    <div class="mode-buttons">
+      <button class="mode-btn" onclick="startGame(1)">
+        <div class="mode-icon">♠️</div>
+        <span class="mode-name">1 масть</span>
+        <span class="mode-desc">Только пики · Легче</span>
+      </button>
+      <button class="mode-btn" onclick="startGame(2)">
+        <div class="mode-icon">♠️♥️</div>
+        <span class="mode-name">2 масти</span>
+        <span class="mode-desc">Пики и червы · Сложнее</span>
+      </button>
+    </div>
+    <button class="rules-toggle" onclick="toggleRules()">📖 Правила игры</button>
+    <div class="rules-box" id="rules-box">
+      <ul>
+        <li>10 колонок: первые 4 получают по 6 карт, остальные 6 — по 5 карт</li>
+        <li>Верхняя карта каждой колонки открыта, остальные закрыты</li>
+        <li>Карту можно положить на карту на 1 больше по значению</li>
+        <li>Группу карт одной масти в порядке убывания можно перемещать вместе</li>
+        <li>Пустая колонка принимает любую карту или группу</li>
+        <li>Полная последовательность К→Т одной масти убирается автоматически</li>
+        <li>«Добавить карты» раздаёт по одной карте на каждую колонку из запаса</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div class="game-screen" id="game-screen">
+  <div class="game-bar">
+    <div class="gstat"><span class="gstat-label">Ходы</span><span class="gstat-val" id="moves-val">0</span></div>
+    <div class="gdiv"></div>
+    <div class="gstat"><span class="gstat-label">Время</span><span class="gstat-val" id="timer-val">00:00</span></div>
+    <div class="gdiv"></div>
+    <div class="gstat"><span class="gstat-label">Убрано</span><span class="gstat-val" id="complete-val">0</span>/8</div>
+    <div class="gdiv"></div>
+    <div class="gstat"><span class="gstat-label">Режим</span><span class="gstat-val" id="mode-val">1 масть</span></div>
+    <div class="gbar-spacer"></div>
+    <button class="gbtn" onclick="undoMove()">↩ Отмена</button>
+    <button class="gbtn" onclick="showWelcome()">↺ Новая игра</button>
+  </div>
+  <div class="felt-area" id="felt">
+    <div class="foundations-row" id="foundations"></div>
+    <div class="columns-row" id="columns"></div>
+    <div class="stock-area">
+      <div class="stock-pile" id="stock" onclick="dealFromStock()">
+        <span>🂠</span>
+        <span class="stock-count" id="stock-count">5 раздач</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WIN -->
+<div class="win-overlay" id="win-overlay">
+  <div class="win-box">
+    <div style="font-size:2.5rem;margin-bottom:.5rem">🎉</div>
+    <h2>Победа!</h2>
+    <p id="win-stats">Пасьянс сложился!</p>
+    <div class="win-buttons">
+      <button class="wbtn primary" onclick="startGame(currentSuits)">Ещё раз</button>
+      <button class="wbtn" onclick="showWelcome()">Сменить режим</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Card image URLs - using deckofcardsapi.com (free, no registration)
+// Format: AS=Ace of Spades, KH=King of Hearts, etc.
+var RANK_CODES = {A:'A','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','10':'0',J:'J',Q:'Q',K:'K'};
+var SUIT_CODES = {'♠':'S','♥':'H','♦':'D','♣':'C'};
+
+function cardImg(rank, suit) {
+  return 'https://deckofcardsapi.com/static/img/' + RANK_CODES[rank] + SUIT_CODES[suit] + '.png';
+}
+function backImg() {
+  return 'https://deckofcardsapi.com/static/img/back.png';
+}
+
+// ═══ STATE ═══
+var currentSuits = 1;
+var gameColumns = [];
+var stockPile = [];
+var foundations = 0;
+var selected = null;
+var moves = 0;
+var seconds = 0;
+var timerInterval = null;
+var undoStack = [];
+
+var RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+var RANK_VAL = {A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q:12,K:13};
+
+function makeDeck(numSuits) {
+  var suits = numSuits === 1
+    ? ['♠','♠','♠','♠','♠','♠','♠','♠']
+    : ['♠','♠','♠','♠','♥','♥','♥','♥'];
+  var deck = [];
+  for (var s = 0; s < 8; s++) {
+    for (var r = 0; r < 13; r++) {
+      deck.push({rank: RANKS[r], suit: suits[s], faceUp: false});
+    }
+  }
+  return shuffle(deck);
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length-1; i > 0; i--) {
+    var j = Math.floor(Math.random()*(i+1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+// card size based on window
+function calcCardSize() {
+  var felt = document.getElementById('felt');
+  if (!felt) return;
+  var w = felt.clientWidth - 16; // padding
+  var stockW = 80;
+  var gaps = 9 * 4;
+  var cw = Math.floor((w - stockW - gaps) / 10);
+  cw = Math.max(52, Math.min(90, cw));
+  var ch = Math.round(cw * 1.4);
+  document.documentElement.style.setProperty('--cw', cw+'px');
+  document.documentElement.style.setProperty('--ch', ch+'px');
+  return {cw, ch};
+}
+
+// ═══ START ═══
+function startGame(suits) {
+  currentSuits = suits;
+  gameColumns = [];
+  stockPile = [];
+  foundations = 0;
+  selected = null;
+  moves = 0;
+  seconds = 0;
+  undoStack = [];
+  clearInterval(timerInterval);
+
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'flex';
+  document.getElementById('win-overlay').classList.remove('show');
+  document.getElementById('mode-val').textContent = suits + (suits===1?' масть':' масти');
+  document.getElementById('moves-val').textContent = '0';
+  document.getElementById('complete-val').textContent = '0';
+  document.getElementById('timer-val').textContent = '00:00';
+
+  var deck = makeDeck(suits);
+  for (var c = 0; c < 10; c++) {
+    var count = c < 4 ? 6 : 5;
+    var col = [];
+    for (var i = 0; i < count; i++) {
+      var card = deck.pop();
+      card.faceUp = (i === count-1);
+      col.push(card);
+    }
+    gameColumns.push(col);
+  }
+  stockPile = deck; // 50 cards left
+
+  timerInterval = setInterval(function(){
+    seconds++;
+    var m = String(Math.floor(seconds/60)).padStart(2,'0');
+    var s = String(seconds%60).padStart(2,'0');
+    document.getElementById('timer-val').textContent = m+':'+s;
+  }, 1000);
+
+  setTimeout(function(){ calcCardSize(); render(); }, 50);
+}
+
+function showWelcome() {
+  clearInterval(timerInterval);
+  document.getElementById('welcome').style.display = 'flex';
+  document.getElementById('game-screen').style.display = 'none';
+}
+
+// ═══ RENDER ═══
+function render() {
+  var sz = calcCardSize();
+  var cw = sz ? sz.cw : 70;
+  var ch = sz ? sz.ch : 98;
+  var OFFSET_DOWN = 18;
+  var OFFSET_UP = 24;
+
+  // Foundations
+  var fEl = document.getElementById('foundations');
+  fEl.innerHTML = '';
+  for (var i = 0; i < 8; i++) {
+    var d = document.createElement('div');
+    d.className = 'foundation' + (i < foundations ? ' complete' : '');
+    d.textContent = i < foundations ? '♠' : '';
+    fEl.appendChild(d);
+  }
+
+  // Columns
+  var cEl = document.getElementById('columns');
+  cEl.innerHTML = '';
+  for (var c = 0; c < 10; c++) {
+    var colDiv = document.createElement('div');
+    colDiv.className = 'column';
+    var inner = document.createElement('div');
+    inner.className = 'column-inner';
+    var col = gameColumns[c];
+
+    if (col.length === 0) {
+      var empty = document.createElement('div');
+      empty.className = 'empty-col';
+      empty.textContent = '⬜';
+      empty.style.width = cw+'px';
+      empty.style.height = ch+'px';
+      ;(function(cc){ empty.onclick = function(){ onEmptyColClick(cc); }; })(c);
+      inner.appendChild(empty);
+      inner.style.height = ch+'px';
+    } else {
+      var totalH = ch;
+      for (var i = 0; i < col.length-1; i++) {
+        totalH += col[i].faceUp ? OFFSET_UP : OFFSET_DOWN;
+      }
+      inner.style.height = totalH+'px';
+      var top = 0;
+      for (var i = 0; i < col.length; i++) {
+        var card = col[i];
+        var div = document.createElement('div');
+        var isSel = selected && selected.col===c && selected.idx===i;
+        div.className = 'card' + (isSel ? ' selected' : '');
+        div.style.top = top+'px';
+        div.style.width = cw+'px';
+        div.style.height = ch+'px';
+        var img = document.createElement('img');
+        img.src = card.faceUp ? cardImg(card.rank, card.suit) : backImg();
+        img.alt = card.faceUp ? card.rank+card.suit : '';
+        div.appendChild(img);
+        ;(function(cc,ii){ div.onclick = function(e){ e.stopPropagation(); onCardClick(cc,ii); }; })(c,i);
+        inner.appendChild(div);
+        if (i < col.length-1) top += card.faceUp ? OFFSET_UP : OFFSET_DOWN;
+      }
+    }
+    colDiv.appendChild(inner);
+    cEl.appendChild(colDiv);
+  }
+
+  // Stock
+  var stockEl = document.getElementById('stock');
+  var packs = Math.floor(stockPile.length/10);
+  if (stockPile.length > 0) {
+    stockEl.className = 'stock-pile has-cards';
+    document.getElementById('stock-count').textContent = packs+' раздач';
+  } else {
+    stockEl.className = 'stock-pile';
+    document.getElementById('stock-count').textContent = 'пусто';
+  }
+}
+
+// ═══ LOGIC ═══
+function isMoveable(col, idx) {
+  var cards = gameColumns[col];
+  if (!cards[idx] || !cards[idx].faceUp) return false;
+  for (var i = idx; i < cards.length-1; i++) {
+    if (!cards[i].faceUp || !cards[i+1].faceUp) return false;
+    if (cards[i].suit !== cards[i+1].suit) return false;
+    if (RANK_VAL[cards[i].rank] !== RANK_VAL[cards[i+1].rank]+1) return false;
+  }
+  return true;
+}
+
+function onCardClick(col, idx) {
+  var card = gameColumns[col][idx];
+  if (!card.faceUp) return;
+
+  if (selected && selected.col===col && selected.idx===idx) {
+    selected = null; render(); return;
+  }
+  if (selected) {
+    if (tryMove(selected.col, selected.idx, col)) { selected=null; render(); return; }
+  }
+  if (isMoveable(col, idx)) { selected = {col:col, idx:idx}; }
+  else { selected = null; }
+  render();
+}
+
+function onEmptyColClick(col) {
+  if (selected) {
+    if (tryMove(selected.col, selected.idx, col)) { selected=null; render(); return; }
+    selected=null; render();
+  }
+}
+
+function tryMove(fromCol, fromIdx, toCol) {
+  if (fromCol===toCol) return false;
+  var movingCards = gameColumns[fromCol].slice(fromIdx);
+  var targetCol = gameColumns[toCol];
+  var canPlace = false;
+  if (targetCol.length===0) {
+    canPlace = true;
+  } else {
+    var top = targetCol[targetCol.length-1];
+    if (top.faceUp && RANK_VAL[top.rank]===RANK_VAL[movingCards[0].rank]+1) canPlace = true;
+  }
+  if (!canPlace) return false;
+
+  undoStack.push({cols: JSON.parse(JSON.stringify(gameColumns)), foundations:foundations, moves:moves});
+  if (undoStack.length>50) undoStack.shift();
+
+  gameColumns[fromCol].splice(fromIdx);
+  for (var i=0;i<movingCards.length;i++) gameColumns[toCol].push(movingCards[i]);
+  if (gameColumns[fromCol].length>0) gameColumns[fromCol][gameColumns[fromCol].length-1].faceUp=true;
+
+  moves++;
+  document.getElementById('moves-val').textContent = moves;
+  checkCompletions();
+  return true;
+}
+
+function checkCompletions() {
+  var found = false;
+  for (var c=0;c<10;c++) {
+    var col = gameColumns[c];
+    if (col.length<13) continue;
+    var top = col.length-13;
+    var suit = col[top].suit;
+    var valid = true;
+    for (var i=0;i<13;i++) {
+      if (col[top+i].suit!==suit || RANK_VAL[col[top+i].rank]!==13-i) { valid=false; break; }
+    }
+    if (valid) {
+      col.splice(top,13);
+      if (col.length>0) col[col.length-1].faceUp=true;
+      foundations++;
+      document.getElementById('complete-val').textContent=foundations;
+      found=true;
+      if (foundations===8) { setTimeout(showWin,400); return; }
+    }
+  }
+  if (found) checkCompletions();
+}
+
+function dealFromStock() {
+  if (stockPile.length===0) return;
+  for (var c=0;c<10;c++) {
+    if (gameColumns[c].length===0) { alert('Нельзя раздавать при наличии пустых колонок'); return; }
+  }
+  undoStack.push({cols:JSON.parse(JSON.stringify(gameColumns)), foundations:foundations, moves:moves});
+  for (var c=0;c<10;c++) {
+    var card = stockPile.pop();
+    card.faceUp=true;
+    gameColumns[c].push(card);
+  }
+  moves++;
+  document.getElementById('moves-val').textContent=moves;
+  checkCompletions();
+  render();
+}
+
+function undoMove() {
+  if (undoStack.length===0) return;
+  var state = undoStack.pop();
+  gameColumns = state.cols;
+  foundations = state.foundations;
+  moves = state.moves;
+  selected = null;
+  document.getElementById('moves-val').textContent=moves;
+  document.getElementById('complete-val').textContent=foundations;
+  render();
+}
+
+function showWin() {
+  clearInterval(timerInterval);
+  var m = String(Math.floor(seconds/60)).padStart(2,'0');
+  var s = String(seconds%60).padStart(2,'0');
+  document.getElementById('win-stats').textContent='Время: '+m+':'+s+' · Ходов: '+moves;
+  document.getElementById('win-overlay').classList.add('show');
+}
+
+function toggleRules() {
+  var b = document.getElementById('rules-box');
+  b.style.display = b.style.display==='block' ? 'none' : 'block';
+}
+
+window.addEventListener('resize', function(){ if(document.getElementById('game-screen').style.display==='flex') render(); });
+</script>
+</body>
+</html>
