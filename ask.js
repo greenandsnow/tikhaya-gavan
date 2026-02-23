@@ -1,3 +1,4 @@
+console.log('ask.js loaded');
 var history = [];
 var isLoading = false;
 
