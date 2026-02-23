@@ -2,9 +2,9 @@
   "rewrites": [
     { "source": "/crosswords", "destination": "/crosswords.html" },
     { "source": "/ask", "destination": "/ask.html" },
+    { "source": "/games", "destination": "/spider.html" },
     { "source": "/reading", "destination": "/reading.html" },
     { "source": "/videos", "destination": "/videos.html" },
-    { "source": "/games", "destination": "/games.html" },
     { "source": "/support", "destination": "/support.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/terms", "destination": "/terms.html" }
