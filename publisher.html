@@ -551,4 +551,26 @@ function resetForm() {
   selectedGenre = '';
   bookId = null;
   aiApproved = true;
-  document.getElementById('agr
+  document.getElementById('agr  document.getElementById('agree1').checked = false;
+  document.getElementById('agree2').checked = false;
+  document.getElementById('author-name').value = '';
+  document.getElementById('author-email').value = '';
+  document.getElementById('author-bio').value = '';
+  document.getElementById('book-title').value = '';
+  document.getElementById('book-annotation').value = '';
+  document.getElementById('file-selected').classList.remove('show');
+  setStep(1);
+}
+
+// Expose all functions globally
+window.nextStep = nextStep;
+window.prevStep = prevStep;
+window.selectGenre = selectGenre;
+window.submitBook = submitBook;
+window.resetForm = resetForm;
+window.removeFile = removeFile;
+window.onFileSelect = onFileSelect;
+window.copyLink = copyLink;
+</script>
+</body>
+</html>
