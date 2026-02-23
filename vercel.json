@@ -6,6 +6,7 @@
     { "source": "/reading", "destination": "/reading.html" },
     { "source": "/publisher", "destination": "/publisher.html" },
     { "source": "/library", "destination": "/library.html" },
+    { "source": "/book/:id", "destination": "/book.html" }
     { "source": "/videos", "destination": "/videos.html" },
     { "source": "/support", "destination": "/support.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
