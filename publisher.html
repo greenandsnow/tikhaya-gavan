@@ -181,9 +181,12 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
           <p>Читатели могут оценивать произведения по шкале от 1 до 10 по двум параметрам: сюжет и литературный язык. Рейтинг формируется автоматически на основе голосов зарегистрированных читателей.</p>
 
           <h3>6. Удаление</h3>
-          <p>Автор может в любой момент запросить удаление своего произведения, написав на support@greenandsnowstudio.com. Произведение будет удалено в течение 5 рабочих дней.</p>
+          <p>Автор может в любой момент запросить удаление своего произведения, написав на <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="62111712120d101622051007070c030c06110c0d15111617060b0d4c010d0f">[email&#160;protected]</a>. Произведение будет удалено в течение 5 рабочих дней.</p>
 
-          <h3>7. Ограничение ответственности</h3>
+          <h3>8. Сообщить о нарушении</h3>
+          <p>Читатели могут сообщить о нарушении правил прямо на странице книги. Каждая жалоба рассматривается в течение 3 рабочих дней. Если нарушение подтверждается, автору направляется предупреждение с просьбой исправить текст. При отказе или повторном нарушении книга удаляется из библиотеки.</p>
+
+          <h3>9. Ответственность автора</h3>
           <p>Платформа предоставляется «как есть». Мы не гарантируем непрерывную работу сервиса и не несём ответственности за технические сбои.</p>
         </div>
         <label class="check-row">
@@ -226,23 +229,30 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       <!-- STEP 3: FILE -->
       <div id="step3" style="display:none">
         <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.5rem;color:var(--ink)">Загрузка произведения</h2>
-        <p style="font-size:.82rem;color:var(--text-light);margin-bottom:1.25rem;line-height:1.6">Поддерживаются форматы: PDF, DOCX, TXT. Максимальный размер — 10 МБ.</p>
+        <p style="font-size:.82rem;color:var(--text-light);margin-bottom:1.25rem;line-height:1.6">Поддерживаются форматы: PDF, DOCX. Максимальный размер — 20 МБ.</p>
 
         <div class="field">
           <label>Название произведения <span style="color:var(--terra)">*</span></label>
           <input type="text" id="book-title" placeholder="Название вашей книги"/>
         </div>
 
+        <div class="field">
+          <label>Аннотация <span style="color:var(--terra)">*</span></label>
+          <textarea id="book-annotation" style="min-height:160px" placeholder="Расскажите о вашей книге в 200–500 словах: о чём она, кто главные герои, что происходит. Именно этот текст увидят читатели в библиотеке и на его основе ИИ определит жанр и проверит соответствие правилам."></textarea>
+          <div class="field-hint">200–500 слов · Этот текст увидят читатели</div>
+        </div>
+
         <div class="file-drop" id="file-drop">
-          <input type="file" id="file-input" accept=".pdf,.docx,.txt" onchange="onFileSelect(this)"/>
+          <input type="file" id="file-input" accept=".pdf,.docx" onchange="onFileSelect(this)"/>
           <div class="file-icon">📄</div>
           <h3>Перетащите файл сюда</h3>
-          <p>или нажмите для выбора файла</p>
+          <p>PDF или DOCX · до 20 МБ</p>
         </div>
         <div class="file-selected" id="file-selected">
           <span>📎</span>
           <span class="file-name" id="file-name">—</span>
           <span class="file-size" id="file-size">—</span>
+          <button onclick="removeFile()" style="background:none;border:none;cursor:pointer;color:var(--stone);font-size:1.1rem;padding:0 .25rem;line-height:1;flex-shrink:0" title="Удалить файл">✕</button>
         </div>
 
         <div class="btn-row">
@@ -338,11 +348,11 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
   <div class="fi">
     <span>© 2025 Тихая гавань</span>
     <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
-    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
+    <a href="/cdn-cgi/l/email-protection#80f3f5f0f0eff2f4c0e7f2e5e5eee1eee4f3eeeff7f3f4f5e4e9efaee3efed"><span class="__cf_email__" data-cfemail="d6a5a3a6a6b9a4a296b1a4b3b3b8b7b8b2a5b8b9a1a5a2a3b2bfb9f8b5b9bb">[email&#160;protected]</span></a>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 var currentStep = 1;
 var selectedGenre = '';
 var selectedFile = null;
@@ -379,7 +389,9 @@ function nextStep(from) {
     setStep(3);
   } else if (from === 3) {
     var title = document.getElementById('book-title').value.trim();
+    var annotation = document.getElementById('book-annotation').value.trim();
     if (!title) { alert('Пожалуйста, введите название произведения.'); return; }
+    if (!annotation || annotation.length < 100) { alert('Пожалуйста, напишите аннотацию (минимум 100 символов).'); return; }
     if (!selectedFile) { alert('Пожалуйста, выберите файл.'); return; }
     setStep(4);
     runAIAnalysis();
@@ -391,6 +403,12 @@ function nextStep(from) {
 
 function prevStep(from) {
   setStep(from - 1);
+}
+
+function removeFile() {
+  selectedFile = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('file-selected').classList.remove('show');
 }
 
 function onFileSelect(input) {
@@ -416,36 +434,21 @@ dropZone.addEventListener('drop', function(e) {
 function runAIAnalysis() {
   document.getElementById('loading').classList.add('show');
   document.getElementById('ai-result').style.display = 'none';
-
-  // Read file text (for txt/readable files)
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var text = e.target.result;
-    // Limit to first 3000 chars for analysis
-    var excerpt = typeof text === 'string' ? text.substring(0, 3000) : '[Бинарный файл — PDF или DOCX]';
-    analyzeWithClaude(excerpt);
-  };
-  reader.onerror = function() {
-    analyzeWithClaude('[Не удалось прочитать файл]');
-  };
-  if (selectedFile.name.endsWith('.txt')) {
-    reader.readAsText(selectedFile, 'UTF-8');
-  } else {
-    analyzeWithClaude('[PDF или DOCX файл — ' + selectedFile.name + ']');
-  }
+  var title = document.getElementById('book-title').value.trim();
+  var annotation = document.getElementById('book-annotation').value.trim();
+  analyzeWithClaude(annotation, title);
 }
 
-function analyzeWithClaude(excerpt) {
-  var title = document.getElementById('book-title').value.trim();
+function analyzeWithClaude(annotation, title) {
   fetch('/api/chat', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
       messages: [{
         role: 'user',
-        content: 'Ты — редактор литературной платформы. Проанализируй произведение.\n\nНазвание: ' + title + '\n\nФрагмент текста:\n' + excerpt + '\n\nОтветь строго в формате JSON (без markdown, без пояснений):\n{\n  "summary": "краткое описание сюжета или содержания, 2-3 предложения",\n  "audience": "для кого предназначено произведение",\n  "genre_suggestion": "предлагаемый жанр",\n  "type": "prose или poetry",\n  "approved": true или false,\n  "issues": "если approved=false — перечисли проблемы, иначе пустая строка",\n  "tags": ["тег1", "тег2", "тег3"]\n}'
+        content: 'Ты — редактор литературной платформы для русскоязычной аудитории. Проанализируй аннотацию произведения.\n\nНазвание: ' + title + '\n\nАннотация автора:\n' + annotation + '\n\nОтветь строго в формате JSON (без markdown, без пояснений):\n{\n  "summary": "краткое резюме для читателей, 2-3 предложения своими словами",\n  "audience": "для кого предназначено произведение",\n  "genre_suggestion": "предлагаемый жанр одним словом или двумя",\n  "type": "prose или poetry",\n  "approved": true или false,\n  "issues": "если approved=false — перечисли проблемы на русском, иначе пустая строка",\n  "tags": ["тег1", "тег2", "тег3"]\n}'
       }],
-      system: 'Ты редактор. Отвечай только валидным JSON без markdown-обёртки.'
+      system: 'Ты редактор. Отвечай только валидным JSON без markdown-обёртки. Запрещённый контент: мат, насилие, порнография, разжигание ненависти. Если аннотация содержит такой контент — approved:false.'
     })
   })
   .then(function(r) { return r.json(); })
@@ -456,27 +459,11 @@ function analyzeWithClaude(excerpt) {
       var result = JSON.parse(clean);
       showAIResult(result);
     } catch(e) {
-      showAIResult({
-        summary: text.substring(0, 300),
-        audience: 'Широкая аудитория',
-        genre_suggestion: 'Проза',
-        type: 'prose',
-        approved: true,
-        issues: '',
-        tags: []
-      });
+      showAIResult({ summary: text.substring(0,300), audience: 'Широкая аудитория', genre_suggestion: 'Проза', type: 'prose', approved: true, issues: '', tags: [] });
     }
   })
   .catch(function() {
-    showAIResult({
-      summary: 'Не удалось выполнить анализ. Произведение будет рассмотрено вручную.',
-      audience: '—',
-      genre_suggestion: 'Не определён',
-      type: 'prose',
-      approved: true,
-      issues: '',
-      tags: []
-    });
+    showAIResult({ summary: 'Анализ временно недоступен. Произведение будет рассмотрено вручную.', audience: '—', genre_suggestion: 'Не определён', type: 'prose', approved: true, issues: '', tags: [] });
   });
 }
 
@@ -525,6 +512,7 @@ function submitBook() {
     title: document.getElementById('book-title').value.trim(),
     author_name: document.getElementById('author-name').value.trim(),
     author_email: document.getElementById('author-email').value.trim(),
+    annotation: document.getElementById('book-annotation').value.trim(),
     genre: selectedGenre,
     type: document.getElementById('book-type').value,
     ai_summary: document.getElementById('ai-summary').textContent
@@ -563,15 +551,4 @@ function resetForm() {
   selectedGenre = '';
   bookId = null;
   aiApproved = true;
-  document.getElementById('agree1').checked = false;
-  document.getElementById('agree2').checked = false;
-  document.getElementById('author-name').value = '';
-  document.getElementById('author-email').value = '';
-  document.getElementById('author-bio').value = '';
-  document.getElementById('book-title').value = '';
-  document.getElementById('file-selected').classList.remove('show');
-  setStep(1);
-}
-</script>
-</body>
-</html>
+  document.getElementById('agr
