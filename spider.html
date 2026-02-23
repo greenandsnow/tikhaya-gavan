@@ -8,11 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;--terra:#a0614a;--felt:#1e4d2b;--felt-dark:#163d22;--gold:#d4a017}
+:root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;--felt:#1e4d2b;--felt-dark:#163d22;--gold:#d4a017;--cw:80px;--ch:112px}
 html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text)}
 body{display:flex;flex-direction:column}
-
-/* HEADER */
 header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 1.5rem;flex-shrink:0}
 .hi{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:1.5rem}
 .logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.1}
@@ -23,7 +21,6 @@ nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-l
 nav a:hover{color:var(--sea);background:var(--sea-pale)}
 nav a.active{color:var(--sea);font-weight:600}
 
-/* WELCOME */
 .welcome{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem}
 .welcome-box{background:var(--white);border:1px solid var(--sand-dark);border-radius:18px;padding:2.5rem 2rem;max-width:460px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
 .welcome-icon{font-size:3rem;margin-bottom:.75rem}
@@ -40,7 +37,6 @@ nav a.active{color:var(--sea);font-weight:600}
 .rules-box ul{padding-left:1.1rem}
 .rules-box li{margin-bottom:.25rem}
 
-/* GAME */
 .game-screen{display:none;flex:1;flex-direction:column;min-height:0}
 .game-bar{background:rgba(0,0,0,0.35);padding:.5rem 1.2rem;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;flex-shrink:0}
 .gstat{display:flex;align-items:center;gap:.35rem;font-size:.78rem;color:rgba(255,255,255,0.9)}
@@ -51,35 +47,35 @@ nav a.active{color:var(--sea);font-weight:600}
 .gbtn{padding:.35rem .8rem;border-radius:6px;font-family:'Jost',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.9);background:rgba(255,255,255,0.1);transition:all .2s}
 .gbtn:hover{background:rgba(255,255,255,0.25)}
 
-/* FELT */
-.felt-area{flex:1;background:radial-gradient(ellipse at center, #266b3a 0%, var(--felt) 50%, var(--felt-dark) 100%);padding:.75rem 1rem;display:flex;flex-direction:column;gap:.4rem;min-height:0;position:relative;overflow:hidden}
-/* felt texture */
-.felt-area::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3L3 1' stroke='rgba(0,0,0,0.05)' stroke-width='1'/%3E%3C/svg%3E");pointer-events:none}
+.felt-area{flex:1;background:radial-gradient(ellipse at center,#266b3a 0%,var(--felt) 50%,var(--felt-dark) 100%);padding:.75rem 1rem;display:flex;flex-direction:column;gap:.4rem;min-height:0;position:relative;overflow-y:auto}
+.felt-area::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3L3 1' stroke='rgba(0,0,0,0.05)' stroke-width='1'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
 
-.foundations-row{display:flex;gap:.4rem;justify-content:flex-end;flex-shrink:0}
-.foundation{width:var(--cw);height:var(--ch);border:2px dashed rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:1.2rem;flex-shrink:0;transition:all .3s}
+.foundations-row{display:flex;gap:.4rem;justify-content:flex-end;flex-shrink:0;position:relative;z-index:1}
+.foundation{width:var(--cw);height:var(--ch);border:2px dashed rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:1.4rem;flex-shrink:0;transition:all .3s}
 .foundation.complete{border-color:var(--gold);background:rgba(212,160,23,0.15);color:var(--gold)}
 
-.columns-row{display:flex;gap:.4rem;flex:1;align-items:flex-start;min-height:0}
+.columns-row{display:flex;gap:.4rem;flex:1;align-items:flex-start;position:relative;z-index:1}
 .column{flex:1;min-width:0;position:relative}
 .column-inner{position:relative}
 
-/* CARDS */
---cw:70px;--ch:98px;
-:root{--cw:70px;--ch:98px}
-.card{position:absolute;width:var(--cw);height:var(--ch);border-radius:7px;cursor:pointer;user-select:none;transition:filter .15s;box-shadow:0 2px 8px rgba(0,0,0,0.35),0 1px 3px rgba(0,0,0,0.2)}
-.card img{width:100%;height:100%;border-radius:6px;display:block;pointer-events:none}
-.card.selected{filter:brightness(1.15);box-shadow:0 0 0 3px #ffd700,0 4px 16px rgba(0,0,0,0.4)!important;transform:translateY(-4px)}
-.card.face-down img{content:url('https://deckofcardsapi.com/static/img/back.png')}
+.card{position:absolute;width:var(--cw);height:var(--ch);border-radius:7px;cursor:grab;user-select:none;box-shadow:0 2px 8px rgba(0,0,0,0.35),0 1px 3px rgba(0,0,0,0.2);transition:box-shadow .15s}
+.card:active{cursor:grabbing}
+.card img{width:100%;height:100%;border-radius:6px;display:block;pointer-events:none;draggable:false}
+.card.selected{box-shadow:0 0 0 3px #ffd700,0 4px 16px rgba(0,0,0,0.4)!important}
+.card.dragging{opacity:0.4}
+.card.drag-over{box-shadow:0 0 0 3px #66bb6a,0 4px 16px rgba(0,0,0,0.4)!important}
 .empty-col{width:var(--cw);height:var(--ch);border:2px dashed rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.15);font-size:.7rem;cursor:pointer}
 
-.stock-area{position:absolute;bottom:.75rem;right:1rem;display:flex;gap:.5rem;align-items:center}
+/* Drag ghost */
+.drag-ghost{position:fixed;pointer-events:none;z-index:1000;opacity:0.85}
+.drag-ghost .card{position:relative!important;top:0!important;box-shadow:0 8px 24px rgba(0,0,0,0.5)!important}
+
+.stock-area{display:flex;gap:.5rem;align-items:center;justify-content:flex-end;flex-shrink:0;position:relative;z-index:1;padding-top:.4rem}
 .stock-pile{width:var(--cw);height:var(--ch);border-radius:8px;border:2px dashed rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-size:.75rem;cursor:pointer;transition:all .2s;flex-direction:column;gap:.2rem;text-align:center;padding:.3rem}
-.stock-pile.has-cards{background:linear-gradient(135deg,#1a4a6b,#2d7a9a);border-color:#2d7a9a;color:white;cursor:pointer}
+.stock-pile.has-cards{background:linear-gradient(135deg,#1a4a6b,#2d7a9a);border-color:#2d7a9a;color:white}
 .stock-pile.has-cards:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(0,0,0,0.4)}
 .stock-count{font-size:.65rem;opacity:.8}
 
-/* WIN */
 .win-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center}
 .win-overlay.show{display:flex}
 .win-box{background:var(--white);border-radius:18px;padding:2.5rem;text-align:center;max-width:360px;width:90%;animation:pop .4s ease}
@@ -108,7 +104,6 @@ nav a.active{color:var(--sea);font-weight:600}
   </div>
 </header>
 
-<!-- WELCOME -->
 <div class="welcome" id="welcome">
   <div class="welcome-box">
     <div class="welcome-icon">🕷️</div>
@@ -141,7 +136,6 @@ nav a.active{color:var(--sea);font-weight:600}
   </div>
 </div>
 
-<!-- GAME -->
 <div class="game-screen" id="game-screen">
   <div class="game-bar">
     <div class="gstat"><span class="gstat-label">Ходы</span><span class="gstat-val" id="moves-val">0</span></div>
@@ -167,7 +161,6 @@ nav a.active{color:var(--sea);font-weight:600}
   </div>
 </div>
 
-<!-- WIN -->
 <div class="win-overlay" id="win-overlay">
   <div class="win-box">
     <div style="font-size:2.5rem;margin-bottom:.5rem">🎉</div>
@@ -181,321 +174,273 @@ nav a.active{color:var(--sea);font-weight:600}
 </div>
 
 <script>
-// Card image URLs - using deckofcardsapi.com (free, no registration)
-// Format: AS=Ace of Spades, KH=King of Hearts, etc.
 var RANK_CODES = {A:'A','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','10':'0',J:'J',Q:'Q',K:'K'};
 var SUIT_CODES = {'♠':'S','♥':'H','♦':'D','♣':'C'};
-
-function cardImg(rank, suit) {
-  return 'https://deckofcardsapi.com/static/img/' + RANK_CODES[rank] + SUIT_CODES[suit] + '.png';
+function cardImg(rank,suit){return 'https://deckofcardsapi.com/static/img/'+RANK_CODES[rank]+SUIT_CODES[suit]+'.png';}
+function backImg(){
+  // Classic plaid card back - SVG as data URL
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="100" height="140"><rect width="100" height="140" fill="#f5f0e0" rx="4"/><rect width="100" height="140" fill="#f5f0e0" rx="4"/>';
+  // Green diagonal lines
+  for(var i=-140;i<200;i+=12){svg+='<line x1="'+i+'" y1="0" x2="'+(i+140)+'" y2="140" stroke="#6a9e6a" stroke-width="1.5" opacity="0.7"/>';}
+  // Red diagonal lines
+  for(var i=-140;i<200;i+=24){svg+='<line x1="'+i+'" y1="0" x2="'+(i+140)+'" y2="140" stroke="#c0392b" stroke-width="2" opacity="0.8"/>';}
+  // Dark brown thin lines
+  for(var i=-140;i<200;i+=24){svg+='<line x1="'+(i+6)+'" y1="0" x2="'+(i+146)+'" y2="140" stroke="#5a3a1a" stroke-width="0.8" opacity="0.5"/>';}
+  // Perpendicular green
+  for(var i=-140;i<200;i+=12){svg+='<line x1="0" y1="'+i+'" x2="100" y2="'+(i+100)+'" stroke="#6a9e6a" stroke-width="1" opacity="0.4"/>';}
+  // Perpendicular red
+  for(var i=-140;i<200;i+=24){svg+='<line x1="0" y1="'+i+'" x2="100" y2="'+(i+100)+'" stroke="#c0392b" stroke-width="1.5" opacity="0.5"/>';}
+  svg+='<rect width="100" height="140" fill="none" stroke="#8a7a5a" stroke-width="3" rx="4"/></svg>';
+  return 'data:image/svg+xml;base64,'+btoa(svg);
 }
-function backImg() {
-  return 'https://deckofcardsapi.com/static/img/back.png';
+
+var currentSuits=1,gameColumns=[],stockPile=[],foundations=0,selected=null,moves=0,seconds=0,timerInterval=null,undoStack=[];
+var RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+var RANK_VAL={A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q:12,K:13};
+
+// Drag state
+var dragState=null;
+
+function calcCardSize(){
+  var felt=document.getElementById('felt');
+  if(!felt)return;
+  var W=felt.clientWidth-16;
+  var cw=Math.floor((W-4)/10)-2;
+  cw=Math.max(60,Math.min(130,cw));
+  var ch=Math.round(cw*1.4);
+  document.documentElement.style.setProperty('--cw',cw+'px');
+  document.documentElement.style.setProperty('--ch',ch+'px');
+  return{cw,ch};
 }
 
-// ═══ STATE ═══
-var currentSuits = 1;
-var gameColumns = [];
-var stockPile = [];
-var foundations = 0;
-var selected = null;
-var moves = 0;
-var seconds = 0;
-var timerInterval = null;
-var undoStack = [];
-
-var RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-var RANK_VAL = {A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q:12,K:13};
-
-function makeDeck(numSuits) {
-  var suits = numSuits === 1
-    ? ['♠','♠','♠','♠','♠','♠','♠','♠']
-    : ['♠','♠','♠','♠','♥','♥','♥','♥'];
-  var deck = [];
-  for (var s = 0; s < 8; s++) {
-    for (var r = 0; r < 13; r++) {
-      deck.push({rank: RANKS[r], suit: suits[s], faceUp: false});
-    }
-  }
+function makeDeck(n){
+  var suits=n===1?['♠','♠','♠','♠','♠','♠','♠','♠']:['♠','♠','♠','♠','♥','♥','♥','♥'];
+  var deck=[];
+  for(var s=0;s<8;s++)for(var r=0;r<13;r++)deck.push({rank:RANKS[r],suit:suits[s],faceUp:false});
   return shuffle(deck);
 }
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
 
-function shuffle(arr) {
-  var a = arr.slice();
-  for (var i = a.length-1; i > 0; i--) {
-    var j = Math.floor(Math.random()*(i+1));
-    var t = a[i]; a[i] = a[j]; a[j] = t;
-  }
-  return a;
-}
-
-// card size based on window
-function calcCardSize() {
-  var felt = document.getElementById('felt');
-  if (!felt) return;
-  var w = felt.clientWidth - 16; // padding
-  var stockW = 80;
-  var gaps = 9 * 4;
-  var cw = Math.floor((w - stockW - gaps) / 10);
-  cw = Math.max(52, Math.min(90, cw));
-  var ch = Math.round(cw * 1.4);
-  document.documentElement.style.setProperty('--cw', cw+'px');
-  document.documentElement.style.setProperty('--ch', ch+'px');
-  return {cw, ch};
-}
-
-// ═══ START ═══
-function startGame(suits) {
-  currentSuits = suits;
-  gameColumns = [];
-  stockPile = [];
-  foundations = 0;
-  selected = null;
-  moves = 0;
-  seconds = 0;
-  undoStack = [];
+function startGame(suits){
+  currentSuits=suits;gameColumns=[];stockPile=[];foundations=0;selected=null;moves=0;seconds=0;undoStack=[];dragState=null;
   clearInterval(timerInterval);
-
-  document.getElementById('welcome').style.display = 'none';
-  document.getElementById('game-screen').style.display = 'flex';
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('game-screen').style.display='flex';
   document.getElementById('win-overlay').classList.remove('show');
-  document.getElementById('mode-val').textContent = suits + (suits===1?' масть':' масти');
-  document.getElementById('moves-val').textContent = '0';
-  document.getElementById('complete-val').textContent = '0';
-  document.getElementById('timer-val').textContent = '00:00';
-
-  var deck = makeDeck(suits);
-  for (var c = 0; c < 10; c++) {
-    var count = c < 4 ? 6 : 5;
-    var col = [];
-    for (var i = 0; i < count; i++) {
-      var card = deck.pop();
-      card.faceUp = (i === count-1);
-      col.push(card);
-    }
+  document.getElementById('mode-val').textContent=suits+(suits===1?' масть':' масти');
+  document.getElementById('moves-val').textContent='0';
+  document.getElementById('complete-val').textContent='0';
+  document.getElementById('timer-val').textContent='00:00';
+  var deck=makeDeck(suits);
+  for(var c=0;c<10;c++){
+    var cnt=c<4?6:5,col=[];
+    for(var i=0;i<cnt;i++){var card=deck.pop();card.faceUp=(i===cnt-1);col.push(card);}
     gameColumns.push(col);
   }
-  stockPile = deck; // 50 cards left
-
-  timerInterval = setInterval(function(){
-    seconds++;
-    var m = String(Math.floor(seconds/60)).padStart(2,'0');
-    var s = String(seconds%60).padStart(2,'0');
-    document.getElementById('timer-val').textContent = m+':'+s;
-  }, 1000);
-
-  setTimeout(function(){ calcCardSize(); render(); }, 50);
+  stockPile=deck;
+  timerInterval=setInterval(function(){seconds++;var m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');document.getElementById('timer-val').textContent=m+':'+s;},1000);
+  setTimeout(function(){calcCardSize();render();},50);
 }
 
-function showWelcome() {
-  clearInterval(timerInterval);
-  document.getElementById('welcome').style.display = 'flex';
-  document.getElementById('game-screen').style.display = 'none';
-}
+function showWelcome(){clearInterval(timerInterval);document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
 
-// ═══ RENDER ═══
-function render() {
-  var sz = calcCardSize();
-  var cw = sz ? sz.cw : 70;
-  var ch = sz ? sz.ch : 98;
-  var OFFSET_DOWN = 16;
-  var OFFSET_UP = 20;
+function render(){
+  var sz=calcCardSize();
+  var cw=sz?sz.cw:80,ch=sz?sz.ch:112;
+  var OFFSET_DOWN=20,OFFSET_UP=32;
 
   // Foundations
-  var fEl = document.getElementById('foundations');
-  fEl.innerHTML = '';
-  for (var i = 0; i < 8; i++) {
-    var d = document.createElement('div');
-    d.className = 'foundation' + (i < foundations ? ' complete' : '');
-    d.textContent = i < foundations ? '♠' : '';
+  var fEl=document.getElementById('foundations');fEl.innerHTML='';
+  for(var i=0;i<8;i++){
+    var d=document.createElement('div');
+    d.className='foundation'+(i<foundations?' complete':'');
+    if(i<foundations){
+      var img=document.createElement('img');
+      img.src=cardImg('A', currentSuits===1?'♠':'♠');
+      img.style.width='100%';img.style.height='100%';img.style.borderRadius='6px';
+      d.appendChild(img);
+    }
     fEl.appendChild(d);
   }
 
   // Columns
-  var cEl = document.getElementById('columns');
-  cEl.innerHTML = '';
-  for (var c = 0; c < 10; c++) {
-    var colDiv = document.createElement('div');
-    colDiv.className = 'column';
-    var inner = document.createElement('div');
-    inner.className = 'column-inner';
-    var col = gameColumns[c];
-
-    if (col.length === 0) {
-      var empty = document.createElement('div');
-      empty.className = 'empty-col';
-      empty.textContent = '⬜';
-      empty.style.width = cw+'px';
-      empty.style.height = ch+'px';
-      ;(function(cc){ empty.onclick = function(){ onEmptyColClick(cc); }; })(c);
-      inner.appendChild(empty);
-      inner.style.height = ch+'px';
+  var cEl=document.getElementById('columns');cEl.innerHTML='';
+  for(var c=0;c<10;c++){
+    var colDiv=document.createElement('div');colDiv.className='column';
+    var inner=document.createElement('div');inner.className='column-inner';
+    var col=gameColumns[c];
+    if(col.length===0){
+      var empty=document.createElement('div');empty.className='empty-col';empty.textContent='⬜';
+      empty.style.width=cw+'px';empty.style.height=ch+'px';
+      (function(cc){
+        empty.onclick=function(){onEmptyColClick(cc);};
+        empty.addEventListener('dragover',function(e){e.preventDefault();});
+        empty.addEventListener('drop',function(e){e.preventDefault();onDropToCol(cc);});
+      })(c);
+      inner.appendChild(empty);inner.style.height=ch+'px';
     } else {
-      var totalH = ch;
-      for (var i = 0; i < col.length-1; i++) {
-        totalH += col[i].faceUp ? OFFSET_UP : OFFSET_DOWN;
-      }
-      inner.style.height = totalH+'px';
-      var top = 0;
-      for (var i = 0; i < col.length; i++) {
-        var card = col[i];
-        var div = document.createElement('div');
-        var isSel = selected && selected.col===c && selected.idx===i;
-        div.className = 'card' + (isSel ? ' selected' : '');
-        div.style.top = top+'px';
-        div.style.width = cw+'px';
-        div.style.height = ch+'px';
-        var img = document.createElement('img');
-        img.src = card.faceUp ? cardImg(card.rank, card.suit) : backImg();
-        img.alt = card.faceUp ? card.rank+card.suit : '';
+      var totalH=ch;
+      for(var i=0;i<col.length-1;i++)totalH+=col[i].faceUp?OFFSET_UP:OFFSET_DOWN;
+      inner.style.height=totalH+'px';
+      var top=0;
+      for(var i=0;i<col.length;i++){
+        var card=col[i];
+        var div=document.createElement('div');
+        var isSel=selected&&selected.col===c&&selected.idx===i;
+        div.className='card'+(isSel?' selected':'');
+        div.style.top=top+'px';div.style.width=cw+'px';div.style.height=ch+'px';
+        div.style.zIndex=i;
+        var img=document.createElement('img');
+        img.src=card.faceUp?cardImg(card.rank,card.suit):backImg();
+        img.alt='';img.draggable=false;
         div.appendChild(img);
-        ;(function(cc,ii){ div.onclick = function(e){ e.stopPropagation(); onCardClick(cc,ii); }; })(c,i);
+        // Click handler
+        (function(cc,ii){
+          div.onclick=function(e){e.stopPropagation();onCardClick(cc,ii);};
+          // Drag handlers
+          if(card.faceUp){
+            div.draggable=true;
+            div.addEventListener('dragstart',function(e){onDragStart(e,cc,ii);});
+            div.addEventListener('dragend',function(e){onDragEnd(e);});
+          }
+          div.addEventListener('dragover',function(e){e.preventDefault();div.classList.add('drag-over');});
+          div.addEventListener('dragleave',function(){div.classList.remove('drag-over');});
+          div.addEventListener('drop',function(e){e.preventDefault();div.classList.remove('drag-over');onDropToCol(cc);});
+        })(c,i);
         inner.appendChild(div);
-        if (i < col.length-1) top += card.faceUp ? OFFSET_UP : OFFSET_DOWN;
+        if(i<col.length-1)top+=card.faceUp?OFFSET_UP:OFFSET_DOWN;
       }
     }
-    colDiv.appendChild(inner);
-    cEl.appendChild(colDiv);
+    colDiv.appendChild(inner);cEl.appendChild(colDiv);
   }
 
   // Stock
-  var stockEl = document.getElementById('stock');
-  var packs = Math.floor(stockPile.length/10);
-  if (stockPile.length > 0) {
-    stockEl.className = 'stock-pile has-cards';
-    document.getElementById('stock-count').textContent = packs+' раздач';
+  var stockEl=document.getElementById('stock');
+  var packs=Math.floor(stockPile.length/10);
+  if(stockPile.length>0){
+    stockEl.className='stock-pile has-cards';
+    stockEl.innerHTML='<img src="'+backImg()+'" style="width:100%;height:100%;border-radius:6px;object-fit:cover"/><span class="stock-count" style="position:absolute;bottom:4px;left:0;right:0;text-align:center;color:white;font-size:.65rem;text-shadow:0 1px 3px rgba(0,0,0,0.8)">'+packs+' раздач</span>';
+    stockEl.style.position='relative';stockEl.style.overflow='hidden';
   } else {
-    stockEl.className = 'stock-pile';
-    document.getElementById('stock-count').textContent = 'пусто';
+    stockEl.className='stock-pile';
+    stockEl.innerHTML='<span>🂠</span><span class="stock-count">пусто</span>';
+    stockEl.style.position='';
   }
 }
 
-// ═══ LOGIC ═══
-function isMoveable(col, idx) {
-  var cards = gameColumns[col];
-  if (!cards[idx] || !cards[idx].faceUp) return false;
-  for (var i = idx; i < cards.length-1; i++) {
-    if (!cards[i].faceUp || !cards[i+1].faceUp) return false;
-    if (cards[i].suit !== cards[i+1].suit) return false;
-    if (RANK_VAL[cards[i].rank] !== RANK_VAL[cards[i+1].rank]+1) return false;
+// ═══ DRAG ═══
+function onDragStart(e,col,idx){
+  if(!isMoveable(col,idx)){e.preventDefault();return;}
+  dragState={col:col,idx:idx};
+  selected={col:col,idx:idx};
+  setTimeout(function(){render();},0);
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain','drag');
+}
+function onDragEnd(e){
+  dragState=null;
+  render();
+}
+function onDropToCol(toCol){
+  if(!dragState)return;
+  if(tryMove(dragState.col,dragState.idx,toCol)){selected=null;}
+  dragState=null;
+  render();
+}
+
+// ═══ CLICK ═══
+function onCardClick(col,idx){
+  var card=gameColumns[col][idx];
+  if(!card.faceUp)return;
+  if(selected&&selected.col===col&&selected.idx===idx){selected=null;render();return;}
+  if(selected){if(tryMove(selected.col,selected.idx,col)){selected=null;render();return;}}
+  if(isMoveable(col,idx))selected={col:col,idx:idx};
+  else selected=null;
+  render();
+}
+function onEmptyColClick(col){
+  if(selected){if(tryMove(selected.col,selected.idx,col)){selected=null;render();return;}selected=null;render();}
+}
+
+function isMoveable(col,idx){
+  var cards=gameColumns[col];
+  if(!cards[idx]||!cards[idx].faceUp)return false;
+  for(var i=idx;i<cards.length-1;i++){
+    if(!cards[i].faceUp||!cards[i+1].faceUp)return false;
+    if(cards[i].suit!==cards[i+1].suit)return false;
+    if(RANK_VAL[cards[i].rank]!==RANK_VAL[cards[i+1].rank]+1)return false;
   }
   return true;
 }
 
-function onCardClick(col, idx) {
-  var card = gameColumns[col][idx];
-  if (!card.faceUp) return;
-
-  if (selected && selected.col===col && selected.idx===idx) {
-    selected = null; render(); return;
-  }
-  if (selected) {
-    if (tryMove(selected.col, selected.idx, col)) { selected=null; render(); return; }
-  }
-  if (isMoveable(col, idx)) { selected = {col:col, idx:idx}; }
-  else { selected = null; }
-  render();
-}
-
-function onEmptyColClick(col) {
-  if (selected) {
-    if (tryMove(selected.col, selected.idx, col)) { selected=null; render(); return; }
-    selected=null; render();
-  }
-}
-
-function tryMove(fromCol, fromIdx, toCol) {
-  if (fromCol===toCol) return false;
-  var movingCards = gameColumns[fromCol].slice(fromIdx);
-  var targetCol = gameColumns[toCol];
-  var canPlace = false;
-  if (targetCol.length===0) {
-    canPlace = true;
-  } else {
-    var top = targetCol[targetCol.length-1];
-    if (top.faceUp && RANK_VAL[top.rank]===RANK_VAL[movingCards[0].rank]+1) canPlace = true;
-  }
-  if (!canPlace) return false;
-
-  undoStack.push({cols: JSON.parse(JSON.stringify(gameColumns)), foundations:foundations, moves:moves});
-  if (undoStack.length>50) undoStack.shift();
-
+function tryMove(fromCol,fromIdx,toCol){
+  if(fromCol===toCol)return false;
+  var movingCards=gameColumns[fromCol].slice(fromIdx);
+  var targetCol=gameColumns[toCol];
+  var canPlace=targetCol.length===0||(targetCol[targetCol.length-1].faceUp&&RANK_VAL[targetCol[targetCol.length-1].rank]===RANK_VAL[movingCards[0].rank]+1);
+  if(!canPlace)return false;
+  undoStack.push({cols:JSON.parse(JSON.stringify(gameColumns)),stock:JSON.parse(JSON.stringify(stockPile)),foundations:foundations,moves:moves});
+  if(undoStack.length>50)undoStack.shift();
   gameColumns[fromCol].splice(fromIdx);
-  for (var i=0;i<movingCards.length;i++) gameColumns[toCol].push(movingCards[i]);
-  if (gameColumns[fromCol].length>0) gameColumns[fromCol][gameColumns[fromCol].length-1].faceUp=true;
-
-  moves++;
-  document.getElementById('moves-val').textContent = moves;
-  checkCompletions();
-  return true;
+  for(var i=0;i<movingCards.length;i++)gameColumns[toCol].push(movingCards[i]);
+  if(gameColumns[fromCol].length>0)gameColumns[fromCol][gameColumns[fromCol].length-1].faceUp=true;
+  moves++;document.getElementById('moves-val').textContent=moves;
+  checkCompletions();return true;
 }
 
-function checkCompletions() {
-  var found = false;
-  for (var c=0;c<10;c++) {
-    var col = gameColumns[c];
-    if (col.length<13) continue;
-    var top = col.length-13;
-    var suit = col[top].suit;
-    var valid = true;
-    for (var i=0;i<13;i++) {
-      if (col[top+i].suit!==suit || RANK_VAL[col[top+i].rank]!==13-i) { valid=false; break; }
-    }
-    if (valid) {
-      col.splice(top,13);
-      if (col.length>0) col[col.length-1].faceUp=true;
-      foundations++;
-      document.getElementById('complete-val').textContent=foundations;
-      found=true;
-      if (foundations===8) { setTimeout(showWin,400); return; }
+function checkCompletions(){
+  var found=true;
+  while(found){
+    found=false;
+    for(var c=0;c<10;c++){
+      var col=gameColumns[c];if(col.length<13)continue;
+      var top=col.length-13,suit=col[top].suit,valid=true;
+      for(var i=0;i<13;i++)if(col[top+i].suit!==suit||RANK_VAL[col[top+i].rank]!==13-i){valid=false;break;}
+      if(valid){
+        col.splice(top,13);
+        if(col.length>0)col[col.length-1].faceUp=true;
+        foundations++;
+        document.getElementById('complete-val').textContent=foundations;
+        found=true;
+        if(foundations===8){setTimeout(showWin,400);return;}
+        break; // restart loop after change
+      }
     }
   }
-  if (found) checkCompletions();
 }
 
-function dealFromStock() {
-  if (stockPile.length===0) return;
-  for (var c=0;c<10;c++) {
-    if (gameColumns[c].length===0) { alert('Нельзя раздавать при наличии пустых колонок'); return; }
-  }
-  undoStack.push({cols:JSON.parse(JSON.stringify(gameColumns)), foundations:foundations, moves:moves});
-  for (var c=0;c<10;c++) {
-    var card = stockPile.pop();
-    card.faceUp=true;
-    gameColumns[c].push(card);
-  }
-  moves++;
-  document.getElementById('moves-val').textContent=moves;
-  checkCompletions();
-  render();
+function dealFromStock(){
+  if(stockPile.length===0)return;
+  for(var c=0;c<10;c++)if(gameColumns[c].length===0){alert('Нельзя раздавать при наличии пустых колонок');return;}
+  undoStack.push({cols:JSON.parse(JSON.stringify(gameColumns)),stock:JSON.parse(JSON.stringify(stockPile)),foundations:foundations,moves:moves});
+  for(var c=0;c<10;c++){var card=stockPile.pop();card.faceUp=true;gameColumns[c].push(card);}
+  moves++;document.getElementById('moves-val').textContent=moves;
+  checkCompletions();render();
 }
 
-function undoMove() {
-  if (undoStack.length===0) return;
-  var state = undoStack.pop();
-  gameColumns = state.cols;
-  foundations = state.foundations;
-  moves = state.moves;
-  selected = null;
+function undoMove(){
+  if(undoStack.length===0)return;
+  var state=undoStack.pop();
+  gameColumns=state.cols;
+  stockPile=state.stock||stockPile;
+  foundations=state.foundations;
+  moves=state.moves;
+  selected=null;
   document.getElementById('moves-val').textContent=moves;
   document.getElementById('complete-val').textContent=foundations;
   render();
 }
 
-function showWin() {
+function showWin(){
   clearInterval(timerInterval);
-  var m = String(Math.floor(seconds/60)).padStart(2,'0');
-  var s = String(seconds%60).padStart(2,'0');
+  var m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');
   document.getElementById('win-stats').textContent='Время: '+m+':'+s+' · Ходов: '+moves;
   document.getElementById('win-overlay').classList.add('show');
 }
 
-function toggleRules() {
-  var b = document.getElementById('rules-box');
-  b.style.display = b.style.display==='block' ? 'none' : 'block';
-}
+function toggleRules(){var b=document.getElementById('rules-box');b.style.display=b.style.display==='block'?'none':'block';}
 
-window.addEventListener('resize', function(){ if(document.getElementById('game-screen').style.display==='flex') render(); });
+window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display==='flex')render();});
 </script>
 </body>
 </html>
