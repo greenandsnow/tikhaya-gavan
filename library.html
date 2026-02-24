@@ -185,11 +185,11 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
   <div class="fi">
     <span>© 2025 Тихая гавань</span>
     <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
-    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
+    <a href="/cdn-cgi/l/email-protection#87f4f2f7f7e8f5f3c7e0f5e2e2e9e6e9e3f4e9e8f0f4f3f2e3eee8a9e4e8ea"><span class="__cf_email__" data-cfemail="20535550504f525460475245454e414e44534e4f5753545544494f0e434f4d">[email&#160;protected]</span></a>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 var allBooks = [];
 var currentFilter = 'all';
 
@@ -286,10 +286,13 @@ function filterBooks(){
     var badgeClass = getBadgeClass(b.genre);
     var icon = getIcon(b.genre, b.type);
     var date = b.published_at ? new Date(b.published_at).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}) : '';
+    var coverHtml = b.cover_url
+      ? '<img src="'+b.cover_url+'" style="width:100%;height:100%;object-fit:cover" alt="обложка"/>'
+      : '<div class="book-cover-bg '+coverClass+'">'+icon+'</div>';
     return '<a href="/book/'+b.id+'" class="book-card">'+
-      '<div class="book-cover"><div class="book-cover-bg '+coverClass+'">'+icon+'</div>'+
+      '<div class="book-cover">'+coverHtml+
       '<div class="book-cover-overlay"></div>'+
-      '<span class="book-genre-badge '+badgeClass+'">'+(b.genre||b.type==='poetry'?'Поэзия':'Проза')+'</span></div>'+
+      '<span class="book-genre-badge '+badgeClass+'">'+(b.genre||(b.type==='poetry'?'Поэзия':'Проза'))+'</span></div>'+
       '<div class="book-body">'+
       '<div class="book-title">'+escHtml(b.title)+'</div>'+
       '<div class="book-author">'+escHtml(b.author_name||'Автор')+'</div>'+
@@ -301,16 +304,3 @@ function filterBooks(){
       '</div></a>';
   }).join('');
 }
-
-function escHtml(s){
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// Expose for inline handlers
-window.setFilter = setFilter;
-window.filterBooks = filterBooks;
-
-loadBooks();
-</script>
-</body>
-</html>
