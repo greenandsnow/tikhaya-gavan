@@ -132,8 +132,8 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 <!-- REPORT MODAL -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
-    <h3>⚠️ Сообщить о нарушении</h3>
-    <p>Если вы обнаружили контент, нарушающий правила публикации, сообщите нам. Каждая жалоба рассматривается в течение 3 рабочих дней.</p>
+    <h3>✉️ Письмо о нарушении</h3>
+    <p>Если вы обнаружили контент, нарушающий правила публикации, напишите нам. Каждое обращение рассматривается в течение 3 рабочих дней. Автор получит предупреждение.</p>
     <select id="report-type">
       <option value="">Выберите тип нарушения...</option>
       <option value="obscene">Нецензурная лексика</option>
@@ -143,11 +143,18 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       <option value="copyright">Нарушение авторских прав</option>
       <option value="other">Другое</option>
     </select>
-    <textarea id="report-text" placeholder="Опишите нарушение подробнее (необязательно)..."></textarea>
-    <input type="text" id="report-contact" placeholder="Ваш адрес почты (необязательно)"/>
+    <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:.75rem">
+      <input type="text" id="report-page" placeholder="Страница №" style="width:130px;margin-bottom:0"/>
+      <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--text-light);cursor:pointer;white-space:nowrap">
+        <input type="checkbox" id="report-whole" onchange="togglePage(this)" style="width:auto;margin:0"/> Вся книга
+      </label>
+    </div>
+    <textarea id="report-text" placeholder="Опишите нарушение подробнее..."></textarea>
+    <p style="font-size:.75rem;color:var(--stone);margin-top:-.5rem;margin-bottom:.75rem">Укажите ваш адрес почты — анонимные обращения рассматриваются с меньшим приоритетом.</p>
+    <input type="text" id="report-contact" placeholder="Ваш адрес почты"/>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Отмена</button>
-      <button class="btn-report-send" onclick="sendReport()">Отправить жалобу</button>
+      <button class="btn-report-send" onclick="sendReport()">Отправить</button>
     </div>
   </div>
 </div>
@@ -214,7 +221,7 @@ function renderBook(){
     '<div class="book-actions">' +
     '<a href="/library" class="btn btn-outline">← Библиотека</a>' +
     '<a href="/read/'+book.id+'" class="btn btn-primary">📖 Читать</a>' +
-    '<button class="btn btn-report" onclick="openModal()">⚠️ Сообщить о нарушении</button>' +
+    '<button class="btn btn-report" onclick="openModal()">✉️ Письмо о нарушении</button>' +
     '</div></div></div></div>' +
 
     '<div class="reading-area">' +
@@ -298,21 +305,27 @@ async function submitRating(){
 function openModal(){ document.getElementById('modal-overlay').classList.add('show'); }
 function closeModal(){ document.getElementById('modal-overlay').classList.remove('show'); }
 
+function togglePage(cb) {
+  document.getElementById('report-page').disabled = cb.checked;
+  if(cb.checked) document.getElementById('report-page').value = '';
+}
+
 async function sendReport(){
   var type = document.getElementById('report-type').value;
   if(!type){ alert('Пожалуйста, выберите тип нарушения.'); return; }
   var text = document.getElementById('report-text').value;
   var contact = document.getElementById('report-contact').value;
+  var page = document.getElementById('report-whole').checked ? 'Вся книга' : document.getElementById('report-page').value;
   try {
     await fetch('/api/report', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ book_id: bookId, type: type, text: text, contact: contact })
+      body: JSON.stringify({ book_id: bookId, book_title: book ? book.title : bookId, type: type, text: text, contact: contact, page: page })
     });
     closeModal();
-    alert('Спасибо! Ваша жалоба принята и будет рассмотрена в течение 3 рабочих дней.');
+    alert('Спасибо! Ваше письмо о нарушении принято и будет рассмотрено в течение 3 рабочих дней.');
   } catch(e) {
-    alert('Не удалось отправить жалобу. Пожалуйста, напишите на support@greenandsnowstudio.com');
+    alert('Не удалось отправить. Пожалуйста, напишите на support@greenandsnowstudio.com');
   }
 }
 
@@ -320,6 +333,7 @@ function esc(s){
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+window.togglePage = togglePage;
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.sendReport = sendReport;
