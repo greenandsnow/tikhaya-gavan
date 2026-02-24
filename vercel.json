@@ -12,5 +12,13 @@
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/book/:id", "destination": "/book.html" },
     { "source": "/read/:id", "destination": "/read.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    }
   ]
 }
