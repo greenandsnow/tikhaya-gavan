@@ -156,11 +156,11 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
   <div class="fi">
     <span>© 2025 Тихая гавань</span>
     <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
-    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
+    <a href="/cdn-cgi/l/email-protection#31424441415e434571564354545f505f55425f5e4642454455585e1f525e5c"><span class="__cf_email__" data-cfemail="80f3f5f0f0eff2f4c0e7f2e5e5eee1eee4f3eeeff7f3f4f5e4e9efaee3efed">[email&#160;protected]</span></a>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 var bookId = window.location.pathname.split('/').pop();
 var book = null;
 var fontSize = 18;
@@ -191,6 +191,9 @@ async function loadBook(){
 function renderBook(){
   var coverBg = genreColors[book.genre] || 'linear-gradient(135deg,#2a2a2a,#5a5a5a)';
   var icon = book.type === 'poetry' ? '📝' : (genreIcons[book.genre] || '📚');
+  var coverHtml = book.cover_url
+    ? '<img src="'+book.cover_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px" alt="обложка"/>'
+    : '<div style="width:100%;height:100%;background:'+coverBg+';border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:2.5rem">'+icon+'</div>';
   var typeLabel = book.type === 'poetry' ? 'Поэзия' : 'Проза';
   var date = book.published_at ? new Date(book.published_at).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}) : '';
 
@@ -199,7 +202,7 @@ function renderBook(){
   document.getElementById('main').innerHTML =
     '<div class="book-header">' +
     '<div class="book-header-inner">' +
-    '<div class="book-cover-thumb" style="background:'+coverBg+'">'+icon+'</div>' +
+    '<div class="book-cover-thumb" style="overflow:hidden">'+coverHtml+'</div>' +
     '<div class="book-meta">' +
     '<h1>'+esc(book.title)+'</h1>' +
     '<div class="book-meta-author">Автор: <strong>'+esc(book.author_name||'')+'</strong> · '+date+'</div>' +
@@ -317,17 +320,4 @@ async function sendReport(){
 }
 
 function esc(s){
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-window.openModal = openModal;
-window.closeModal = closeModal;
-window.sendReport = sendReport;
-window.setStar = setStar;
-window.changeFontSize = changeFontSize;
-window.submitRating = submitRating;
-
-loadBook();
-</script>
-</body>
-</html>
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;
