@@ -31,6 +31,7 @@ main{flex:1}
 .cover-rating{width:180px;flex-shrink:0;text-align:center;margin-top:.75rem}
 .cover-stars{color:#d4a017;font-size:1.1rem;letter-spacing:.1em;line-height:1}
 .cover-rating-num{font-size:.95rem;font-weight:600;color:var(--ink);margin-top:.2rem}
+.cover-rating-detail{font-size:.72rem;color:var(--text-light);margin-top:.15rem}
 .cover-rating-count{font-size:.75rem;color:var(--stone);margin-top:.1rem}
 .book-hero-meta{flex:1}
 .book-hero-title{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--ink);margin-bottom:.4rem;line-height:1.2}
@@ -228,6 +229,7 @@ function renderBook(){
     ? '<div class="cover-rating">'+
       '<div class="cover-stars">'+'★'.repeat(Math.round(avgRating/2))+'☆'.repeat(5-Math.round(avgRating/2))+'</div>'+
       '<div class="cover-rating-num">'+avgRating+' / 10</div>'+
+      '<div class="cover-rating-detail">Сюжет: '+parseFloat(book.rating_plot||0).toFixed(1)+' · Язык: '+parseFloat(book.rating_style||0).toFixed(1)+'</div>'+
       '<div class="cover-rating-count">'+book.votes_count+' '+(book.votes_count===1?'оценка':book.votes_count<5?'оценки':'оценок')+'</div>'+
       '</div>'
     : '<div class="cover-rating"><div class="cover-rating-count" style="color:var(--stone)">Нет оценок</div></div>';
