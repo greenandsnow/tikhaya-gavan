@@ -40,6 +40,8 @@ module.exports = async function handler(req, res) {
         },
         body: JSON.stringify({ rating_plot: parseFloat(avgPlot.toFixed(2)), rating_style: parseFloat(avgStyle.toFixed(2)), votes_count: ratings.length })
       });
+      const patchText = await patchRes.text();
+      console.log('PATCH status:', patchRes.status, 'body:', patchText);
     }
 
     return res.status(200).json({ ok: true });
