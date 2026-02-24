@@ -7,11 +7,18 @@
     { "source": "/publisher", "destination": "/publisher.html" },
     { "source": "/library", "destination": "/library.html" },
     { "source": "/videos", "destination": "/videos.html" },
+    { "source": "/news", "destination": "/news.html" },
     { "source": "/support", "destination": "/support.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/book/:id", "destination": "/book.html" },
     { "source": "/read/:id", "destination": "/read.html" }
+  ],
+  "crons": [
+    {
+      "path": "/api/news-fetch",
+      "schedule": "0 7 * * *"
+    }
   ],
   "headers": [
     {
