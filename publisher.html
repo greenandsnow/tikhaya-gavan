@@ -217,7 +217,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
           <div class="field-hint">На этот адрес придёт подтверждение публикации</div>
         </div>
         <div class="field">
-          <label>Краткая биография <span style="color:var(--stone);font-weight:300">(необязательно)</span></label>
+          <label>О себе <span style="color:var(--stone);font-weight:300">(необязательно)</span></label>
           <textarea id="author-bio" placeholder="Несколько слов о себе для читателей..."></textarea>
         </div>
         <div class="btn-row">
@@ -229,7 +229,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       <!-- STEP 3: FILE -->
       <div id="step3" style="display:none">
         <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.5rem;color:var(--ink)">Загрузка произведения</h2>
-        <p style="font-size:.82rem;color:var(--text-light);margin-bottom:1.25rem;line-height:1.6">Поддерживаются форматы: PDF, DOCX. Максимальный размер — 20 МБ.</p>
+        <p style="font-size:.82rem;color:var(--text-light);margin-bottom:1.25rem;line-height:1.6">Принимается только формат <strong>PDF</strong>. Максимальный размер — 20 МБ. <a href="#help-pdf" onclick="toggleHelp()" style="color:var(--brown);text-decoration:none;font-weight:500">Как подготовить PDF? →</a></p><div id="help-pdf" style="display:none;background:var(--sand);border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.8rem;line-height:1.7;color:var(--text-light)"><strong>Как сохранить книгу в PDF:</strong><br>• <strong>Word / LibreOffice:</strong> Файл → Сохранить как → PDF<br>• <strong>Google Docs:</strong> Файл → Скачать → PDF<br>• <strong>Apple Pages:</strong> Файл → Экспорт → PDF<br><br>Рекомендуем использовать шрифт не мельче 12pt и поля не менее 2 см.</div>
 
         <div class="field">
           <label>Название произведения <span style="color:var(--terra)">*</span></label>
@@ -246,7 +246,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
           <input type="file" id="file-input" accept=".pdf,.docx" onchange="onFileSelect(this)"/>
           <div class="file-icon">📄</div>
           <h3>Перетащите файл сюда</h3>
-          <p>PDF или DOCX · до 20 МБ</p>
+          <p>Только PDF · до 20 МБ</p>
         </div>
         <div class="file-selected" id="file-selected">
           <span>📎</span>
@@ -260,7 +260,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
           <div class="file-drop" id="cover-drop" style="padding:1.5rem">
             <input type="file" id="cover-input" accept=".jpg,.jpeg,.png,.webp" onchange="onCoverSelect(this)"/>
             <div class="file-icon" style="font-size:1.8rem">🖼️</div>
-            <h3 style="font-size:.85rem">Загрузить обложку</h3>
+            <h3 style="font-size:.85rem">Загрузить обложку <span style="font-weight:300;color:var(--stone)">(необязательно)</span></h3><p style="font-size:.75rem;color:var(--stone);margin:.2rem 0 .5rem">JPEG или PNG · 600×900 пикселей · до 5 МБ</p>
             <p>JPG, PNG · до 5 МБ · рекомендуем 600×900 px</p>
           </div>
           <div class="file-selected" id="cover-selected" style="margin-top:.6rem">
@@ -273,7 +273,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="prevStep(3)">← Назад</button>
-          <button class="btn btn-primary" onclick="nextStep(3)">Анализировать →</button>
+          <button class="btn btn-primary" onclick="nextStep(3)">Проверить и продолжить →</button>
         </div>
       </div>
 
@@ -308,7 +308,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       <!-- STEP 5: GENRE -->
       <div id="step5" style="display:none">
         <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.4rem;color:var(--ink)">Жанр произведения</h2>
-        <p style="font-size:.82rem;color:var(--text-light);margin-bottom:1.25rem">ИИ предложил жанр на основе анализа. Вы можете изменить его.</p>
+        <p style="font-size:.82rem;color:var(--text-light);margin-bottom:1.25rem">ИИ предложил жанр на основе анализа. Вы можете выбрать до 3 жанров.</p>
 
         <div class="field">
           <label>Тип</label>
@@ -318,19 +318,20 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
           </select>
         </div>
 
-        <label style="display:block;font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:.65rem">Жанр</label>
+        <label style="display:block;font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:.65rem">Жанр <span style="color:var(--stone);font-weight:300">(до 3 жанров)</span></label>
         <div class="genre-grid" id="genre-grid">
-          <button class="genre-btn" onclick="selectGenre(this,'Детектив')">🔍 Детектив</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Приключения')">🗺️ Приключения</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Любовный роман')">💕 Любовный роман</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Фантастика')">🚀 Фантастика</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Фэнтези')">🧙 Фэнтези</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Исторический')">📜 Исторический</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Биография')">👤 Биография</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Юмор')">😄 Юмор</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Драма')">🎭 Драма</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Лирика')">🌸 Лирика</button>
-          <button class="genre-btn" onclick="selectGenre(this,'Другое')">📚 Другое</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Детектив')">🔍 Детектив</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Приключения')">🗺️ Приключения</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Любовный роман')">💕 Любовный роман</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Фантастика')">🚀 Фантастика</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Фэнтези')">🧙 Фэнтези</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Исторический')">📜 Исторический</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Биография')">👤 Биография</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Юмор')">😄 Юмор</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Драма')">🎭 Драма</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Лирика')">🌸 Лирика</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Философия')">🧠 Философия</button>
+          <button class="genre-btn" onclick="toggleGenre(this,'Другое')">📚 Другое</button>
         </div>
 
         <div class="btn-row">
@@ -370,7 +371,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
 <script>
 var currentStep = 1;
-var selectedGenre = '';
+var selectedGenres = [];
 var selectedFile = null;
 var bookId = null;
 var aiApproved = true;
@@ -507,7 +508,7 @@ function showAIResult(result) {
     if (result.genre_suggestion) {
       document.querySelectorAll('.genre-btn').forEach(function(btn) {
         if (btn.textContent.trim().toLowerCase().includes(result.genre_suggestion.toLowerCase())) {
-          selectGenre(btn, btn.textContent.replace(/^\S+\s/, '').trim());
+          toggleGenre(btn, btn.textContent.replace(/^\S+\s/, '').trim());
         }
       });
     }
@@ -522,14 +523,14 @@ function selectGenre(btn, genre) {
 }
 
 function submitBook() {
-  if (!selectedGenre) { alert('Пожалуйста, выберите жанр.'); return; }
+  if (selectedGenres.length === 0) { alert('Пожалуйста, выберите хотя бы один жанр.'); return; }
 
   var payload = {
     title: document.getElementById('book-title').value.trim(),
     author_name: document.getElementById('author-name').value.trim(),
     author_email: document.getElementById('author-email').value.trim(),
     annotation: document.getElementById('book-annotation').value.trim(),
-    genre: selectedGenre,
+    genre: selectedGenres.join(', '),
     type: document.getElementById('book-type').value,
     ai_summary: document.getElementById('ai-summary').textContent
   };
@@ -580,7 +581,7 @@ function copyLink() {
 
 function resetForm() {
   selectedFile = null;
-  selectedGenre = '';
+  selectedGenres = [];
   bookId = null;
   aiApproved = true;
   document.getElementById('agree1').checked = false;
@@ -620,7 +621,8 @@ function removeCover() {
 window.onCoverSelect = onCoverSelect;
 window.removeCover = removeCover;
 window.prevStep = prevStep;
-window.selectGenre = selectGenre;
+window.toggleGenre = toggleGenre;
+window.toggleHelp = function(){ var el = document.getElementById('help-pdf'); el.style.display = el.style.display === 'none' ? 'block' : 'none'; return false; };
 window.submitBook = submitBook;
 window.resetForm = resetForm;
 window.removeFile = removeFile;
