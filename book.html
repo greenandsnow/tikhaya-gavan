@@ -321,4 +321,17 @@ async function sendReport(){
 }
 
 function esc(s){
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.sendReport = sendReport;
+window.setStar = setStar;
+window.changeFontSize = changeFontSize;
+window.submitRating = submitRating;
+
+loadBook();
+</script>
+</body>
+</html>
