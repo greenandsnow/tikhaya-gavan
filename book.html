@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Книга — Тихая гавань</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Marck+Script&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;--terra:#a0614a;--ink:#2a2420;--green:#1e4d2b}
@@ -29,7 +29,7 @@ main{flex:1}
 .book-hero-inner{max-width:860px;margin:0 auto;display:flex;gap:2.5rem;align-items:flex-start}
 .book-cover-large{width:180px;height:260px;border-radius:10px;flex-shrink:0;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.15)}
 .cover-rating{width:180px;flex-shrink:0;text-align:center;margin-top:.75rem}
-.cover-big-num{font-size:2rem;font-weight:700;color:var(--ink);line-height:1}
+.cover-big-num{font-size:1.5rem;font-weight:700;color:var(--ink);line-height:1}
 .cover-bar-wrap{width:140px;height:8px;background:var(--sand-dark);border-radius:4px;margin:.5rem auto .25rem;overflow:hidden}
 .cover-bar-fill{height:100%;background:#d4a017;border-radius:4px}
 .cover-stars-row{color:#d4a017;font-size:.95rem;letter-spacing:.05em}
@@ -38,13 +38,13 @@ main{flex:1}
 .book-hero-title{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--ink);margin-bottom:.4rem;line-height:1.2}
 .book-hero-author{font-size:1rem;color:var(--text-light);margin-bottom:.2rem}
 .book-hero-date{font-size:.8rem;color:var(--stone)}
-.book-ai-summary{margin-top:1.25rem;font-size:.9rem;color:var(--text-light);line-height:1.8;font-style:italic;border-left:3px solid var(--sea-pale);padding-left:1rem}
+.book-ai-summary{margin-top:1.25rem;font-size:1rem;color:var(--text-light);line-height:1.9;font-style:italic;border-left:3px solid var(--sea-pale);padding-left:1rem}
 
 /* FROM AUTHOR */
 .book-from-author{background:var(--sand);border-bottom:1px solid var(--sand-dark);padding:2rem}
 .book-section-inner{max-width:860px;margin:0 auto}
 .book-section-label{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--stone);margin-bottom:.75rem}
-.book-author-text{font-size:.92rem;color:var(--text);line-height:1.85}
+.book-author-text{font-size:.95rem;color:var(--text);line-height:1.95;font-family:'Marck Script',cursive}
 
 /* ACTIONS */
 .book-actions-section{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1.5rem 2rem}
@@ -231,7 +231,7 @@ function renderBook(){
     (avgRating
       ? '<div class="cover-big-num">'+avgRating+'</div>'+
         '<div class="cover-bar-wrap"><div class="cover-bar-fill" style="width:'+pct+'%"></div></div>'+
-        '<div class="cover-stars-row">'+'★'.repeat(filledStars)+'<span style="color:var(--sand-dark)">'+'★'.repeat(5-filledStars)+'</span></div>'+
+        
         '<div class="cover-rating-count">('+book.votes_count+' '+countWord+')</div>'
       : '<div class="cover-rating-count" style="color:var(--stone);font-size:.75rem">Нет оценок</div>'
     )+'</div>';
@@ -247,12 +247,12 @@ function renderBook(){
     '</div>' +
     '<div class="book-hero-meta">' +
     '<div class="book-badges" style="margin-bottom:.75rem">' +
-    (book.genre?'<span class="badge badge-genre">'+esc(book.genre)+'</span>':'')+
+    (book.genre ? book.genre.split(',').map(function(g){ return '<span class="badge badge-genre">'+esc(g.trim())+'</span>'; }).join('') : '')+
     '<span class="badge badge-type">'+typeLabel+'</span>' +
     '</div>' +
     '<h1 class="book-hero-title">'+esc(book.title)+'</h1>' +
     '<div class="book-hero-author">'+esc(book.author_name||'')+'</div>' +
-    '<div class="book-hero-date">'+date+'</div>' +
+    '<div class="book-hero-date">'+(date?'Дата публикации: '+date:'')+'</div>' +
     ratingHtml +
     (aiText ? '<div class="book-ai-summary">'+esc(aiText)+'</div>' : '') +
     '</div></div></div>' +
