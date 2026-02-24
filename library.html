@@ -304,21 +304,25 @@ function filterBooks(){
     var icon = getIcon(b.genre, b.type);
     var date = b.published_at ? new Date(b.published_at).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}) : '';
     var coverHtml = b.cover_url
-      ? '<img src="'+b.cover_url+'" style="width:100%;height:100%;object-fit:cover" alt="обложка"/>'
+      ? '<img src="'+b.cover_url+'" alt="обложка"/>'
       : '<div class="book-cover-bg '+coverClass+'">'+icon+'</div>';
+    var genreText = b.genre ? b.genre.split(',').map(function(g){ return g.trim(); }).join(' · ') : '';
+    var barPct = rating > 0 ? (rating/10*100).toFixed(0) : 0;
+    var ratingBlock = '<div class="book-rating-block">'+
+      (rating > 0
+        ? '<div class="rating-bar-wrap"><div class="rating-bar-fill" style="width:'+barPct+'%"></div></div>'+
+          '<div class="rating-label">'+rating+' / 10</div>'
+        : '<div class="rating-label">нет оценок</div>'
+      )+'</div>';
     return '<a href="/book/'+b.id+'" class="book-card">'+
-      '<div class="book-cover">'+coverHtml+
-      '<div class="book-cover-overlay"></div>'+
-      '<span class="book-genre-badge '+badgeClass+'">'+(b.genre||(b.type==='poetry'?'Поэзия':'Проза'))+'</span></div>'+
-      '<div class="book-body">'+
-      '<div class="book-title">'+escHtml(b.title)+'</div>'+
-      '<div class="book-author">'+escHtml(b.author_name||'Автор')+'</div>'+
-      '<div class="book-desc">'+escHtml(b.description||b.ai_summary||'')+'</div>'+
+      '<div class="book-cover">'+coverHtml+'</div>'+
+      '<div class="book-info">'+
+        '<div class="book-title">'+escHtml(b.title)+'</div>'+
+        '<div class="book-author">'+escHtml(b.author_name||'Автор')+'</div>'+
+        (genreText?'<div class="book-genre-row">'+escHtml(genreText)+'</div>':'')+
       '</div>'+
-      '<div class="book-footer">'+
-      '<div class="book-rating"><span class="rating-stars">'+ratingStars(rating)+'</span>'+(rating>0?'<span>'+rating+'</span>':'')+'</div>'+
-      '<div class="book-type">'+date+'</div>'+
-      '</div></a>';
+      ratingBlock+
+      '</a>';
   }).join('');
 }
 function escHtml(s){
