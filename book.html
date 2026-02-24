@@ -144,7 +144,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       <option value="other">Другое</option>
     </select>
     <textarea id="report-text" placeholder="Опишите нарушение подробнее (необязательно)..."></textarea>
-    <input type="email" id="report-email" placeholder="Ваш email (для обратной связи, необязательно)"/>
+    <input type="text" id="report-contact" placeholder="Ваш адрес почты (необязательно)"/>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Отмена</button>
       <button class="btn-report-send" onclick="sendReport()">Отправить жалобу</button>
@@ -156,11 +156,11 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
   <div class="fi">
     <span>© 2025 Тихая гавань</span>
     <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
-    <a href="/cdn-cgi/l/email-protection#31424441415e434571564354545f505f55425f5e4642454455585e1f525e5c"><span class="__cf_email__" data-cfemail="80f3f5f0f0eff2f4c0e7f2e5e5eee1eee4f3eeeff7f3f4f5e4e9efaee3efed">[email&#160;protected]</span></a>
+    <a href="/support">Написать нам</a>
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 var bookId = window.location.pathname.split('/').pop();
 var book = null;
 var fontSize = 18;
@@ -306,12 +306,12 @@ async function sendReport(){
   var type = document.getElementById('report-type').value;
   if(!type){ alert('Пожалуйста, выберите тип нарушения.'); return; }
   var text = document.getElementById('report-text').value;
-  var email = document.getElementById('report-email').value;
+  var contact = document.getElementById('report-contact').value;
   try {
     await fetch('/api/report', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ book_id: bookId, type: type, text: text, email: email })
+      body: JSON.stringify({ book_id: bookId, type: type, text: text, contact: contact })
     });
     closeModal();
     alert('Спасибо! Ваша жалоба принята и будет рассмотрена в течение 3 рабочих дней.');
