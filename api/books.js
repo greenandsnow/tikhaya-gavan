@@ -6,7 +6,7 @@ module.exports = async function handler(req, res) {
     const supabaseKey = process.env.SUPABASE_SECRET_KEY;
 
     // Get books with author names via join
-    const r = await fetch(`${supabaseUrl}/rest/v1/books?select=id,title,genre,type,description,ai_summary,rating_plot,rating_style,votes_count,published_at,status,cover_path,authors(name)&status=eq.approved`, {
+    const r = await fetch(`${supabaseUrl}/rest/v1/books?select=id,title,genre,type,description,ai_summary,rating_plot,rating_style,votes_count,published_at,status,cover_path,authors(name)&status=eq.approved&deleted_at=is.null`, {
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`

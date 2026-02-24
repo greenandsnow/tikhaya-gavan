@@ -6,7 +6,7 @@ module.exports = async function handler(req, res) {
   const supabaseKey = process.env.SUPABASE_SECRET_KEY;
 
   try {
-    const r = await fetch(`${supabaseUrl}/rest/v1/books?id=eq.${id}&select=*,authors(name)&status=eq.approved`, {
+    const r = await fetch(`${supabaseUrl}/rest/v1/books?id=eq.${id}&select=*,authors(name)&status=eq.approved&deleted_at=is.null`, {
       headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
     const data = await r.json();
