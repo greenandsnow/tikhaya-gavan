@@ -263,7 +263,7 @@ function filterBooks(){
   var filtered = allBooks.filter(function(b){
     if(currentFilter !== 'all'){
       if(currentFilter === 'poetry' && b.type !== 'poetry') return false;
-      if(currentFilter !== 'poetry' && b.genre !== currentFilter) return false;
+      if(currentFilter !== 'poetry' && !(b.genre||'').split(',').map(function(g){return g.trim();}).includes(currentFilter)) return false;
     }
     if(search){
       var inTitle = (b.title||'').toLowerCase().includes(search);
