@@ -3,6 +3,7 @@ module.exports = async function handler(req, res) {
 
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SECRET_KEY;
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY || supabaseKey;
 
   try {
     let body = req.body;
@@ -33,11 +34,11 @@ module.exports = async function handler(req, res) {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
+          'apikey': serviceKey,
+          'Authorization': `Bearer ${serviceKey}`,
           'Prefer': 'return=minimal'
         },
-        body: JSON.stringify({ rating_plot: avgPlot.toFixed(2), rating_style: avgStyle.toFixed(2), votes_count: ratings.length })
+        body: JSON.stringify({ rating_plot: parseFloat(avgPlot.toFixed(2)), rating_style: parseFloat(avgStyle.toFixed(2)), votes_count: ratings.length })
       });
     }
 
