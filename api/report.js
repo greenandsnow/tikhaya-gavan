@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${resendKey}` },
       body: JSON.stringify({
-        from: 'Тихая гавань <onboarding@resend.dev>',
+        from: 'Тихая гавань <noreply@greenandsnowstudio.com>',
         to: 'support@greenandsnowstudio.com',
         subject: '⚠️ Новая жалоба на книгу',
         html: `<p>Поступила жалоба на книгу ID: <strong>${book_id}</strong></p><p>Тип нарушения: <strong>${type}</strong></p><p>Описание: ${text || 'не указано'}</p><p>Email жалующегося: ${email || 'не указан'}</p>`
