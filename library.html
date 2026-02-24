@@ -61,7 +61,7 @@ main{flex:1;padding:2.5rem 2rem 4rem}
 .book-info{padding:.45rem .55rem;border-top:1px solid var(--sand-dark);background:var(--white)}
 .book-title{font-family:'Playfair Display',serif;font-size:.75rem;font-weight:700;color:var(--ink);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:.1rem}
 .book-author{font-size:.62rem;color:var(--stone);margin-bottom:.1rem}
-.book-genre-row{font-size:.6rem;color:var(--sea);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.book-genre-row{font-size:.6rem;color:var(--sea);font-weight:500;line-height:1.4;min-height:2.8em}
 .book-desc{display:none}
 .book-body{display:none}
 .book-footer{display:none}
@@ -307,6 +307,7 @@ function filterBooks(){
       ? '<img src="'+b.cover_url+'" alt="обложка"/>'
       : '<div class="book-cover-bg '+coverClass+'">'+icon+'</div>';
     var genreText = b.genre ? b.genre.split(',').map(function(g){ return g.trim(); }).join(' · ') : '';
+    var genreHtml = '<div class="book-genre-row">'+escHtml(genreText)+'<br>&nbsp;</div>';
     var barPct = rating > 0 ? (rating/10*100).toFixed(0) : 0;
     var ratingBlock = '<div class="book-rating-block">'+
       (rating > 0
@@ -319,7 +320,7 @@ function filterBooks(){
       '<div class="book-info">'+
         '<div class="book-title">'+escHtml(b.title)+'</div>'+
         '<div class="book-author">'+escHtml(b.author_name||'Автор')+'</div>'+
-        (genreText?'<div class="book-genre-row">'+escHtml(genreText)+'</div>':'')+
+        (genreText?genreHtml:'<div class="book-genre-row"><br>&nbsp;</div>')+
       '</div>'+
       ratingBlock+
       '</a>';
