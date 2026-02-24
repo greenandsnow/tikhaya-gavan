@@ -6,7 +6,7 @@ module.exports = async function handler(req, res) {
     const supabaseKey = process.env.SUPABASE_SECRET_KEY;
 
     // Get books with author names via join
-    const r = await fetch(`${supabaseUrl}/rest/v1/books?select=id,title,genre,type,description,ai_summary,rating_plot,rating_style,votes_count,published_at,status,cover_path,authors(name)&status=eq.approved&order=rating_plot.desc`, {
+    const r = await fetch(`${supabaseUrl}/rest/v1/books?select=id,title,genre,type,description,ai_summary,rating_plot,rating_style,votes_count,published_at,status,cover_path,authors(name)&status=eq.approved`, {
       headers: {
         'apikey': supabaseKey,
         'Authorization': `Bearer ${supabaseKey}`
@@ -22,6 +22,13 @@ module.exports = async function handler(req, res) {
         author_name: b.authors ? b.authors.name : '',
         cover_url: b.cover_path ? STORAGE_URL + b.cover_path : null
       });
+    });
+
+    // Sort by average rating descending
+    result.sort(function(a, b) {
+      var ra = a.votes_count > 0 ? (parseFloat(a.rating_plot) + parseFloat(a.rating_style)) / 2 : 0;
+      var rb = b.votes_count > 0 ? (parseFloat(b.rating_plot) + parseFloat(b.rating_style)) / 2 : 0;
+      return rb - ra;
     });
 
     res.setHeader('Cache-Control', 'no-store');
