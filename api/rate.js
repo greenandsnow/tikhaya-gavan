@@ -30,7 +30,7 @@ module.exports = async function handler(req, res) {
     if (ratings && ratings.length > 0) {
       const avgPlot = ratings.reduce((s,r) => s + r.rating_plot, 0) / ratings.length;
       const avgStyle = ratings.reduce((s,r) => s + r.rating_style, 0) / ratings.length;
-      await fetch(`${supabaseUrl}/rest/v1/books?id=eq.${book_id}`, {
+      const patchRes = await fetch(`${supabaseUrl}/rest/v1/books?id=eq.${book_id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
