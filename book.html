@@ -246,7 +246,7 @@ function renderBook(){
     coverRatingHtml +
     '</div>' +
     '<div class="book-hero-meta">' +
-    '<div class="book-badges" style="margin-bottom:.75rem">' +
+    '<div class="book-badges" style="margin-bottom:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">' +
     (book.genre ? book.genre.split(',').map(function(g){ return '<span class="badge badge-genre">'+esc(g.trim())+'</span>'; }).join('') : '')+
     '<span class="badge badge-type">'+typeLabel+'</span>' +
     '</div>' +
