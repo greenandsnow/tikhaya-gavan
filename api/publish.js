@@ -21,7 +21,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const { title, author_name, author_email, annotation, genre, type, ai_summary, cover_base64, cover_name } = fields;
+    const { title, author_name, author_email, annotation, genre, type, ai_summary, cover_base64, cover_name, file_base64, file_name } = fields;
 
     if (!title || !author_name || !author_email) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -53,6 +53,25 @@ module.exports = async function handler(req, res) {
       author = Array.isArray(authors) ? authors[0] : authors;
     }
     if (!author || !author.id) throw new Error('Failed to create author: ' + JSON.stringify(author));
+
+    // Upload PDF if provided
+    let filePath = null;
+    if (file_base64 && file_name) {
+      const matches = file_base64.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
+      if (matches) {
+        const buffer = Buffer.from(matches[2], 'base64');
+        filePath = `books/${author.id}/${Date.now()}.pdf`;
+        await fetch(`${supabaseUrl}/storage/v1/object/books/${filePath}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/pdf',
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`
+          },
+          body: buffer
+        });
+      }
+    }
 
     // Upload cover if provided
     let coverPath = null;
@@ -94,6 +113,7 @@ module.exports = async function handler(req, res) {
         ai_approved: true,
         status: 'approved',
         cover_path: coverPath,
+        file_path: filePath,
         published_at: new Date().toISOString()
       })
     });
