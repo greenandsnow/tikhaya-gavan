@@ -38,7 +38,7 @@ main{flex:1;padding:2.5rem 2rem 4rem}
 .search-wrap input{width:100%;padding:.65rem 1rem .65rem 2.5rem;border:1.5px solid var(--sand-dark);border-radius:8px;font-family:'Jost',sans-serif;font-size:.88rem;background:var(--white);color:var(--text);outline:none;transition:border-color .2s}
 .search-wrap input:focus{border-color:var(--sea-light)}
 .search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--stone);font-size:.9rem;pointer-events:none}
-.filters{display:flex;gap:.4rem;flex-wrap:wrap}
+.filters{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem}
 .filter-btn{padding:.4rem .85rem;border:1.5px solid var(--sand-dark);border-radius:20px;background:var(--white);font-family:'Jost',sans-serif;font-size:.78rem;color:var(--text-light);cursor:pointer;transition:all .2s}
 .filter-btn:hover{border-color:var(--sea-light);color:var(--sea)}
 .filter-btn.active{background:var(--green);border-color:var(--green);color:white;font-weight:500}
@@ -53,9 +53,10 @@ main{flex:1;padding:2.5rem 2rem 4rem}
 /* BOOK CARD */
 .book-card{background:var(--white);border:1px solid var(--sand-dark);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none;display:flex;flex-direction:column}
 .book-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.1)}
-.book-cover{height:160px;position:relative;overflow:hidden;flex-shrink:0}
-.book-cover-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3.5rem}
-.book-cover-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,0.4) 100%)}
+.book-cover{height:120px;position:relative;overflow:hidden;flex-shrink:0;display:flex;justify-content:center;align-items:flex-start;background:var(--sand)}
+.book-cover-img{height:100%;width:auto;max-width:100%;object-fit:contain;display:block}
+.book-cover-bg{width:80px;height:112px;margin-top:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;border-radius:4px}
+.book-cover-overlay{display:none}
 .book-genre-badge{position:absolute;top:.6rem;right:.6rem;padding:.2rem .6rem;border-radius:12px;font-size:.65rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
 .book-body{padding:1rem;flex:1;display:flex;flex-direction:column}
 .book-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:.25rem;line-height:1.3}
@@ -151,7 +152,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
     </div>
 
     <div class="filters" id="filters">
-      <button class="filter-btn active" onclick="setFilter('all',this)">Все</button>
+      <button class="filter-btn active" onclick="setFilter('all',this)">Все жанры</button>
       <button class="filter-btn" onclick="setFilter('Фантастика',this)">🚀 Фантастика</button>
       <button class="filter-btn" onclick="setFilter('Фэнтези',this)">🧙 Фэнтези</button>
       <button class="filter-btn" onclick="setFilter('Детектив',this)">🔍 Детектив</button>
@@ -161,8 +162,8 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       <button class="filter-btn" onclick="setFilter('Биография',this)">👤 Биография</button>
       <button class="filter-btn" onclick="setFilter('Юмор',this)">😄 Юмор</button>
       <button class="filter-btn" onclick="setFilter('Драма',this)">🎭 Драма</button>
+      <button class="filter-btn" onclick="setFilter('Философия',this)">🧠 Философия</button>
       <button class="filter-btn" onclick="setFilter('Лирика',this)">🌸 Лирика</button>
-      <button class="filter-btn" onclick="setFilter('poetry',this)">📝 Поэзия</button>
     </div>
 
     <div class="stats-bar" id="stats-bar"></div>
