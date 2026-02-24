@@ -29,10 +29,11 @@ main{flex:1}
 .book-hero-inner{max-width:860px;margin:0 auto;display:flex;gap:2.5rem;align-items:flex-start}
 .book-cover-large{width:180px;height:260px;border-radius:10px;flex-shrink:0;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.15)}
 .cover-rating{width:180px;flex-shrink:0;text-align:center;margin-top:.75rem}
-.cover-stars{color:#d4a017;font-size:1.1rem;letter-spacing:.1em;line-height:1}
-.cover-rating-num{font-size:.95rem;font-weight:600;color:var(--ink);margin-top:.2rem}
-.cover-rating-detail{font-size:.72rem;color:var(--text-light);margin-top:.15rem}
-.cover-rating-count{font-size:.75rem;color:var(--stone);margin-top:.1rem}
+.cover-big-num{font-size:2rem;font-weight:700;color:var(--ink);line-height:1}
+.cover-bar-wrap{width:140px;height:8px;background:var(--sand-dark);border-radius:4px;margin:.5rem auto .25rem;overflow:hidden}
+.cover-bar-fill{height:100%;background:#d4a017;border-radius:4px}
+.cover-stars-row{color:#d4a017;font-size:.95rem;letter-spacing:.05em}
+.cover-rating-count{font-size:.75rem;color:var(--stone);margin-top:.25rem}
 .book-hero-meta{flex:1}
 .book-hero-title{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--ink);margin-bottom:.4rem;line-height:1.2}
 .book-hero-author{font-size:1rem;color:var(--text-light);margin-bottom:.2rem}
@@ -221,18 +222,19 @@ function renderBook(){
   var aiText = book.ai_summary || '';
   var authorText = book.description || '';
   var avgRating = book.votes_count > 0 ? ((parseFloat(book.rating_plot||0) + parseFloat(book.rating_style||0)) / 2).toFixed(1) : null;
-  var ratingHtml = avgRating
-    ? '<div style="display:flex;align-items:center;gap:.5rem;margin-top:.75rem"><span style="color:#d4a017;font-size:1.2rem">★</span><span style="font-weight:600;font-size:1.1rem">'+avgRating+'</span><span style="color:var(--stone);font-size:.8rem">/ 10 · '+book.votes_count+' оцен.</span></div>'
-    : '<div style="color:var(--stone);font-size:.8rem;margin-top:.75rem">Оценок пока нет</div>';
+  var ratingHtml = '';
 
-  var coverRatingHtml = avgRating
-    ? '<div class="cover-rating">'+
-      '<div class="cover-stars">'+'★'.repeat(Math.round(avgRating/2))+'☆'.repeat(5-Math.round(avgRating/2))+'</div>'+
-      '<div class="cover-rating-num">'+avgRating+' / 10</div>'+
-      '<div class="cover-rating-detail">Сюжет: '+parseFloat(book.rating_plot||0).toFixed(1)+' · Язык: '+parseFloat(book.rating_style||0).toFixed(1)+'</div>'+
-      '<div class="cover-rating-count">'+book.votes_count+' '+(book.votes_count===1?'оценка':book.votes_count<5?'оценки':'оценок')+'</div>'+
-      '</div>'
-    : '<div class="cover-rating"><div class="cover-rating-count" style="color:var(--stone)">Нет оценок</div></div>';
+  var filledStars = avgRating ? Math.round(avgRating / 2) : 0;
+  var pct = avgRating ? (avgRating / 10 * 100).toFixed(0) : 0;
+  var countWord = book.votes_count === 1 ? 'оценка' : book.votes_count < 5 ? 'оценки' : 'оценок';
+  var coverRatingHtml = '<div class="cover-rating">'+
+    (avgRating
+      ? '<div class="cover-big-num">'+avgRating+'</div>'+
+        '<div class="cover-bar-wrap"><div class="cover-bar-fill" style="width:'+pct+'%"></div></div>'+
+        '<div class="cover-stars-row">'+'★'.repeat(filledStars)+'<span style="color:var(--sand-dark)">'+'★'.repeat(5-filledStars)+'</span></div>'+
+        '<div class="cover-rating-count">('+book.votes_count+' '+countWord+')</div>'
+      : '<div class="cover-rating-count" style="color:var(--stone);font-size:.75rem">Нет оценок</div>'
+    )+'</div>';
 
   document.title = book.title + ' — Тихая гавань';
 
