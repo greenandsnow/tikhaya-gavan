@@ -134,7 +134,7 @@ html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:#
       <option value="other">Другое</option>
     </select>
     <textarea id="report-text" placeholder="Опишите нарушение..."></textarea>
-    <input type="text" id="report-email" placeholder="Ваш адрес почты (необязательно)"/>
+    <input type="text" id="report-contact" placeholder="Ваш адрес почты (необязательно)"/>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Отмена</button>
       <button class="btn-report-send" onclick="sendReport()">Отправить</button>
@@ -285,7 +285,7 @@ async function sendReport(){
   await fetch('/api/report', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({book_id:bookId, type:type, text:document.getElementById('report-text').value, email:document.getElementById('report-email').value})
+    body:JSON.stringify({book_id:bookId, type:type, text:document.getElementById('report-text').value, contact:document.getElementById('report-contact').value})
   });
   closeModal();
   alert('Жалоба отправлена. Спасибо!');
