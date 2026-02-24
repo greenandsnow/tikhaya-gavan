@@ -11,7 +11,11 @@ module.exports = async function handler(req, res) {
     });
     const data = await r.json();
     if (!data || data.length === 0) return res.status(404).json({ error: 'Not found' });
-    const book = Object.assign({}, data[0], { author_name: data[0].authors ? data[0].authors.name : '' });
+    const STORAGE_URL = 'https://nclltofdkjiuneqzemhd.supabase.co/storage/v1/object/public/books/';
+    const book = Object.assign({}, data[0], {
+      author_name: data[0].authors ? data[0].authors.name : '',
+      cover_url: data[0].cover_path ? STORAGE_URL + data[0].cover_path : null
+    });
     return res.status(200).json(book);
   } catch(err) {
     return res.status(500).json({ error: err.message });

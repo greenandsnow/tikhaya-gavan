@@ -14,9 +14,14 @@ module.exports = async function handler(req, res) {
     });
     const books = await r.json();
 
-    // Flatten author name
+    const STORAGE_URL = 'https://nclltofdkjiuneqzemhd.supabase.co/storage/v1/object/public/books/';
+
+    // Flatten author name and add cover URL
     const result = books.map(function(b) {
-      return Object.assign({}, b, { author_name: b.authors ? b.authors.name : '' });
+      return Object.assign({}, b, {
+        author_name: b.authors ? b.authors.name : '',
+        cover_url: b.cover_path ? STORAGE_URL + b.cover_path : null
+      });
     });
 
     res.setHeader('Cache-Control', 's-maxage=60');
