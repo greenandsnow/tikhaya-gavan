@@ -24,20 +24,28 @@ nav a.active{color:var(--sea);font-weight:600}
 
 main{flex:1}
 
-/* BOOK HEADER */
-.book-header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:2rem}
-.book-header-inner{max-width:800px;margin:0 auto;display:flex;gap:2rem;align-items:flex-start}
-.book-cover-thumb{width:100px;height:140px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
-.book-meta{flex:1}
-.book-meta h1{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,2.5vw,2rem);color:var(--ink);margin-bottom:.35rem;line-height:1.2}
-.book-meta-author{font-size:.9rem;color:var(--text-light);margin-bottom:.75rem}
-.book-meta-author strong{color:var(--text)}
-.book-badges{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
-.badge{padding:.2rem .7rem;border-radius:12px;font-size:.7rem;font-weight:500}
-.badge-genre{background:rgba(74,124,142,0.12);color:var(--sea)}
-.badge-type{background:rgba(46,125,50,0.1);color:#2e7d32}
-.book-summary{font-size:.85rem;color:var(--text-light);line-height:1.7;margin-bottom:.75rem}
-.book-actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+/* BOOK HERO */
+.book-hero{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:3rem 2rem}
+.book-hero-inner{max-width:860px;margin:0 auto;display:flex;gap:2.5rem;align-items:flex-start}
+.book-cover-large{width:180px;height:260px;border-radius:10px;flex-shrink:0;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+.book-hero-meta{flex:1}
+.book-hero-title{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--ink);margin-bottom:.4rem;line-height:1.2}
+.book-hero-author{font-size:1rem;color:var(--text-light);margin-bottom:.2rem}
+.book-hero-date{font-size:.8rem;color:var(--stone)}
+.book-ai-summary{margin-top:1.25rem;font-size:.9rem;color:var(--text-light);line-height:1.8;font-style:italic;border-left:3px solid var(--sea-pale);padding-left:1rem}
+
+/* FROM AUTHOR */
+.book-from-author{background:var(--sand);border-bottom:1px solid var(--sand-dark);padding:2rem}
+.book-section-inner{max-width:860px;margin:0 auto}
+.book-section-label{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--stone);margin-bottom:.75rem}
+.book-author-text{font-size:.92rem;color:var(--text);line-height:1.85}
+
+/* ACTIONS */
+.book-actions-section{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1.5rem 2rem}
+.book-action-btns{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+
+/* RATING */
+.book-rating-section{padding:2rem}
 .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.2rem;border-radius:7px;font-family:'Jost',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
 .btn-primary{background:var(--green);color:white}
 .btn-primary:hover{background:#2d6040}
@@ -103,8 +111,10 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 .fl{display:flex;gap:1.5rem}
 
 @media(max-width:600px){
-  .book-header-inner{flex-direction:column}
-  .book-cover-thumb{width:80px;height:112px}
+  .book-hero-inner{flex-direction:column;align-items:center;text-align:center}
+  .book-cover-large{width:140px;height:200px}
+  .book-ai-summary{text-align:left}
+  .book-action-btns{justify-content:center}
   .book-content{padding:1.5rem}
   .rating-grid{grid-template-columns:1fr}
 }
@@ -199,45 +209,52 @@ function renderBook(){
   var coverBg = genreColors[book.genre] || 'linear-gradient(135deg,#2a2a2a,#5a5a5a)';
   var icon = book.type === 'poetry' ? '📝' : (genreIcons[book.genre] || '📚');
   var coverHtml = book.cover_url
-    ? '<img src="'+book.cover_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px" alt="обложка"/>'
-    : '<div style="width:100%;height:100%;background:'+coverBg+';border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:2.5rem">'+icon+'</div>';
+    ? '<img src="'+book.cover_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px" alt="обложка"/>'
+    : '<div style="width:100%;height:100%;background:'+coverBg+';border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:3rem">'+icon+'</div>';
   var typeLabel = book.type === 'poetry' ? 'Поэзия' : 'Проза';
   var date = book.published_at ? new Date(book.published_at).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}) : '';
+  var aiText = book.ai_summary || '';
+  var authorText = book.description || '';
+  var avgRating = book.votes_count > 0 ? ((parseFloat(book.rating_plot||0) + parseFloat(book.rating_style||0)) / 2).toFixed(1) : null;
+  var ratingHtml = avgRating
+    ? '<div style="display:flex;align-items:center;gap:.5rem;margin-top:.75rem"><span style="color:#d4a017;font-size:1.2rem">★</span><span style="font-weight:600;font-size:1.1rem">'+avgRating+'</span><span style="color:var(--stone);font-size:.8rem">/ 10 · '+book.votes_count+' оцен.</span></div>'
+    : '<div style="color:var(--stone);font-size:.8rem;margin-top:.75rem">Оценок пока нет</div>';
 
   document.title = book.title + ' — Тихая гавань';
 
   document.getElementById('main').innerHTML =
-    '<div class="book-header">' +
-    '<div class="book-header-inner">' +
-    '<div class="book-cover-thumb" style="overflow:hidden">'+coverHtml+'</div>' +
-    '<div class="book-meta">' +
-    '<h1>'+esc(book.title)+'</h1>' +
-    '<div class="book-meta-author">Автор: <strong>'+esc(book.author_name||'')+'</strong> · '+date+'</div>' +
-    '<div class="book-badges">' +
+    '<div class="book-hero">' +
+    '<div class="book-hero-inner">' +
+    '<div class="book-cover-large">'+coverHtml+'</div>' +
+    '<div class="book-hero-meta">' +
+    '<div class="book-badges" style="margin-bottom:.75rem">' +
     (book.genre?'<span class="badge badge-genre">'+esc(book.genre)+'</span>':'')+
     '<span class="badge badge-type">'+typeLabel+'</span>' +
     '</div>' +
-    '<div class="book-summary">'+esc(book.description||book.ai_summary||'')+'</div>' +
-    '<div class="book-actions">' +
+    '<h1 class="book-hero-title">'+esc(book.title)+'</h1>' +
+    '<div class="book-hero-author">'+esc(book.author_name||'')+'</div>' +
+    '<div class="book-hero-date">'+date+'</div>' +
+    ratingHtml +
+    (aiText ? '<div class="book-ai-summary">'+esc(aiText)+'</div>' : '') +
+    '</div></div></div>' +
+
+    (authorText ?
+    '<div class="book-from-author">' +
+    '<div class="book-section-inner">' +
+    '<div class="book-section-label">От автора</div>' +
+    '<div class="book-author-text">'+esc(authorText)+'</div>' +
+    '</div></div>' : '') +
+
+    '<div class="book-actions-section">' +
+    '<div class="book-section-inner">' +
+    '<div class="book-action-btns">' +
     '<a href="/library" class="btn btn-outline">← Библиотека</a>' +
-    '<a href="/read/'+book.id+'" class="btn btn-primary">📖 Читать</a>' +
+    (book.file_path ? '<a href="/read/'+book.id+'" class="btn btn-primary">📖 Читать</a>' : '') +
     '<button class="btn btn-report" onclick="openModal()">✉️ Письмо о нарушении</button>' +
-    '</div></div></div></div>' +
+    '</div></div></div>' +
 
-    '<div class="reading-area">' +
-    '<div class="reading-controls">' +
-    '<div class="font-controls">Размер шрифта: ' +
-    '<button class="font-btn" onclick="changeFontSize(-1)">A−</button>' +
-    '<span id="font-size-label" style="min-width:2.5rem;text-align:center">'+fontSize+'px</span>' +
-    '<button class="font-btn" onclick="changeFontSize(1)">A+</button>' +
-    '</div>' +
-    '<div class="reading-progress" id="reading-progress">Читайте и оценивайте</div>' +
-    '</div>' +
-
-    '<div class="pdf-notice">' +
-    '<p>📖 Используйте кнопку «Читать» выше для чтения книги.</p>' +
-    '</div>'
-
+    '<div class="book-rating-section">' +
+    '<div class="book-section-inner">' +
     '<div class="rating-section" id="rating-section">' +
     '<h3>Ваша оценка</h3>' +
     '<p style="font-size:.82rem;color:var(--text-light);margin-top:.4rem;line-height:1.6">Оцените произведение по двум параметрам. Ваш голос влияет на рейтинг в библиотеке.</p>' +
@@ -247,8 +264,7 @@ function renderBook(){
     '</div>' +
     '<div class="rating-note">Оценка анонимна. Вы можете изменить её в любой момент.</div>' +
     '<div class="rating-submit"><button class="btn btn-primary" onclick="submitRating()">Отправить оценку</button></div>' +
-    '</div>' +
-    '</div>';
+    '</div></div></div>';
 }
 
 function renderContent(book){
