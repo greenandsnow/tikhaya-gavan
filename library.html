@@ -51,11 +51,12 @@ main{flex:1;padding:2.5rem 2rem 4rem}
 .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem}
 
 /* BOOK CARD */
-.book-card{background:var(--white);border:1px solid var(--sand-dark);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none;display:flex;flex-direction:column}
-.book-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.1)}
-.book-cover{height:120px;position:relative;overflow:hidden;flex-shrink:0;display:flex;justify-content:center;align-items:flex-start;background:var(--sand)}
-.book-cover-img{height:100%;width:auto;max-width:100%;object-fit:contain;display:block}
-.book-cover-bg{width:80px;height:112px;margin-top:4px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;border-radius:4px}
+.book-card{background:var(--white);border:1px solid var(--sand-dark);border-radius:10px;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer;text-decoration:none;display:flex;flex-direction:column}
+.book-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.1)}
+.book-cover{width:100%;padding-top:150%;position:relative;flex-shrink:0;overflow:hidden;background:var(--sand)}
+.book-cover-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.book-cover-inner img{width:100%;height:100%;object-fit:cover}
+.book-cover-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
 .book-cover-overlay{display:none}
 .book-genre-badge{position:absolute;top:.6rem;right:.6rem;padding:.2rem .6rem;border-radius:12px;font-size:.65rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
 .book-body{padding:1rem;flex:1;display:flex;flex-direction:column}
@@ -76,7 +77,7 @@ main{flex:1;padding:2.5rem 2rem 4rem}
 /* LOADING */
 .loading-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem}
 .skeleton{background:var(--white);border:1px solid var(--sand-dark);border-radius:12px;overflow:hidden;animation:pulse 1.5s ease infinite}
-.skeleton-cover{height:160px;background:var(--sand-dark)}
+.skeleton-cover{padding-top:150%;background:var(--sand-dark);position:relative}
 .skeleton-body{padding:1rem}
 .skeleton-line{height:12px;background:var(--sand-dark);border-radius:4px;margin-bottom:.6rem}
 .skeleton-line.short{width:60%}
@@ -170,12 +171,18 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
     <div id="books-container">
       <div class="loading-grid" id="loading">
-        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
-        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
-        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
-        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
-        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
-        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton"><div class="skeleton-cover"></div><div class="skeleton-body"><div class="skeleton-line medium"></div><div class="skeleton-line short"></div></div></div>
       </div>
       <div class="books-grid" id="books-grid" style="display:none"></div>
       <div class="empty" id="empty" style="display:none">
