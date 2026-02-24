@@ -516,10 +516,16 @@ function showAIResult(result) {
   }
 }
 
-function selectGenre(btn, genre) {
-  document.querySelectorAll('.genre-btn').forEach(function(b) { b.classList.remove('selected'); });
-  btn.classList.add('selected');
-  selectedGenre = genre;
+function toggleGenre(btn, genre) {
+  var idx = selectedGenres.indexOf(genre);
+  if (idx > -1) {
+    selectedGenres.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else {
+    if (selectedGenres.length >= 3) { alert('Можно выбрать не более 3 жанров.'); return; }
+    selectedGenres.push(genre);
+    btn.classList.add('selected');
+  }
 }
 
 function submitBook() {
