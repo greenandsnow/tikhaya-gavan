@@ -541,18 +541,24 @@ function submitBook() {
     ai_summary: document.getElementById('ai-summary').textContent
   };
 
-  // If cover selected, convert to base64 and include
-  if (selectedCover) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      payload.cover_base64 = e.target.result;
-      payload.cover_name = selectedCover.name;
-      doSubmit(payload);
-    };
-    reader.readAsDataURL(selectedCover);
-  } else {
-    doSubmit(payload);
+  // Convert PDF to base64
+  function readCover(cb) {
+    if (selectedCover) {
+      var r = new FileReader();
+      r.onload = function(e) { payload.cover_base64 = e.target.result; payload.cover_name = selectedCover.name; cb(); };
+      r.readAsDataURL(selectedCover);
+    } else { cb(); }
   }
+
+  function readPdf(cb) {
+    if (selectedFile) {
+      var r = new FileReader();
+      r.onload = function(e) { payload.file_base64 = e.target.result; payload.file_name = selectedFile.name; cb(); };
+      r.readAsDataURL(selectedFile);
+    } else { cb(); }
+  }
+
+  readCover(function() { readPdf(function() { doSubmit(payload); }); });
 }
 
 function doSubmit(payload) {
