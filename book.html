@@ -213,6 +213,7 @@ function renderBook(){
     '<div class="book-summary">'+esc(book.description||book.ai_summary||'')+'</div>' +
     '<div class="book-actions">' +
     '<a href="/library" class="btn btn-outline">← Библиотека</a>' +
+    '<a href="/read/'+book.id+'" class="btn btn-primary">📖 Читать</a>' +
     '<button class="btn btn-report" onclick="openModal()">⚠️ Сообщить о нарушении</button>' +
     '</div></div></div></div>' +
 

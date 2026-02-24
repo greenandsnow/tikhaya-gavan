@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Читать — Тихая гавань</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;--terra:#a0614a;--ink:#2a2420;--green:#1e4d2b}
+html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:#1a1a1a;color:var(--text)}
+
+/* TOP BAR */
+.topbar{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(26,26,26,0.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;padding:0 1.25rem;z-index:100;gap:1rem}
+.topbar-left{display:flex;align-items:center;gap:.75rem}
+.back-btn{color:rgba(255,255,255,0.6);text-decoration:none;font-size:.82rem;display:flex;align-items:center;gap:.3rem;transition:color .2s}
+.back-btn:hover{color:white}
+.book-title-bar{font-family:'Playfair Display',serif;font-size:.9rem;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
+.topbar-right{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+.tb-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);padding:.35rem .7rem;border-radius:6px;font-family:'Jost',sans-serif;font-size:.75rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tb-btn:hover{background:rgba(255,255,255,0.15);color:white}
+.tb-btn.active{background:rgba(74,124,142,0.3);border-color:var(--sea);color:var(--sea)}
+.page-counter{color:rgba(255,255,255,0.5);font-size:.78rem;min-width:80px;text-align:center}
+
+/* MAIN AREA */
+.reader-wrap{position:fixed;top:52px;left:0;right:0;bottom:60px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.canvas-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+#pdf-canvas{max-width:100%;max-height:100%;box-shadow:0 8px 40px rgba(0,0,0,0.6);display:block}
+
+/* NAV ARROWS */
+.nav-arrow{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:50%;color:rgba(255,255,255,0.6);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:50}
+.nav-arrow:hover{background:rgba(255,255,255,0.2);color:white}
+.nav-arrow:disabled{opacity:.2;cursor:default}
+.nav-prev{left:1rem}
+.nav-next{right:1rem}
+
+/* BOTTOM BAR */
+.bottombar{position:fixed;bottom:0;left:0;right:0;height:60px;background:rgba(26,26,26,0.95);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;gap:1rem;padding:0 1.25rem}
+.progress-wrap{flex:1;max-width:400px;position:relative}
+.progress-track{height:4px;background:rgba(255,255,255,0.1);border-radius:2px;cursor:pointer;position:relative}
+.progress-fill{height:100%;background:var(--sea);border-radius:2px;transition:width .3s;pointer-events:none}
+.progress-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;background:var(--sea);border-radius:50%;cursor:grab;transition:left .3s}
+.progress-label{text-align:center;font-size:.7rem;color:rgba(255,255,255,0.4);margin-top:.3rem}
+
+/* BOOKMARK */
+.bookmark-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(46,125,50,0.9);color:white;padding:.5rem 1.25rem;border-radius:20px;font-size:.8rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200}
+.bookmark-toast.show{opacity:1}
+
+/* LOADING */
+.loading-screen{position:fixed;inset:0;background:#1a1a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;z-index:300}
+.loading-spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--sea);border-radius:50%;animation:spin .8s linear infinite}
+.loading-text{color:rgba(255,255,255,0.5);font-size:.85rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ERROR */
+.error-screen{position:fixed;inset:0;background:#1a1a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;text-align:center;padding:2rem}
+.error-screen h2{color:white;font-family:'Playfair Display',serif}
+.error-screen p{color:rgba(255,255,255,0.5);font-size:.85rem;line-height:1.6}
+
+/* REPORT MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.show{display:flex}
+.modal{background:#2a2a2a;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:2rem;max-width:480px;width:100%}
+.modal h3{color:white;font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:.5rem}
+.modal p{font-size:.82rem;color:rgba(255,255,255,0.5);margin-bottom:1.25rem;line-height:1.6}
+.modal select,.modal textarea,.modal input{width:100%;padding:.7rem .9rem;border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-family:'Jost',sans-serif;font-size:.85rem;color:white;background:rgba(255,255,255,0.05);outline:none;margin-bottom:.75rem}
+.modal select option{background:#2a2a2a}
+.modal textarea{min-height:80px;resize:vertical}
+.modal-actions{display:flex;gap:.75rem;justify-content:flex-end}
+.btn-cancel{background:transparent;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.1);padding:.5rem 1rem;border-radius:7px;cursor:pointer;font-family:'Jost',sans-serif;font-size:.82rem}
+.btn-report-send{background:var(--terra);color:white;border:none;padding:.5rem 1rem;border-radius:7px;cursor:pointer;font-family:'Jost',sans-serif;font-size:.82rem;font-weight:600}
+
+@media(max-width:600px){
+  .book-title-bar{display:none}
+  .nav-arrow{width:36px;height:36px;font-size:1rem}
+}
+</style>
+</head>
+<body>
+
+<div class="loading-screen" id="loading-screen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Загрузка книги...</div>
+</div>
+
+<div class="topbar" id="topbar" style="display:none">
+  <div class="topbar-left">
+    <a href="#" class="back-btn" id="back-btn">← Книга</a>
+    <span class="book-title-bar" id="title-bar">—</span>
+  </div>
+  <div class="topbar-right">
+    <span class="page-counter" id="page-counter">— / —</span>
+    <button class="tb-btn" onclick="changeFontSize(-1)">A−</button>
+    <button class="tb-btn" onclick="changeFontSize(1)">A+</button>
+    <button class="tb-btn" id="bookmark-btn" onclick="saveBookmark()">🔖 Закладка</button>
+    <button class="tb-btn" onclick="openModal()">⚠️ Нарушение</button>
+  </div>
+</div>
+
+<div class="reader-wrap" id="reader-wrap" style="display:none">
+  <div class="canvas-wrap">
+    <canvas id="pdf-canvas"></canvas>
+  </div>
+</div>
+
+<button class="nav-arrow nav-prev" id="btn-prev" onclick="changePage(-1)" disabled>‹</button>
+<button class="nav-arrow nav-next" id="btn-next" onclick="changePage(1)" disabled>›</button>
+
+<div class="bottombar" id="bottombar" style="display:none">
+  <div class="progress-wrap">
+    <div class="progress-track" id="progress-track" onclick="onProgressClick(event)">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      <div class="progress-thumb" id="progress-thumb" style="left:0%"></div>
+    </div>
+    <div class="progress-label" id="progress-label">Страница 1</div>
+  </div>
+</div>
+
+<div class="bookmark-toast" id="bookmark-toast">🔖 Закладка сохранена</div>
+
+<!-- REPORT MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3>⚠️ Сообщить о нарушении</h3>
+    <p>Если вы обнаружили контент, нарушающий правила, сообщите нам. Жалоба рассматривается в течение 3 рабочих дней.</p>
+    <select id="report-type">
+      <option value="">Выберите тип нарушения...</option>
+      <option value="obscene">Нецензурная лексика</option>
+      <option value="violence">Насилие и жестокость</option>
+      <option value="adult">Порнографический контент</option>
+      <option value="hate">Разжигание ненависти</option>
+      <option value="copyright">Нарушение авторских прав</option>
+      <option value="other">Другое</option>
+    </select>
+    <textarea id="report-text" placeholder="Опишите нарушение..."></textarea>
+    <input type="email" id="report-email" placeholder="Ваш email (необязательно)"/>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="btn-report-send" onclick="sendReport()">Отправить</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+var bookId = window.location.pathname.replace('/read/', '');
+var pdfDoc = null;
+var currentPage = 1;
+var totalPages = 0;
+var scale = 1.4;
+var rendering = false;
+var STORAGE_URL = 'https://nclltofdkjiuneqzemhd.supabase.co/storage/v1/object/public/books/';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+async function init() {
+  try {
+    // Load book metadata
+    var r = await fetch('/api/book?id=' + bookId);
+    if (!r.ok) throw new Error('Book not found');
+    var book = await r.json();
+
+    if (!book.file_path) throw new Error('Файл книги недоступен');
+
+    document.getElementById('title-bar').textContent = book.title;
+    document.getElementById('back-btn').href = '/book/' + bookId;
+    document.title = book.title + ' — Читать';
+
+    // Restore bookmark
+    var saved = localStorage.getItem('bookmark_' + bookId);
+    if (saved) currentPage = parseInt(saved) || 1;
+
+    // Load PDF
+    var pdfUrl = STORAGE_URL + book.file_path;
+    var loadingTask = pdfjsLib.getDocument(pdfUrl);
+    pdfDoc = await loadingTask.promise;
+    totalPages = pdfDoc.numPages;
+
+    // Show UI
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('topbar').style.display = 'flex';
+    document.getElementById('reader-wrap').style.display = 'flex';
+    document.getElementById('bottombar').style.display = 'flex';
+    document.getElementById('btn-prev').style.display = 'flex';
+    document.getElementById('btn-next').style.display = 'flex';
+
+    await renderPage(currentPage);
+  } catch(e) {
+    document.getElementById('loading-screen').innerHTML =
+      '<div class="error-screen"><h2>Ошибка загрузки</h2><p>'+e.message+'</p><a href="/library" style="color:var(--sea);text-decoration:none;margin-top:.5rem">← В библиотеку</a></div>';
+  }
+}
+
+async function renderPage(n) {
+  if (rendering) return;
+  rendering = true;
+
+  var page = await pdfDoc.getPage(n);
+  var canvas = document.getElementById('pdf-canvas');
+  var ctx = canvas.getContext('2d');
+
+  // Fit to screen
+  var wrap = document.getElementById('reader-wrap');
+  var maxW = wrap.clientWidth - 80;
+  var maxH = wrap.clientHeight - 20;
+  var viewport = page.getViewport({scale: 1});
+  var scaleW = maxW / viewport.width;
+  var scaleH = maxH / viewport.height;
+  scale = Math.min(scaleW, scaleH) * window.devicePixelRatio;
+
+  var scaledViewport = page.getViewport({scale: scale});
+  canvas.width = scaledViewport.width;
+  canvas.height = scaledViewport.height;
+  canvas.style.width = (scaledViewport.width / window.devicePixelRatio) + 'px';
+  canvas.style.height = (scaledViewport.height / window.devicePixelRatio) + 'px';
+
+  await page.render({canvasContext: ctx, viewport: scaledViewport}).promise;
+
+  currentPage = n;
+  rendering = false;
+  updateUI();
+}
+
+function updateUI() {
+  document.getElementById('page-counter').textContent = currentPage + ' / ' + totalPages;
+  document.getElementById('progress-label').textContent = 'Страница ' + currentPage + ' из ' + totalPages;
+  var pct = totalPages > 1 ? ((currentPage - 1) / (totalPages - 1) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-thumb').style.left = pct + '%';
+  document.getElementById('btn-prev').disabled = currentPage <= 1;
+  document.getElementById('btn-next').disabled = currentPage >= totalPages;
+}
+
+function changePage(d) {
+  var n = currentPage + d;
+  if (n < 1 || n > totalPages) return;
+  renderPage(n);
+}
+
+function onProgressClick(e) {
+  var track = document.getElementById('progress-track');
+  var rect = track.getBoundingClientRect();
+  var pct = (e.clientX - rect.left) / rect.width;
+  var n = Math.round(pct * (totalPages - 1)) + 1;
+  n = Math.max(1, Math.min(totalPages, n));
+  renderPage(n);
+}
+
+function saveBookmark() {
+  localStorage.setItem('bookmark_' + bookId, currentPage);
+  var toast = document.getElementById('bookmark-toast');
+  toast.classList.add('show');
+  setTimeout(function(){ toast.classList.remove('show'); }, 2000);
+}
+
+function changeFontSize(d) {
+  // For PDF: zoom in/out
+  scale = Math.max(0.5, Math.min(3, scale + d * 0.2 * window.devicePixelRatio));
+  var canvas = document.getElementById('pdf-canvas');
+  if (pdfDoc) renderPage(currentPage);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changePage(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changePage(-1);
+  if (e.key === 'b' || e.key === 'B') saveBookmark();
+});
+
+// Touch swipe
+var touchX = 0;
+document.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; });
+document.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 50) changePage(dx < 0 ? 1 : -1);
+});
+
+function openModal(){ document.getElementById('modal-overlay').classList.add('show'); }
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('show'); }
+
+async function sendReport(){
+  var type = document.getElementById('report-type').value;
+  if(!type){ alert('Выберите тип нарушения.'); return; }
+  await fetch('/api/report', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({book_id:bookId, type:type, text:document.getElementById('report-text').value, email:document.getElementById('report-email').value})
+  });
+  closeModal();
+  alert('Жалоба отправлена. Спасибо!');
+}
+
+window.changePage = changePage;
+window.changeFontSize = changeFontSize;
+window.saveBookmark = saveBookmark;
+window.onProgressClick = onProgressClick;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.sendReport = sendReport;
+
+init();
+</script>
+</body>
+</html>
