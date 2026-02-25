@@ -1,0 +1,32 @@
+{
+  "rewrites": [
+    { "source": "/crosswords", "destination": "/crosswords.html" },
+    { "source": "/ask", "destination": "/ask.html" },
+    { "source": "/games", "destination": "/spider.html" },
+    { "source": "/reading", "destination": "/reading.html" },
+    { "source": "/publisher", "destination": "/publisher.html" },
+    { "source": "/library", "destination": "/library.html" },
+    { "source": "/videos", "destination": "/videos.html" },
+    { "source": "/news", "destination": "/news.html" },
+    { "source": "/admin-news", "destination": "/admin-news.html" },
+    { "source": "/support", "destination": "/support.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/book/:id", "destination": "/book.html" },
+    { "source": "/read/:id", "destination": "/read.html" }
+  ],
+  "crons": [
+    {
+      "path": "/api/news-fetch",
+      "schedule": "0 0 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    }
+  ]
+}
