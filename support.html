@@ -27,8 +27,6 @@ nav ul{list-style:none;display:flex;gap:.25rem}
 nav a{display:block;padding:.45rem .85rem;text-decoration:none;color:var(--text-light);font-size:.88rem;border-radius:6px;transition:color .2s,background .2s}
 nav a:hover{color:var(--sea);background:var(--sea-pale)}
 nav a.active{color:var(--sea);font-weight:600}
-
-/* BURGER */
 .burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
 .burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}
 
@@ -42,26 +40,38 @@ main{flex:1;padding:3rem 2rem 4rem}
 .page-title h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.4rem);color:var(--ink);line-height:1.2}
 .page-title p{font-size:.92rem;color:var(--text-light);margin-top:.6rem;line-height:1.6}
 
-/* SECTION HEADINGS */
-.section-heading{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--ink);margin-bottom:1.25rem;display:flex;align-items:center;gap:.6rem}
-.section-heading .icon{font-size:1.1rem}
+/* TILE CARD */
+.tile{background:var(--white);border:1px solid var(--sand-dark);border-radius:14px;padding:1.5rem 2rem;display:flex;align-items:center;gap:1.25rem;transition:box-shadow .25s,transform .25s;margin-bottom:.75rem}
+.tile.clickable{cursor:pointer}
+.tile.clickable:hover{box-shadow:0 6px 24px rgba(74,124,142,0.12);transform:translateY(-2px)}
+.tile-icon{font-size:2rem;flex-shrink:0}
+.tile-body{flex:1}
+.tile-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ink);margin-bottom:.2rem}
+.tile-desc{font-size:.82rem;color:var(--text-light);line-height:1.5}
+.tile-chevron{font-size:.8rem;color:var(--stone);transition:transform .3s;flex-shrink:0}
+.tile.open .tile-chevron{transform:rotate(180deg)}
+
+/* EXPANDED PANEL */
+.panel{max-height:0;overflow:hidden;transition:max-height .5s ease;margin-bottom:.75rem}
+.panel.open{max-height:4000px}
+.panel-inner{padding:.75rem 0 0}
 
 /* FAQ ACCORDION */
-.faq-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:3rem}
+.faq-list{display:flex;flex-direction:column;gap:.6rem}
 .faq-item{background:var(--white);border:1px solid var(--sand-dark);border-radius:10px;overflow:hidden;transition:box-shadow .2s}
 .faq-item:hover{box-shadow:0 2px 12px rgba(74,124,142,0.08)}
 .faq-q{padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;cursor:pointer;font-size:.92rem;font-weight:500;color:var(--text);transition:color .2s;user-select:none}
 .faq-q:hover{color:var(--sea)}
 .faq-arrow{font-size:.75rem;color:var(--stone);transition:transform .3s;flex-shrink:0}
 .faq-item.open .faq-arrow{transform:rotate(180deg)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
 .faq-item.open .faq-a{max-height:500px}
 .faq-a-inner{padding:0 1.25rem 1.1rem;font-size:.86rem;color:var(--text-light);line-height:1.7}
 .faq-a-inner a{color:var(--sea);text-decoration:none}
 .faq-a-inner a:hover{text-decoration:underline}
 
 /* CONTACT FORM */
-.form-card{background:var(--white);border:1px solid var(--sand-dark);border-radius:12px;padding:2rem;margin-bottom:2rem}
+.form-card{background:var(--white);border:1px solid var(--sand-dark);border-radius:12px;padding:2rem}
 .field{margin-bottom:1.1rem}
 .field label{display:block;font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:.4rem}
 .field label .req{color:var(--terra);font-weight:400}
@@ -70,25 +80,21 @@ main{flex:1;padding:3rem 2rem 4rem}
 .field input::placeholder,.field textarea::placeholder{color:var(--stone)}
 .field textarea{resize:vertical;min-height:120px;line-height:1.6}
 .field-hint{font-size:.72rem;color:var(--stone);margin-top:.3rem}
-
 .btn-send{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.6rem;background:var(--sea);color:white;border:none;border-radius:8px;font-family:'Jost',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s,transform .1s}
 .btn-send:hover{background:var(--sea-light)}
 .btn-send:active{transform:scale(.97)}
 .btn-send:disabled{background:var(--stone);cursor:not-allowed;transform:none}
 
+/* SOCIAL ICONS */
+.social-icons{display:flex;gap:1rem;margin-top:.75rem;flex-wrap:wrap}
+.social-link{display:flex;align-items:center;gap:.5rem;padding:.45rem .9rem;border-radius:8px;background:var(--sand);border:1px solid var(--sand-dark);text-decoration:none;color:var(--text);font-size:.82rem;transition:background .2s,transform .2s}
+.social-link:hover{background:var(--sea-pale);transform:scale(1.03)}
+.social-link svg{width:20px;height:20px;flex-shrink:0}
+
 /* TOAST */
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:white;padding:.85rem 1.5rem;border-radius:10px;font-size:.88rem;font-weight:400;z-index:200;transition:transform .4s ease;pointer-events:none;text-align:center;max-width:90vw}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast.error{background:var(--terra)}
-
-/* CONTACT INFO */
-.contact-info{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:3rem}
-.contact-card{flex:1;min-width:220px;background:var(--white);border:1px solid var(--sand-dark);border-radius:10px;padding:1.25rem;text-align:center}
-.contact-card .ci-icon{font-size:1.4rem;margin-bottom:.5rem}
-.contact-card .ci-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--stone);margin-bottom:.3rem}
-.contact-card .ci-value{font-size:.88rem;color:var(--text)}
-.contact-card a{color:var(--sea);text-decoration:none}
-.contact-card a:hover{text-decoration:underline}
 
 /* FOOTER */
 footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5rem 2rem;margin-top:auto}
@@ -105,8 +111,8 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
   nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}
   nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
   main{padding:2rem 1rem 3rem}
+  .tile{padding:1.25rem 1rem}
   .form-card{padding:1.25rem}
-  .contact-info{flex-direction:column}
   .fi{flex-direction:column;align-items:flex-start}
 }
 </style>
@@ -134,123 +140,154 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 <main>
   <div class="container">
 
-    <!-- PAGE TITLE -->
     <div class="page-title">
       <div class="page-eyebrow">Поддержка</div>
       <h1>Чем можем помочь?</h1>
-      <p>Посмотрите частые вопросы ниже или напишите нам — мы ответим в течение 1–2 рабочих дней.</p>
+      <p>Выберите нужный раздел — мы ответим в течение 1–2 рабочих дней.</p>
     </div>
 
-    <!-- FAQ -->
-    <h2 class="section-heading"><span class="icon">💡</span> Частые вопросы</h2>
-
-    <div class="faq-list" id="faq-list">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Нужна ли регистрация для пользования сайтом?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">Нет, регистрация не требуется. Все разделы — кроссворды, чат с AI, библиотека, видео и игры — доступны без создания аккаунта.</div></div>
+    <!-- TILE 1: FAQ -->
+    <div class="tile clickable" id="tile-faq" onclick="togglePanel('faq')">
+      <div class="tile-icon">&#128161;</div>
+      <div class="tile-body">
+        <div class="tile-title">Частые вопросы</div>
+        <div class="tile-desc">Ответы на самые популярные вопросы о сайте</div>
       </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Как опубликовать свою книгу?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">Перейдите в раздел <a href="/reading">Чтиво</a> и нажмите «Опубликовать произведение». Загрузите книгу в формате PDF (до 20 МБ), заполните данные — и всё! На указанный email придёт подтверждение публикации.</div></div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Как удалить свою книгу из библиотеки?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">Напишите нам через форму ниже или на <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a> — укажите название книги и email, который вы использовали при публикации. Книга будет удалена в течение 5 рабочих дней.</div></div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Кто отвечает в разделе «Задай вопрос»?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">Отвечает искусственный интеллект на базе Claude AI. Он может помочь с самыми разными вопросами — о здоровье, кулинарии, технике, путешествиях и многом другом. Ваши вопросы не сохраняются и не передаются третьим лицам.</div></div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Сайт бесплатный?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">Да, «Тихая гавань» полностью бесплатна. Здесь нет рекламы, подписок и скрытых платежей. Проект создан с любовью для русскоязычной аудитории за рубежом.</div></div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Я нашёл(а) ошибку или нарушение. Куда сообщить?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">На странице каждой книги есть кнопка «✉️ Письмо о нарушении». Вы также можете написать нам через форму ниже или на <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>. Каждое обращение рассматривается в течение 3 рабочих дней.</div></div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Как сохранить прогресс в кроссворде или игре?</span>
-          <span class="faq-arrow">▼</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">Прогресс автоматически сохраняется в вашем браузере. Если вы очистите данные браузера или зайдёте с другого устройства, прогресс, к сожалению, не сохранится.</div></div>
-      </div>
+      <div class="tile-chevron">&#9660;</div>
     </div>
 
-    <!-- CONTACT INFO CARDS -->
-    <div class="contact-info">
-      <div class="contact-card">
-        <div class="ci-icon">✉️</div>
-        <div class="ci-label">Электронная почта</div>
-        <div class="ci-value"><a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a></div>
-      </div>
-      <div class="contact-card">
-        <div class="ci-icon">⏱️</div>
-        <div class="ci-label">Время ответа</div>
-        <div class="ci-value">1–2 рабочих дня</div>
-      </div>
-      <div class="contact-card">
-        <div class="ci-icon">🌐</div>
-        <div class="ci-label">Язык поддержки</div>
-        <div class="ci-value">Русский / English</div>
+    <!-- FAQ PANEL -->
+    <div class="panel" id="panel-faq">
+      <div class="panel-inner">
+        <div class="faq-list">
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Нужна ли регистрация для пользования сайтом?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">Нет, регистрация не требуется. Все разделы — кроссворды, чат с AI, библиотека, видео и игры — доступны без создания аккаунта.</div></div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Сайт бесплатный?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">Да, «Тихая гавань» для Вас полностью бесплатна. Здесь нет подписок и скрытых платежей. Ненавязчивая баннерная реклама позволяет нам поддерживать обслуживание сайта.</div></div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Как опубликовать свою книгу?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">Перейдите в раздел <a href="/reading">«Чтиво»</a>, выберите «Издательство» и следуйте инструкциям в форме. Загрузите книгу в формате PDF (до 20 МБ), заполните данные — и на указанный email придёт подтверждение публикации.</div></div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Как удалить свою книгу из библиотеки?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">Напишите нам через форму на этой странице или на <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a> — укажите название книги и email, который вы использовали при публикации. Книга будет удалена в течение 5 рабочих дней.</div></div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Кому будет принадлежать авторское право на мою книгу после её публикации?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">Все авторские права остаются у вас. Публикация на «Тихой гавани» не передаёт нам никаких прав на ваше произведение. Дата загрузки фиксируется в базе данных, что может служить дополнительным подтверждением вашего авторства.</div></div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Кто отвечает в разделе «Задай вопрос»?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">Отвечает искусственный интеллект на базе Claude AI. Он может помочь с вопросами о здоровье, кулинарии, технике, путешествиях и многом другом. Ваши вопросы не сохраняются и не передаются третьим лицам.</div></div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Как сохранить прогресс в кроссворде или игре?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">Прогресс автоматически сохраняется в вашем браузере. Если вы очистите данные браузера или зайдёте с другого устройства, прогресс не сохранится.</div></div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Я нашёл ошибку на сайте. Куда сообщить?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">Напишите нам через форму на этой странице — выберите тему «Ошибка на сайте» и опишите проблему. Мы постараемся исправить как можно скорее.</div></div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Как сообщить о нарушении в книге?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">На странице каждой книги есть кнопка «Письмо о нарушении». Каждое обращение рассматривается в течение 3 рабочих дней.</div></div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)"><span>Можно ли предложить идею для сайта?</span><span class="faq-arrow">&#9660;</span></div>
+            <div class="faq-a"><div class="faq-a-inner">Конечно! Напишите нам через форму — выберите тему «Идея или пожелание». Мы читаем все обращения и рады обратной связи.</div></div>
+          </div>
+
+        </div>
       </div>
     </div>
 
-    <!-- CONTACT FORM -->
-    <h2 class="section-heading"><span class="icon">✏️</span> Написать нам</h2>
+    <!-- TILE 2: CONTACT -->
+    <div class="tile clickable" id="tile-form" onclick="togglePanel('form')">
+      <div class="tile-icon">&#9997;&#65039;</div>
+      <div class="tile-body">
+        <div class="tile-title">Напишите нам</div>
+        <div class="tile-desc">Вопрос, пожелание или сообщение об ошибке</div>
+      </div>
+      <div class="tile-chevron">&#9660;</div>
+    </div>
 
-    <div class="form-card">
-      <div class="field">
-        <label>Ваше имя <span class="req">*</span></label>
-        <input type="text" id="s-name" placeholder="Как к вам обращаться"/>
+    <!-- FORM PANEL -->
+    <div class="panel" id="panel-form">
+      <div class="panel-inner">
+        <div class="form-card">
+          <div class="field">
+            <label>Ваше имя <span class="req">*</span></label>
+            <input type="text" id="s-name" placeholder="Как к вам обращаться"/>
+          </div>
+          <div class="field">
+            <label>Email <span class="req">*</span></label>
+            <input type="email" id="s-email" placeholder="your@email.com"/>
+            <div class="field-hint">На этот адрес мы отправим ответ</div>
+          </div>
+          <div class="field">
+            <label>Тема</label>
+            <select id="s-topic">
+              <option value="question">Общий вопрос</option>
+              <option value="bug">Ошибка на сайте</option>
+              <option value="book">Вопрос о публикации / удалении книги</option>
+              <option value="idea">Идея или пожелание</option>
+              <option value="other">Другое</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Сообщение <span class="req">*</span></label>
+            <textarea id="s-message" placeholder="Опишите ваш вопрос или предложение..."></textarea>
+          </div>
+          <button class="btn-send" id="s-btn" onclick="sendSupport()">
+            <span id="s-btn-text">Отправить</span>
+          </button>
+        </div>
       </div>
-      <div class="field">
-        <label>Email <span class="req">*</span></label>
-        <input type="email" id="s-email" placeholder="your@email.com"/>
-        <div class="field-hint">На этот адрес мы отправим ответ</div>
+    </div>
+
+    <!-- TILE 3: SOCIAL (not clickable, no panel) -->
+    <div class="tile">
+      <div class="tile-icon">&#127760;</div>
+      <div class="tile-body">
+        <div class="tile-title">Мы в соцсетях</div>
+        <div class="tile-desc">Следите за новостями и обновлениями</div>
+        <div class="social-icons">
+          <!-- Telegram: замените href на ваш канал -->
+          <a href="Ваш канал" target="_blank" rel="noopener" class="social-link" aria-label="Telegram">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.28-.02-.12.03-2.02 1.28-5.69 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.4-.27-2.09-.49-.84-.28-1.51-.42-1.45-.89.03-.25.38-.5 1.04-.76 4.09-1.78 6.81-2.96 8.17-3.52 3.89-1.62 4.7-1.9 5.23-1.91.12 0 .37.03.54.17.14.12.18.28.2.45-.01.06.01.24 0 .37z" fill="#4a7c8e"/></svg>
+            Telegram
+          </a>
+          <!-- YouTube: замените href на ваш канал -->
+          <a href="Ваш канал" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M21.58 7.19a2.51 2.51 0 00-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42A2.51 2.51 0 002.42 7.19 26.4 26.4 0 002 12a26.4 26.4 0 00.42 4.81 2.51 2.51 0 001.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42a2.51 2.51 0 001.77-1.77A26.4 26.4 0 0022 12a26.4 26.4 0 00-.42-4.81zM10 15V9l5.2 3L10 15z" fill="#4a7c8e"/></svg>
+            YouTube
+          </a>
+          <!-- Instagram: замените href на ваш канал -->
+          <a href="Ваш канал" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2.16c2.67 0 2.99.01 4.04.06 2.43.11 3.56 1.26 3.67 3.67.05 1.05.06 1.37.06 4.04 0 2.67-.01 2.99-.06 4.04-.11 2.4-1.23 3.56-3.67 3.67-1.05.05-1.37.06-4.04.06-2.67 0-2.99-.01-4.04-.06-2.44-.11-3.56-1.27-3.67-3.67-.05-1.05-.06-1.37-.06-4.04 0-2.67.01-2.99.06-4.04C4.4 3.48 5.53 2.33 7.96 2.22 9.01 2.17 9.33 2.16 12 2.16zM12 0C9.28 0 8.94.01 7.88.06 4.46.22 2.22 2.46.06 5.88.01 6.94 0 7.28 0 12s.01 5.06.06 6.12c.16 3.42 2.4 5.66 5.82 5.82C6.94 23.99 7.28 24 12 24s5.06-.01 6.12-.06c3.41-.16 5.67-2.4 5.82-5.82.05-1.06.06-1.4.06-6.12s-.01-5.06-.06-6.12C23.78 2.47 21.54.22 18.12.06 17.06.01 16.72 0 12 0zm0 5.84A6.16 6.16 0 1018.16 12 6.16 6.16 0 0012 5.84zM12 16a4 4 0 110-8 4 4 0 010 8zm6.4-10.85a1.44 1.44 0 100 2.88 1.44 1.44 0 000-2.88z" fill="#4a7c8e"/></svg>
+            Instagram
+          </a>
+          <!-- Facebook: замените href на ваш канал -->
+          <a href="Ваш канал" target="_blank" rel="noopener" class="social-link" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.13 8.44 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99C18.34 21.13 22 16.99 22 12z" fill="#4a7c8e"/></svg>
+            Facebook
+          </a>
+        </div>
       </div>
-      <div class="field">
-        <label>Тема</label>
-        <select id="s-topic">
-          <option value="question">Общий вопрос</option>
-          <option value="bug">Ошибка на сайте</option>
-          <option value="book">Вопрос о публикации / удалении книги</option>
-          <option value="idea">Идея или пожелание</option>
-          <option value="other">Другое</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Сообщение <span class="req">*</span></label>
-        <textarea id="s-message" placeholder="Опишите ваш вопрос или предложение..."></textarea>
-      </div>
-      <button class="btn-send" id="s-btn" onclick="sendSupport()">
-        <span id="s-btn-text">Отправить</span>
-      </button>
     </div>
 
   </div>
@@ -262,13 +299,32 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 <!-- FOOTER -->
 <footer>
   <div class="fi">
-    <span>© 2025 Тихая гавань</span>
+    <span>&copy; 2025 Тихая гавань</span>
     <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
     <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
   </div>
 </footer>
 
 <script>
+/* Toggle panels */
+function togglePanel(id) {
+  var panel = document.getElementById('panel-' + id);
+  var tile = document.getElementById('tile-' + id);
+  var wasOpen = panel.classList.contains('open');
+
+  /* Close all panels */
+  var panels = document.querySelectorAll('.panel');
+  var tiles = document.querySelectorAll('.tile.clickable');
+  for (var i = 0; i < panels.length; i++) panels[i].classList.remove('open');
+  for (var i = 0; i < tiles.length; i++) tiles[i].classList.remove('open');
+
+  /* Toggle clicked */
+  if (!wasOpen) {
+    panel.classList.add('open');
+    tile.classList.add('open');
+  }
+}
+
 /* FAQ Accordion */
 function toggleFaq(el) {
   var item = el.parentElement;
@@ -308,11 +364,11 @@ function sendSupport() {
     body: JSON.stringify({ name: name, email: email, topic: topic, message: message })
   })
   .then(function(r) {
-    if (!r.ok) throw new Error('Ошибка сервера');
+    if (!r.ok) throw new Error('err');
     return r.json();
   })
   .then(function() {
-    showToast('✓ Спасибо! Ваше сообщение отправлено. Мы ответим в ближайшее время.');
+    showToast('Спасибо! Ваше сообщение отправлено. Мы ответим в ближайшее время.');
     document.getElementById('s-name').value = '';
     document.getElementById('s-email').value = '';
     document.getElementById('s-message').value = '';
