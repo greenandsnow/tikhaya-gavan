@@ -8,6 +8,7 @@
     { "source": "/library", "destination": "/library.html" },
     { "source": "/videos", "destination": "/videos.html" },
     { "source": "/news", "destination": "/news.html" },
+    { "source": "/admin-news", "destination": "/admin-news.html" },
     { "source": "/support", "destination": "/support.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/terms", "destination": "/terms.html" },
@@ -17,7 +18,7 @@
   "crons": [
     {
       "path": "/api/news-fetch",
-      "schedule": "0 7 * * *"
+      "schedule": "0 0 * * *"
     }
   ],
   "headers": [
