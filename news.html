@@ -125,15 +125,27 @@
     @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
     @media (max-width: 720px) { .news-grid { grid-template-columns: 1fr; } .hi { gap: 1rem; } nav ul { gap: 0.15rem; } nav a { padding: .35rem .5rem; font-size: .78rem; } .hero h1 { font-size: 1.7rem; } .modal { margin: 1rem; max-height: 90vh; } .legend { flex-wrap: wrap; gap: .75rem; } .modal-body { padding: 1rem; } }
-    @media (max-width: 500px) { nav { display: none; } .hero { padding: 2.5rem 1.25rem 1.5rem; } .news-container { padding: .75rem 1rem 2rem; } }
-  </style>
+    @media (max-width: 500px) { .hero { padding: 2.5rem 1.25rem 1.5rem; } .news-container { padding: .75rem 1rem 2rem; } }
+  
+/* BURGER */
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
+@media(max-width:768px){
+.burger{display:flex}
+nav{display:none;position:absolute;top:72px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}
+nav.open{display:block}
+nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}
+nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
+}
+</style>
 </head>
 <body>
 
 <header>
   <div class="hi">
     <a href="/" class="logo"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></a>
-    <nav><ul>
+    <button class="burger" id="burger" aria-label="Меню" onclick="document.getElementById('main-nav').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <nav id="main-nav"><ul>
       <li><a href="/crosswords">Кроссворды</a></li>
       <li><a href="/ask">Задай вопрос</a></li>
       <li><a href="/reading">Чтиво</a></li>
