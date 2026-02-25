@@ -7,16 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  /* ── BURGER ── */
-    .burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
-    .burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
-    @media(max-width:768px){
-      .burger{display:flex}
-      nav{display:none;position:absolute;top:72px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}
-      nav.open{display:block}
-      nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}
-      nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
-    }
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -408,6 +398,17 @@
     .footer-email { font-size: 0.78rem; color: var(--stone); }
     .footer-email a { color: var(--sea); text-decoration: none; }
 
+    /* ── BURGER ── */
+    .burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+    .burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
+    @media(max-width:768px){
+      .burger{display:flex}
+      nav{display:none;position:absolute;top:72px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}
+      nav.open{display:block}
+      nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}
+      nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
+    }
+
     @media (max-width: 900px) {
       .game-area { grid-template-columns: 1fr; }
       .clues-panel { grid-template-columns: 1fr; }
@@ -564,11 +565,11 @@
       <a href="/privacy">Политика конфиденциальности</a>
       <a href="/terms">Условия</a>
     </div>
-    <span class="footer-email">Написать нам: <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a></span>
+    <span class="footer-email">Написать нам: <a href="/cdn-cgi/l/email-protection#5f2c2a2f2f302d2b1f382d3a3a313e313b2c3130282c2b2a3b3630713c3032"><span class="__cf_email__" data-cfemail="e695939696899492a6819483838887888295888991959293828f89c885898b">[email&#160;protected]</span></a></span>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══════════════════════════════════════════════
 // PUZZLE DATA — replace with fetch() from server
 // ═══════════════════════════════════════════════
@@ -1099,13 +1100,4 @@ function toggleHowto() {
   toggle.textContent = open ? '▲ Скрыть' : '▼ Показать';
 }
 
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
-buildGrid();
-buildClueLists();
-updateWordCount();
-focusInput();
-</script>
-</body>
-</html>
+// ════════════════════════════════════════
