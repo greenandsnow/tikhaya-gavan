@@ -11,68 +11,107 @@ Wiki
 Security
 Insights
 Settings
-Commit 881807f
+Commit d959c7d
 greenandsnow
 greenandsnow
 authored
-41 minutes ago
+26 minutes ago
 ·
 ·
 Verified
 Add files via upload
 main
 1 parent 
-b90fce3
- commit 
 881807f
+ commit 
+d959c7d
 File tree
 
 support.html
 1 file changed
-+134
--236
++6
+-11
 lines changed
 
  
 ‎support.html‎
-+134
--236
-Lines changed: 134 additions & 236 deletions
++6
+-11
+Lines changed: 6 additions & 11 deletions
 Original file line number	Diff line number	Diff line change
-@@ -7,101 +7,106 @@
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa}
-html{font-size:clamp(15px,1.1vw,18px);scroll-behavior:smooth}
-body{font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+@@ -153,38 +153,38 @@
+    <p>Здесь вы найдёте ответы на частые вопросы, а если не нашли — напишите нам.</p>
+  </div>
 
-/* ── HEADER ── */
-header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(74,124,142,0.06)}
-.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:2rem}
-.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.1}
-.logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
-.logo-tag{font-size:.65rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
-nav ul{list-style:none;display:flex;gap:.25rem}
-nav a{display:block;padding:.45rem .85rem;text-decoration:none;color:var(--text-light);font-size:.88rem;border-radius:6px;transition:color .2s,background .2s}
-nav a:hover{color:var(--sea);background:var(--sea-pale)}
-nav a.active{color:var(--sea);font-weight:600}
-.burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
-.burger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+  <!-- ═══ BLOCK 1: FAQ ═══ -->
+  <div class="block" id="block-faq">
+    <div class="block-header" onclick="toggleBlock('block-faq')">
+      <div class="block-icon faq-ic">❓</div>
+      <div class="block-info">
+        <div class="block-title">Частые вопросы</div>
+        <div class="block-desc">10 ответов на популярные вопросы о сайте</div>
+      </div>
+      <svg class="block-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="block-body">
+      <div class="block-inner">
 
-/* ── MAIN ── */
-main{flex:1;max-width:860px;margin:0 auto;padding:2.5rem clamp(1rem,3vw,2rem) 4rem;width:100%}
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Что такое «Тихая гавань»?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Это бесплатный русскоязычный сайт для тех, кто ценит спокойный и вдумчивый досуг. Здесь собраны кроссворды, интересное чтиво, новости с четырёх точек зрения, игры и AI-помощник. Сайт создан для русскоязычной аудитории за пределами России, Украины и Беларуси — хотя, конечно, заходить может любой.</p></div></div>
 
-/* Hero */
-.support-hero{text-align:center;margin-bottom:3rem}
-.support-hero{text-align:center;margin-bottom:2.5rem}
-.support-hero h1{font-size:1.6rem;font-weight:600;color:var(--sea);margin-bottom:.4rem}
-.support-hero p{font-size:.92rem;color:var(--text-light);line-height:1.6}
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Нужна ли регистрация?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Нет, регистрация не нужна. Все разделы — кроссворды, чтение, новости, игры, AI-чат — доступны без создания аккаунта. Если вы хотите опубликовать книгу, понадобится только ваше имя и email.</p></div></div>
 
-/* ── QUICK LINKS ── */
-.quick-links{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:3rem}
-.ql-card{background:var(--white);border:1px solid var(--sand-dark);border-radius:12px;padding:1.25rem;text-align:center;text-decoration:none;color:var(--text);transition:all .2s;cursor:pointer}
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Кто отвечает в разделе «Задай вопрос»?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Отвечает искусственный интеллект — Claude AI от компании Anthropic. Он может помочь с общими вопросами о здоровье, кулинарии, путешествиях, технике и многом другом. Однако помните: это не врач и не юрист, а AI-помощник. Для серьёзных медицинских или правовых вопросов обращайтесь к специалистам.</p></div></div>
+
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Как опубликовать свою книгу?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Перейдите в раздел <a href="/reading">Чтиво</a> → «Опубликовать книгу». Вам нужен файл в формате PDF (до 20 МБ), имя автора и email. Книга проходит модерацию и появляется в библиотеке в течение 1–3 дней. Публикация бесплатная.</p></div></div>
+
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Откуда берутся новости? Это объективная информация?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Раздел «Новости» показывает одну тему глазами четырёх лагерей: Запад (BBC, DW), Украина (УНИАН), Россия (ТАСС), Китай (Синьхуа). Мы не даём оценок — вы видите, как одну и ту же тему освещают разные стороны, и делаете выводы сами. Темы подбираются автоматически и проходят ручную модерацию.</p></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Откуда берутся новости? Это объективная информация?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Раздел «Новости» показывает одну тему взглядом с четырёх разных углов: глазами западных СМИ (BBC, DW), украинских СМИ (УНИАН, Украинская Правда), российских официальных СМИ (ТАСС, РИА Новости) и китайских СМИ (Синьхуа). Мы не даём оценок — вы видите, как одну и ту же тему освещают разные стороны, и делаете выводы сами. Темы подбираются автоматически искусственным интеллектом — Claude AI от компании Anthropic. Новости не модерируются.</p></div></div>
+
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Сколько стоит пользование сайтом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Всё бесплатно. На сайте нет рекламы, подписок и платного контента. Проект создан как некоммерческая инициатива для русскоязычного сообщества за рубежом.</p></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Сколько стоит пользование сайтом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Для Вас всё бесплатно. Ненавязчивая реклама, которая помогает нам покрыть издержки на содержание сайта, не должна Вам мешать спокойно отдыхать в «Тихой Гавани». У нас также нет платных подписок и контента. Проект создан для тех, кто говорит на русском, как в странах проживания, так и за рубежом.</p></div></div>
+
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Мои данные в безопасности?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Мы не собираем персональные данные, не используем трекеры и не продаём информацию третьим лицам. Вопросы в AI-чате не сохраняются. Единственные данные, которые вы оставляете, — это обращения через форму обратной связи и информация при публикации книги.</p></div></div>
+
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Как сообщить о проблеме с книгой?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>На странице каждой книги есть кнопка «Сообщить о нарушении». Укажите тип проблемы — жалоба рассматривается в течение 3 рабочих дней. Также можно написать нам через блок «Написать нам».</p></div></div>
+
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Могу ли я предложить идею для сайта?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Конечно! Мы очень рады обратной связи. Откройте блок «Написать нам» и выберите тему «Предложение / идея». Мы читаем каждое письмо и стараемся учитывать пожелания читателей.</p></div></div>
+
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Кто стоит за этим проектом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>«Тихая гавань» — это независимый проект одного человека, живущего в Канаде. Сайт делается в свободное время с любовью к русскоязычному сообществу за рубежом. Лучшая помощь — рассказать о нём друзьям и знакомым.</p></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Кто стоит за этим проектом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>«Тихая гавань» — это независимый проект одного человека, живущего в Канаде. Сайт делается в свободное время с целью занять досуг простыми, но интересными вещами. Лучшая помощь проекту — рассказать о нём друзьям и знакомым.</p></div></div>
+
+      </div>
+    </div>
+@@ -262,11 +262,11 @@
+  <div class="fi">
+    <span>© 2025 Тихая гавань</span>
+    <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
+    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
+    <a href="/cdn-cgi/l/email-protection#ddaea8adadb2afa99dbaafb8b8b3bcb3b9aeb3b2aaaea9a8b9b4b2f3beb2b0"><span class="__cf_email__" data-cfemail="c8bbbdb8b8a7babc88afbaadada6a9a6acbba6a7bfbbbcbdaca1a7e6aba7a5">[email&#160;protected]</span></a>
+  </div>
+</footer>
+
+<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function toggleBlock(id) {
+  var block = document.getElementById(id);
+  var wasOpen = block.classList.contains('open');
+@@ -316,9 +316,4 @@
+  document.getElementById('form-fields').style.display = '';
+  document.getElementById('form-success').classList.remove('show');
+  var btn = document.getElementById('send-btn');
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M16 9l-6-6M16 9l-6 6M16 9H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Отправить';
+}
+</script>
+</body>
+</html>
+  btn.disabled = fals
+0 commit comments
+Comments
+0
+ (0)
+Comment
+You're not receiving notifications from this thread.
 .ql-card:hover{border-color:var(--sea-light);box-shadow:0 4px 16px rgba(74,124,142,0.1);transform:translateY(-2px)}
 .ql-icon{font-size:1.8rem;margin-bottom:.5rem}
 .ql-title{font-size:.88rem;font-weight:500;color:var(--sea);margin-bottom:.2rem}
