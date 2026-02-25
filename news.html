@@ -22,9 +22,10 @@
       --text-light: #6b6560;
       --white: #fdfcfa;
       --ink: #2a2520;
-      --accent-west: #2d6a8a;
-      --accent-ua: #d4a832;
-      --accent-ru: #8a3a3a;
+      --c-west: #2d6a8a;
+      --c-ukraine: #d4a832;
+      --c-russia: #8a3a3a;
+      --c-china: #c44d2b;
     }
 
     html { font-size: clamp(15px, 1.1vw, 18px); scroll-behavior: smooth; }
@@ -99,7 +100,7 @@
       font-size: .92rem;
       color: var(--text-light);
       line-height: 1.8;
-      max-width: 600px;
+      max-width: 620px;
       margin: 0 auto;
     }
     .hero-date {
@@ -142,6 +143,28 @@
     .date-btn:hover { border-color: var(--sea-light); color: var(--sea); }
     .date-btn:disabled { opacity: .4; cursor: not-allowed; }
 
+    /* ─── LEGEND ─── */
+    .legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: .75rem 2rem;
+      margin-bottom: .5rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      font-size: .72rem;
+      color: var(--stone);
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
     /* ─── NEWS GRID ─── */
     .news-container {
       max-width: 1100px;
@@ -172,7 +195,6 @@
     .news-card:nth-child(4) { animation-delay: .24s; }
     .news-card:nth-child(5) { animation-delay: .32s; }
     .news-card:nth-child(6) { animation-delay: .40s; }
-
     .news-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 8px 28px rgba(0,0,0,0.1);
@@ -223,7 +245,6 @@
       border-radius: 4px;
       font-size: .68rem;
       font-weight: 500;
-      letter-spacing: .02em;
     }
     .source-pill .dot {
       width: 6px;
@@ -231,12 +252,14 @@
       border-radius: 50%;
       flex-shrink: 0;
     }
-    .source-west { background: #e8f2f7; color: var(--accent-west); }
-    .source-west .dot { background: var(--accent-west); }
-    .source-ua { background: #faf3dc; color: #8a7020; }
-    .source-ua .dot { background: var(--accent-ua); }
-    .source-ru { background: #f5e8e8; color: var(--accent-ru); }
-    .source-ru .dot { background: var(--accent-ru); }
+    .pill-west { background: #e8f2f7; color: var(--c-west); }
+    .pill-west .dot { background: var(--c-west); }
+    .pill-ukraine { background: #faf3dc; color: #8a7020; }
+    .pill-ukraine .dot { background: var(--c-ukraine); }
+    .pill-russia { background: #f5e8e8; color: var(--c-russia); }
+    .pill-russia .dot { background: var(--c-russia); }
+    .pill-china { background: #fce8e3; color: var(--c-china); }
+    .pill-china .dot { background: var(--c-china); }
 
     .news-more {
       display: inline-flex;
@@ -267,9 +290,9 @@
     .modal {
       background: var(--white);
       border-radius: 14px;
-      max-width: 640px;
+      max-width: 720px;
       width: 100%;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
       box-shadow: 0 20px 60px rgba(0,0,0,0.2);
       animation: modalIn .3s ease;
@@ -320,59 +343,80 @@
       margin-bottom: 1rem;
     }
 
-    .modal-source {
+    /* ─── SOURCE BLOCK (внутри модала) ─── */
+    .src-block {
+      border: 1px solid var(--sand-dark);
+      border-radius: 10px;
+      margin-bottom: .85rem;
+      overflow: hidden;
+    }
+    .src-header {
       display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-      padding: .9rem 0;
+      align-items: center;
+      gap: .65rem;
+      padding: .75rem 1rem;
       border-bottom: 1px solid var(--sand-dark);
     }
-    .modal-source:last-child { border-bottom: none; }
-
-    .modal-source-flag {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+    .src-flag {
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      font-size: 1rem;
       flex-shrink: 0;
     }
-    .flag-west { background: #e8f2f7; }
-    .flag-ua { background: #faf3dc; }
-    .flag-ru { background: #f5e8e8; }
+    .src-flag-west { background: #e8f2f7; }
+    .src-flag-ukraine { background: #faf3dc; }
+    .src-flag-russia { background: #f5e8e8; }
+    .src-flag-china { background: #fce8e3; }
 
-    .modal-source-info { flex: 1; }
-    .modal-source-perspective {
-      font-size: .68rem;
+    .src-meta { flex: 1; }
+    .src-camp-label {
+      font-size: .62rem;
       text-transform: uppercase;
       letter-spacing: .1em;
       color: var(--stone);
-      margin-bottom: .2rem;
     }
-    .modal-source-name {
+    .src-name {
       font-size: .82rem;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: .25rem;
     }
-    .modal-source-title {
+
+    .src-body { padding: 1rem; }
+    .src-title {
+      font-family: 'Playfair Display', serif;
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+      margin-bottom: .5rem;
+    }
+    .src-excerpt {
       font-size: .82rem;
       color: var(--text-light);
-      line-height: 1.5;
+      line-height: 1.7;
+      margin-bottom: .75rem;
     }
-    .modal-source-link {
+    .src-link {
       display: inline-flex;
       align-items: center;
-      gap: .3rem;
-      margin-top: .4rem;
+      gap: .35rem;
+      padding: .4rem .85rem;
+      border: 1.5px solid var(--sea);
+      border-radius: 6px;
       font-size: .75rem;
       color: var(--sea);
       text-decoration: none;
       font-weight: 500;
+      transition: all .2s;
     }
-    .modal-source-link:hover { text-decoration: underline; }
+    .src-link:hover {
+      background: var(--sea);
+      color: white;
+    }
 
     .modal-close {
       position: sticky;
@@ -418,28 +462,6 @@
     .empty h3 { font-family: 'Playfair Display', serif; color: var(--ink); margin-bottom: .5rem; }
     .empty p { font-size: .88rem; color: var(--stone); line-height: 1.7; }
 
-    /* ─── LEGEND ─── */
-    .legend {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      padding: .75rem 2rem;
-      margin-bottom: .5rem;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: .35rem;
-      font-size: .72rem;
-      color: var(--stone);
-    }
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
     /* ─── FOOTER ─── */
     footer {
       background: var(--white);
@@ -471,6 +493,7 @@
       .hero h1 { font-size: 1.7rem; }
       .modal { margin: 1rem; max-height: 90vh; }
       .legend { flex-wrap: wrap; gap: .75rem; }
+      .modal-body { padding: 1rem; }
     }
     @media (max-width: 500px) {
       nav { display: none; }
@@ -499,8 +522,9 @@
   <div class="eyebrow">Мировые события</div>
   <h1>Новости <em>дня</em></h1>
   <div class="hero-sub">
-    Шесть главных событий — три точки зрения на каждое.<br>
-    Западные, украинские и российские источники.
+    Главные события — четыре точки зрения на каждое.<br>
+    Западные, украинские, российские и китайские источники.<br>
+    Читайте оригиналы и думайте сами.
   </div>
   <div class="hero-date" id="hero-date">
     <svg viewBox="0 0 16 16"><path d="M5 0v2H3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2h-2V0h-1v2H6V0H5zm8 6H3v8h10V6z"/></svg>
@@ -515,9 +539,10 @@
 </div>
 
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-west)"></div> Западные СМИ</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-ua)"></div> Украинские СМИ</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-ru)"></div> Российские СМИ</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-west)"></div> Запад</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-ukraine)"></div> Украина</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-russia)"></div> Россия</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-china)"></div> Китай</div>
 </div>
 
 <div class="news-container">
@@ -554,35 +579,19 @@ var newsData = [];
 var currentDate = new Date().toISOString().split('T')[0];
 var today = currentDate;
 
-var PERSPECTIVE_LABELS = {
-  western: 'Западные СМИ',
-  ukrainian: 'Украинские СМИ',
-  russian: 'Российские СМИ'
-};
-var PERSPECTIVE_FLAGS = {
-  western: '🌍',
-  ukrainian: '🇺🇦',
-  russian: '🇷🇺'
-};
-var PERSPECTIVE_CSS = {
-  western: 'flag-west',
-  ukrainian: 'flag-ua',
-  russian: 'flag-ru'
-};
-var SOURCE_CSS = {
-  western: 'source-west',
-  ukrainian: 'source-ua',
-  russian: 'source-ru'
+var CAMP = {
+  west:    { label: 'Запад',   flag: '🌍', flagCss: 'src-flag-west',    pillCss: 'pill-west' },
+  ukraine: { label: 'Украина', flag: '🇺🇦', flagCss: 'src-flag-ukraine', pillCss: 'pill-ukraine' },
+  russia:  { label: 'Россия',  flag: '🇷🇺', flagCss: 'src-flag-russia',  pillCss: 'pill-russia' },
+  china:   { label: 'Китай',   flag: '🇨🇳', flagCss: 'src-flag-china',   pillCss: 'pill-china' }
 };
 
 var TAG_ICONS = {
-  'мир': '🌍',
-  'политика': '🏛️',
-  'экономика': '💹',
-  'конфликт': '⚡',
-  'дипломатия': '🤝',
-  'общество': '👥'
+  'мир': '🌍', 'политика': '🏛️', 'экономика': '📉',
+  'конфликт': '⚡', 'дипломатия': '🤝', 'общество': '👥'
 };
+
+var ORDER = ['west', 'ukraine', 'russia', 'china'];
 
 function formatDateRu(dateStr) {
   var months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
@@ -628,10 +637,14 @@ async function loadNews(date) {
     var sources = n.sources || [];
 
     var pillsHtml = '';
-    for (var j = 0; j < sources.length; j++) {
-      var s = sources[j];
-      var css = SOURCE_CSS[s.perspective] || 'source-west';
-      pillsHtml += '<span class="source-pill ' + css + '"><span class="dot"></span>' + esc(s.name) + '</span>';
+    for (var k = 0; k < ORDER.length; k++) {
+      for (var j = 0; j < sources.length; j++) {
+        if (sources[j].perspective === ORDER[k]) {
+          var c = CAMP[ORDER[k]] || CAMP.west;
+          pillsHtml += '<span class="source-pill ' + c.pillCss + '"><span class="dot"></span>' + esc(sources[j].name) + '</span>';
+          break;
+        }
+      }
     }
 
     var tagIcon = TAG_ICONS[n.topic_tag] || '📰';
@@ -656,22 +669,28 @@ function openModal(idx) {
   if (!n) return;
 
   var sources = n.sources || [];
-  var sourcesHtml = '';
+  var blocksHtml = '';
 
-  // Порядок: западный, украинский, российский
-  var order = ['western', 'ukrainian', 'russian'];
-  for (var k = 0; k < order.length; k++) {
+  for (var k = 0; k < ORDER.length; k++) {
     for (var j = 0; j < sources.length; j++) {
-      if (sources[j].perspective === order[k]) {
+      if (sources[j].perspective === ORDER[k]) {
         var s = sources[j];
-        sourcesHtml +=
-          '<div class="modal-source">' +
-            '<div class="modal-source-flag ' + (PERSPECTIVE_CSS[s.perspective] || '') + '">' + (PERSPECTIVE_FLAGS[s.perspective] || '📰') + '</div>' +
-            '<div class="modal-source-info">' +
-              '<div class="modal-source-perspective">' + (PERSPECTIVE_LABELS[s.perspective] || '') + '</div>' +
-              '<div class="modal-source-name">' + esc(s.name) + '</div>' +
-              '<div class="modal-source-title">' + esc(s.title) + '</div>' +
-              '<a href="' + esc(s.url) + '" target="_blank" rel="noopener" class="modal-source-link">Читать оригинал ↗</a>' +
+        var c = CAMP[s.perspective] || CAMP.west;
+        var excerpt = s.excerpt || '';
+
+        blocksHtml +=
+          '<div class="src-block">' +
+            '<div class="src-header">' +
+              '<div class="src-flag ' + c.flagCss + '">' + c.flag + '</div>' +
+              '<div class="src-meta">' +
+                '<div class="src-camp-label">' + c.label + '</div>' +
+                '<div class="src-name">' + esc(s.name) + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="src-body">' +
+              '<div class="src-title">' + esc(s.title) + '</div>' +
+              (excerpt ? '<div class="src-excerpt">' + esc(excerpt) + '</div>' : '') +
+              '<a href="' + esc(s.url) + '" target="_blank" rel="noopener" class="src-link">Читать первоисточник ↗</a>' +
             '</div>' +
           '</div>';
         break;
@@ -688,8 +707,8 @@ function openModal(idx) {
     '</div>' +
     '<div class="modal-body">' +
       '<div class="modal-summary">' + esc(n.summary) + '</div>' +
-      '<div class="modal-sources-title">Три точки зрения</div>' +
-      sourcesHtml +
+      '<div class="modal-sources-title">Четыре точки зрения</div>' +
+      blocksHtml +
     '</div>' +
     '<button class="modal-close" onclick="closeModal()">Закрыть</button>';
 
@@ -710,16 +729,14 @@ function changeDate(d) {
   loadNews(newDate);
 }
 
-function goToday() {
-  loadNews(today);
-}
+function goToday() { loadNews(today); }
 
-// Клавиша Escape для закрытия модалки
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeModal();
+  if (e.key === 'ArrowLeft') changeDate(-1);
+  if (e.key === 'ArrowRight' && currentDate < today) changeDate(1);
 });
 
-// Загрузка при открытии страницы
 loadNews(today);
 </script>
 </body>
