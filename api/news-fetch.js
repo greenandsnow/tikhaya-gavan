@@ -3,12 +3,12 @@
 // Вызывается автоматически раз в день через Vercel Cron
 
 module.exports = async function handler(req, res) {
-  // Защита: только GET от Vercel Cron (или ваш ручной вызов с секретом)
-  const authHeader = req.headers['authorization'];
-  const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  // ВРЕМЕННО ОТКЛЮЧЕНО для теста — после теста раскомментируйте!
+  // const authHeader = req.headers['authorization'];
+  // const cronSecret = process.env.CRON_SECRET;
+  // if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  //   return res.status(401).json({ error: 'Unauthorized' });
+  // }
 
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_KEY;
