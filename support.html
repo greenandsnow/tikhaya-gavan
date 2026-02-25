@@ -1,165 +1,61 @@
-Skip to content
-greenandsnow
-tikhaya-gavan
-Repository navigation
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-Commit d959c7d
-greenandsnow
-greenandsnow
-authored
-26 minutes ago
-·
-·
-Verified
-Add files via upload
-main
-1 parent 
-881807f
- commit 
-d959c7d
-File tree
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Поддержка — Тихая гавань</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa}
+html{font-size:clamp(15px,1.1vw,18px);scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
 
-support.html
-1 file changed
-+6
--11
-lines changed
+/* ── HEADER ── */
+header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(74,124,142,0.06)}
+.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:2rem}
+.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.1}
+.logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
+.logo-tag{font-size:.65rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
+nav ul{list-style:none;display:flex;gap:.25rem}
+nav a{display:block;padding:.45rem .85rem;text-decoration:none;color:var(--text-light);font-size:.88rem;border-radius:6px;transition:color .2s,background .2s}
+nav a:hover{color:var(--sea);background:var(--sea-pale)}
+nav a.active{color:var(--sea);font-weight:600}
+.burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.burger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
 
- 
-‎support.html‎
-+6
--11
-Lines changed: 6 additions & 11 deletions
-Original file line number	Diff line number	Diff line change
-@@ -153,38 +153,38 @@
-    <p>Здесь вы найдёте ответы на частые вопросы, а если не нашли — напишите нам.</p>
-  </div>
+/* ── MAIN ── */
+main{flex:1;max-width:860px;margin:0 auto;padding:2.5rem clamp(1rem,3vw,2rem) 4rem;width:100%}
 
-  <!-- ═══ BLOCK 1: FAQ ═══ -->
-  <div class="block" id="block-faq">
-    <div class="block-header" onclick="toggleBlock('block-faq')">
-      <div class="block-icon faq-ic">❓</div>
-      <div class="block-info">
-        <div class="block-title">Частые вопросы</div>
-        <div class="block-desc">10 ответов на популярные вопросы о сайте</div>
-      </div>
-      <svg class="block-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-    <div class="block-body">
-      <div class="block-inner">
+/* Hero */
+.support-hero{text-align:center;margin-bottom:3rem}
+.support-hero h1{font-size:1.6rem;font-weight:600;color:var(--sea);margin-bottom:.4rem}
+.support-hero p{font-size:.92rem;color:var(--text-light);line-height:1.6}
 
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Что такое «Тихая гавань»?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Это бесплатный русскоязычный сайт для тех, кто ценит спокойный и вдумчивый досуг. Здесь собраны кроссворды, интересное чтиво, новости с четырёх точек зрения, игры и AI-помощник. Сайт создан для русскоязычной аудитории за пределами России, Украины и Беларуси — хотя, конечно, заходить может любой.</p></div></div>
-
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Нужна ли регистрация?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Нет, регистрация не нужна. Все разделы — кроссворды, чтение, новости, игры, AI-чат — доступны без создания аккаунта. Если вы хотите опубликовать книгу, понадобится только ваше имя и email.</p></div></div>
-
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Кто отвечает в разделе «Задай вопрос»?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Отвечает искусственный интеллект — Claude AI от компании Anthropic. Он может помочь с общими вопросами о здоровье, кулинарии, путешествиях, технике и многом другом. Однако помните: это не врач и не юрист, а AI-помощник. Для серьёзных медицинских или правовых вопросов обращайтесь к специалистам.</p></div></div>
-
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Как опубликовать свою книгу?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Перейдите в раздел <a href="/reading">Чтиво</a> → «Опубликовать книгу». Вам нужен файл в формате PDF (до 20 МБ), имя автора и email. Книга проходит модерацию и появляется в библиотеке в течение 1–3 дней. Публикация бесплатная.</p></div></div>
-
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Откуда берутся новости? Это объективная информация?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Раздел «Новости» показывает одну тему глазами четырёх лагерей: Запад (BBC, DW), Украина (УНИАН), Россия (ТАСС), Китай (Синьхуа). Мы не даём оценок — вы видите, как одну и ту же тему освещают разные стороны, и делаете выводы сами. Темы подбираются автоматически и проходят ручную модерацию.</p></div></div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Откуда берутся новости? Это объективная информация?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Раздел «Новости» показывает одну тему взглядом с четырёх разных углов: глазами западных СМИ (BBC, DW), украинских СМИ (УНИАН, Украинская Правда), российских официальных СМИ (ТАСС, РИА Новости) и китайских СМИ (Синьхуа). Мы не даём оценок — вы видите, как одну и ту же тему освещают разные стороны, и делаете выводы сами. Темы подбираются автоматически искусственным интеллектом — Claude AI от компании Anthropic. Новости не модерируются.</p></div></div>
-
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Сколько стоит пользование сайтом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Всё бесплатно. На сайте нет рекламы, подписок и платного контента. Проект создан как некоммерческая инициатива для русскоязычного сообщества за рубежом.</p></div></div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Сколько стоит пользование сайтом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Для Вас всё бесплатно. Ненавязчивая реклама, которая помогает нам покрыть издержки на содержание сайта, не должна Вам мешать спокойно отдыхать в «Тихой Гавани». У нас также нет платных подписок и контента. Проект создан для тех, кто говорит на русском, как в странах проживания, так и за рубежом.</p></div></div>
-
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Мои данные в безопасности?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Мы не собираем персональные данные, не используем трекеры и не продаём информацию третьим лицам. Вопросы в AI-чате не сохраняются. Единственные данные, которые вы оставляете, — это обращения через форму обратной связи и информация при публикации книги.</p></div></div>
-
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Как сообщить о проблеме с книгой?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>На странице каждой книги есть кнопка «Сообщить о нарушении». Укажите тип проблемы — жалоба рассматривается в течение 3 рабочих дней. Также можно написать нам через блок «Написать нам».</p></div></div>
-
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Могу ли я предложить идею для сайта?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Конечно! Мы очень рады обратной связи. Откройте блок «Написать нам» и выберите тему «Предложение / идея». Мы читаем каждое письмо и стараемся учитывать пожелания читателей.</p></div></div>
-
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Кто стоит за этим проектом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>«Тихая гавань» — это независимый проект одного человека, живущего в Канаде. Сайт делается в свободное время с любовью к русскоязычному сообществу за рубежом. Лучшая помощь — рассказать о нём друзьям и знакомым.</p></div></div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Кто стоит за этим проектом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>«Тихая гавань» — это независимый проект одного человека, живущего в Канаде. Сайт делается в свободное время с целью занять досуг простыми, но интересными вещами. Лучшая помощь проекту — рассказать о нём друзьям и знакомым.</p></div></div>
-
-      </div>
-    </div>
-@@ -262,11 +262,11 @@
-  <div class="fi">
-    <span>© 2025 Тихая гавань</span>
-    <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
-    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
-    <a href="/cdn-cgi/l/email-protection#ddaea8adadb2afa99dbaafb8b8b3bcb3b9aeb3b2aaaea9a8b9b4b2f3beb2b0"><span class="__cf_email__" data-cfemail="c8bbbdb8b8a7babc88afbaadada6a9a6acbba6a7bfbbbcbdaca1a7e6aba7a5">[email&#160;protected]</span></a>
-  </div>
-</footer>
-
-<script>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-function toggleBlock(id) {
-  var block = document.getElementById(id);
-  var wasOpen = block.classList.contains('open');
-@@ -316,9 +316,4 @@
-  document.getElementById('form-fields').style.display = '';
-  document.getElementById('form-success').classList.remove('show');
-  var btn = document.getElementById('send-btn');
-  btn.disabled = false;
-  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M16 9l-6-6M16 9l-6 6M16 9H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Отправить';
-}
-</script>
-</body>
-</html>
-  btn.disabled = fals
-0 commit comments
-Comments
-0
- (0)
-Comment
-You're not receiving notifications from this thread.
+/* ── QUICK LINKS ── */
+.quick-links{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:3rem}
+.ql-card{background:var(--white);border:1px solid var(--sand-dark);border-radius:12px;padding:1.25rem;text-align:center;text-decoration:none;color:var(--text);transition:all .2s;cursor:pointer}
 .ql-card:hover{border-color:var(--sea-light);box-shadow:0 4px 16px rgba(74,124,142,0.1);transform:translateY(-2px)}
 .ql-icon{font-size:1.8rem;margin-bottom:.5rem}
 .ql-title{font-size:.88rem;font-weight:500;color:var(--sea);margin-bottom:.2rem}
 .ql-desc{font-size:.75rem;color:var(--stone);line-height:1.4}
-/* ══════════════════════════════════
-   THREE HORIZONTAL BLOCKS
-   ══════════════════════════════════ */
-.block{background:var(--white);border:1px solid var(--sand-dark);border-radius:14px;margin-bottom:1rem;overflow:hidden;transition:border-color .25s,box-shadow .25s}
-.block:hover{border-color:var(--sea-light)}
-.block.open{border-color:var(--sea-light);box-shadow:0 4px 20px rgba(74,124,142,0.08)}
-.block-header{display:flex;align-items:center;gap:1rem;padding:1.25rem 1.5rem;cursor:pointer;user-select:none;transition:background .2s}
-.block-header:hover{background:rgba(74,124,142,0.03)}
-.block.social-block .block-header{cursor:default}
-.block.social-block .block-header:hover{background:transparent}
-.block-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.4rem}
-.block-icon.faq-ic{background:var(--sea-pale)}
-.block-icon.form-ic{background:#fce8e0}
-.block-icon.social-ic{background:#e8edf5}
-.block-info{flex:1}
-.block-title{font-size:1.05rem;font-weight:500;color:var(--text)}
-.block-desc{font-size:.78rem;color:var(--stone);margin-top:.1rem}
-.block-arrow{width:22px;height:22px;flex-shrink:0;transition:transform .3s;color:var(--stone)}
-.block.open .block-arrow{transform:rotate(180deg);color:var(--sea)}
-.block-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.block.open .block-body{max-height:3000px}
-.block-inner{padding:0 1.5rem 1.5rem}
 
 /* ── FAQ ── */
 .section-title{font-size:1.15rem;font-weight:600;color:var(--sea);margin-bottom:1.25rem;padding-bottom:.5rem;border-bottom:2px solid var(--sea-pale);display:flex;align-items:center;gap:.5rem}
 .section-title svg{flex-shrink:0}
+
 .faq-list{margin-bottom:3rem}
 .faq-item{background:var(--white);border:1px solid var(--sand-dark);border-radius:10px;margin-bottom:.6rem;overflow:hidden;transition:border-color .2s}
-.faq-item{border:1px solid var(--sand-dark);border-radius:10px;margin-bottom:.5rem;overflow:hidden;transition:border-color .2s}
 .faq-item:hover{border-color:var(--sea-light)}
 .faq-item.open{border-color:var(--sea-light)}
 .faq-q{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;cursor:pointer;gap:1rem;user-select:none}
 .faq-q span{font-size:.92rem;font-weight:400;color:var(--text);line-height:1.5}
 .faq-arrow{width:20px;height:20px;flex-shrink:0;transition:transform .3s;color:var(--stone)}
-.faq-q{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;cursor:pointer;gap:1rem;user-select:none}
-.faq-q span{font-size:.88rem;font-weight:400;color:var(--text);line-height:1.5}
-.faq-arrow{width:18px;height:18px;flex-shrink:0;transition:transform .3s;color:var(--stone)}
 .faq-item.open .faq-arrow{transform:rotate(180deg);color:var(--sea)}
 .faq-a{padding:0 1.25rem;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
 .faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1.15rem}
 .faq-a p{font-size:.86rem;color:var(--text-light);line-height:1.7}
-.faq-a{padding:0 1.1rem;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
-.faq-item.open .faq-a{max-height:300px;padding:0 1.1rem 1rem}
-.faq-a p{font-size:.84rem;color:var(--text-light);line-height:1.7}
 .faq-a a{color:var(--sea);text-decoration:none}
 .faq-a a:hover{text-decoration:underline}
 
@@ -177,7 +73,6 @@ You're not receiving notifications from this thread.
 .char-count{font-size:.7rem;color:var(--stone);text-align:right;margin-top:.2rem}
 
 .send-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 2rem;border-radius:8px;background:var(--sea);color:white;font-family:'Jost',sans-serif;font-size:.92rem;font-weight:500;border:none;cursor:pointer;transition:all .2s;letter-spacing:.02em}
-.send-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 2rem;border-radius:8px;background:var(--sea);color:white;font-family:'Jost',sans-serif;font-size:.92rem;font-weight:500;border:none;cursor:pointer;transition:all .2s}
 .send-btn:hover{background:var(--sea-light);transform:translateY(-1px)}
 .send-btn:active{transform:translateY(0)}
 .send-btn:disabled{background:var(--stone);cursor:not-allowed;transform:none}
@@ -189,7 +84,6 @@ You're not receiving notifications from this thread.
 
 /* Success state */
 .form-success{display:none;text-align:center;padding:2.5rem 1rem}
-.form-success{display:none;text-align:center;padding:2rem 1rem}
 .form-success.show{display:block}
 .form-success .success-icon{font-size:3rem;margin-bottom:1rem}
 .form-success h3{font-size:1.1rem;color:var(--sea);margin-bottom:.4rem}
@@ -208,21 +102,11 @@ You're not receiving notifications from this thread.
 .social-name{font-size:.92rem;font-weight:500;color:var(--text)}
 .social-desc{font-size:.78rem;color:var(--stone);margin-top:.15rem}
 .social-arrow{margin-left:auto;color:var(--stone);font-size:.8rem}
-/* ── SOCIAL BUTTONS ── */
-.social-btns{display:flex;gap:1rem;padding:0 1.5rem 1.5rem}
-.social-btn{display:flex;align-items:center;gap:.75rem;flex:1;background:var(--sand);border:1.5px solid var(--sand-dark);border-radius:10px;padding:.9rem 1.15rem;text-decoration:none;color:var(--text);transition:all .2s}
-.social-btn:hover{border-color:var(--sea-light);background:var(--sea-pale);transform:translateY(-2px);box-shadow:0 4px 12px rgba(74,124,142,0.1)}
-.social-btn-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.social-btn-icon.tg{background:#d4eaf8}
-.social-btn-icon.yt{background:#fde0e0}
-.social-btn-name{font-size:.9rem;font-weight:500}
-.social-btn-desc{font-size:.72rem;color:var(--stone);margin-top:.1rem}
-.social-btn-arrow{margin-left:auto;color:var(--stone);font-size:.85rem;transition:transform .2s}
-.social-btn:hover .social-btn-arrow{transform:translateX(3px);color:var(--sea)}
 
 /* ── FOOTER ── */
 footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5rem 2rem;margin-top:auto}
-@@ -110,23 +115,20 @@
+.fi{max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem}
+.fi span,.fi a{font-size:.78rem;color:var(--stone);text-decoration:none}
 .fi a:hover{color:var(--sea)}
 .fl{display:flex;gap:1.5rem}
 
@@ -236,7 +120,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
   .quick-links{grid-template-columns:1fr}
   .form-row{grid-template-columns:1fr}
   .social-cards{grid-template-columns:1fr}
-  .social-btns{flex-direction:column}
   .fi{flex-direction:column;align-items:flex-start}
 }
 </style>
@@ -247,7 +130,17 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 <header>
   <div class="hi">
     <a href="/" class="logo"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></a>
-@@ -144,212 +146,118 @@
+    <button class="burger" id="burger" aria-label="Меню" onclick="document.getElementById('nav').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="nav"><ul>
+      <li><a href="/crosswords">Кроссворды</a></li>
+      <li><a href="/ask">Задай вопрос</a></li>
+      <li><a href="/reading">Чтиво</a></li>
+      <li><a href="/news">Новости</a></li>
+      <li><a href="/games">Игры</a></li>
+      <li><a href="/support" class="active">Поддержка</a></li>
+    </ul></nav>
   </div>
 </header>
 
@@ -278,29 +171,21 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       <div class="ql-desc">Telegram и YouTube</div>
     </a>
   </div>
+
   <!-- ═══ FAQ ═══ -->
   <div class="faq-list" id="faq">
     <div class="section-title">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 7.5a2.5 2.5 0 0 1 4.75 1c0 1.5-2.25 2-2.25 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="14" r=".8" fill="currentColor"/></svg>
       Частые вопросы
     </div>
+
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
         <span>Что такое «Тихая гавань»?</span>
         <svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  <!-- ═══ BLOCK 1: FAQ ═══ -->
-  <div class="block" id="block-faq">
-    <div class="block-header" onclick="toggleBlock('block-faq')">
-      <div class="block-icon faq-ic">❓</div>
-      <div class="block-info">
-        <div class="block-title">Частые вопросы</div>
-        <div class="block-desc">10 ответов на популярные вопросы о сайте</div>
       </div>
       <div class="faq-a"><p>Это бесплатный русскоязычный сайт для тех, кто ценит спокойный и вдумчивый досуг. Здесь собраны кроссворды, интересное чтиво, новости с четырёх точек зрения, игры и AI-помощник. Сайт создан для русскоязычной аудитории за пределами России, Украины и Беларуси — хотя, конечно, заходить может любой.</p></div>
-      <svg class="block-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
-    <div class="block-body">
-      <div class="block-inner">
 
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
@@ -309,7 +194,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       </div>
       <div class="faq-a"><p>Нет, регистрация не нужна. Все разделы — кроссворды, чтение, новости, игры, AI-чат — доступны без создания аккаунта. Если вы хотите опубликовать книгу, понадобится только ваше имя и email.</p></div>
     </div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Что такое «Тихая гавань»?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Это бесплатный русскоязычный сайт для тех, кто ценит спокойный и вдумчивый досуг. Здесь собраны кроссворды, интересное чтиво, новости с четырёх точек зрения, игры и AI-помощник. Сайт создан для русскоязычной аудитории за пределами России, Украины и Беларуси — хотя, конечно, заходить может любой.</p></div></div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
@@ -318,7 +202,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       </div>
       <div class="faq-a"><p>Отвечает искусственный интеллект — Claude AI от компании Anthropic. Он может помочь с общими вопросами о здоровье, кулинарии, путешествиях, технике и многом другом. Однако помните: это не врач и не юрист, а AI-помощник. Для серьёзных медицинских или правовых вопросов обращайтесь к специалистам.</p></div>
     </div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Нужна ли регистрация?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Нет, регистрация не нужна. Все разделы — кроссворды, чтение, новости, игры, AI-чат — доступны без создания аккаунта. Если вы хотите опубликовать книгу, понадобится только ваше имя и email.</p></div></div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
@@ -327,7 +210,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       </div>
       <div class="faq-a"><p>Перейдите в раздел <a href="/reading">Чтиво</a> → «Опубликовать книгу». Вам нужен файл в формате PDF (до 20 МБ), имя автора и email. Книга проходит модерацию и появляется в библиотеке в течение 1–3 дней. Публикация бесплатная.</p></div>
     </div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Кто отвечает в разделе «Задай вопрос»?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Отвечает искусственный интеллект — Claude AI от компании Anthropic. Он может помочь с общими вопросами о здоровье, кулинарии, путешествиях, технике и многом другом. Однако помните: это не врач и не юрист, а AI-помощник. Для серьёзных медицинских или правовых вопросов обращайтесь к специалистам.</p></div></div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
@@ -336,7 +218,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       </div>
       <div class="faq-a"><p>Раздел «Новости» показывает одну тему глазами четырёх лагерей: Запад (BBC, DW), Украина (УНИАН), Россия (ТАСС), Китай (Синьхуа). Мы не даём оценок — вы видите, как одну и ту же тему освещают разные стороны, и делаете выводы сами. Темы подбираются автоматически и проходят ручную модерацию.</p></div>
     </div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Как опубликовать свою книгу?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Перейдите в раздел <a href="/reading">Чтиво</a> → «Опубликовать книгу». Вам нужен файл в формате PDF (до 20 МБ), имя автора и email. Книга проходит модерацию и появляется в библиотеке в течение 1–3 дней. Публикация бесплатная.</p></div></div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
@@ -345,7 +226,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       </div>
       <div class="faq-a"><p>Всё бесплатно. На сайте нет рекламы, подписок и платного контента. Проект создан как некоммерческая инициатива для русскоязычного сообщества за рубежом.</p></div>
     </div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Откуда берутся новости? Это объективная информация?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Раздел «Новости» показывает одну тему глазами четырёх лагерей: Запад (BBC, DW), Украина (УНИАН), Россия (ТАСС), Китай (Синьхуа). Мы не даём оценок — вы видите, как одну и ту же тему освещают разные стороны, и делаете выводы сами. Темы подбираются автоматически и проходят ручную модерацию.</p></div></div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
@@ -354,7 +234,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       </div>
       <div class="faq-a"><p>Мы не собираем персональные данные, не используем трекеры и не продаём информацию третьим лицам. Вопросы в AI-чате не сохраняются. Единственные данные, которые вы оставляете, — это обращения через форму обратной связи и информация при публикации книги.</p></div>
     </div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Сколько стоит пользование сайтом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Всё бесплатно. На сайте нет рекламы, подписок и платного контента. Проект создан как некоммерческая инициатива для русскоязычного сообщества за рубежом.</p></div></div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
@@ -363,7 +242,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       </div>
       <div class="faq-a"><p>На странице каждой книги есть кнопка «Сообщить о нарушении». Укажите тип проблемы (нецензурная лексика, насилие, нарушение авторских прав и т.д.) — жалоба рассматривается в течение 3 рабочих дней. Также можно написать нам через форму ниже.</p></div>
     </div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Мои данные в безопасности?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Мы не собираем персональные данные, не используем трекеры и не продаём информацию третьим лицам. Вопросы в AI-чате не сохраняются. Единственные данные, которые вы оставляете, — это обращения через форму обратной связи и информация при публикации книги.</p></div></div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
@@ -372,9 +250,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       </div>
       <div class="faq-a"><p>Конечно! Мы очень рады обратной связи. Напишите нам через форму ниже — выберите тему «Предложение / идея». Мы читаем каждое письмо и стараемся учитывать пожелания наших читателей.</p></div>
     </div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Как сообщить о проблеме с книгой?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>На странице каждой книги есть кнопка «Сообщить о нарушении». Укажите тип проблемы — жалоба рассматривается в течение 3 рабочих дней. Также можно написать нам через блок «Написать нам».</p></div></div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Могу ли я предложить идею для сайта?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>Конечно! Мы очень рады обратной связи. Откройте блок «Написать нам» и выберите тему «Предложение / идея». Мы читаем каждое письмо и стараемся учитывать пожелания читателей.</p></div></div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Кто стоит за этим проектом?</span><svg class="faq-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="faq-a"><p>«Тихая гавань» — это независимый проект одного человека, живущего в Канаде. Сайт делается в свободное время с любовью к русскоязычному сообществу за рубежом. Лучшая помощь — рассказать о нём друзьям и знакомым.</p></div></div>
 
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">
@@ -390,47 +265,19 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
     <div class="section-title">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 6l8 5 8-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       Напишите нам
-  <!-- ═══ BLOCK 2: FORM ═══ -->
-  <div class="block" id="block-form">
-    <div class="block-header" onclick="toggleBlock('block-form')">
-      <div class="block-icon form-ic">✉️</div>
-      <div class="block-info">
-        <div class="block-title">Написать нам</div>
-        <div class="block-desc">Вопрос, предложение или сообщение об ошибке</div>
-      </div>
-      <svg class="block-arrow" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
+
     <div class="form-card">
       <div id="form-fields">
         <div class="form-row">
           <div class="field">
             <label>Ваше имя <span class="req">*</span></label>
             <input type="text" id="f-name" placeholder="Как вас зовут?" maxlength="100"/>
-    <div class="block-body">
-      <div class="block-inner">
-        <div id="form-fields">
-          <div class="form-row">
-            <div class="field"><label>Ваше имя <span class="req">*</span></label><input type="text" id="f-name" placeholder="Как вас зовут?" maxlength="100"/></div>
-            <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="f-email" placeholder="your@email.com"/></div>
           </div>
           <div class="field">
             <label>Email <span class="req">*</span></label>
             <input type="email" id="f-email" placeholder="your@email.com"/>
-          <div class="field"><label>Тема обращения</label>
-            <select id="f-subject">
-              <option value="general">Общий вопрос</option>
-              <option value="bug">Ошибка на сайте</option>
-              <option value="idea">Предложение / идея</option>
-              <option value="books">Вопрос по книгам</option>
-              <option value="other">Другое</option>
-            </select>
           </div>
-          <div class="field"><label>Сообщение <span class="req">*</span></label><textarea id="f-message" placeholder="Опишите ваш вопрос или предложение..." maxlength="2000" oninput="updateCount()"></textarea><div class="char-count"><span id="msg-count">0</span> / 2000</div></div>
-          <button class="send-btn" id="send-btn" onclick="submitForm()">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M16 9l-6-6M16 9l-6 6M16 9H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Отправить
-          </button>
-          <div class="form-note"><p>Мы отвечаем в течение 1–3 рабочих дней на указанный email. Ваши данные не передаются третьим лицам.</p></div>
         </div>
         <div class="field">
           <label>Тема обращения</label>
@@ -454,13 +301,9 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
         <div class="form-note">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v3M8 10.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
           <p>Мы отвечаем в течение 1–3 рабочих дней на указанный email. Ваши данные не передаются третьим лицам.</p>
-        <div class="form-success" id="form-success">
-          <div class="success-icon">✅</div>
-          <h3>Спасибо! Ваше сообщение отправлено.</h3>
-          <p>Мы прочитаем его и ответим на указанную почту в течение 1–3 рабочих дней.</p>
-          <button class="reset-btn" onclick="resetForm()">Отправить ещё одно</button>
         </div>
       </div>
+
       <div class="form-success" id="form-success">
         <div class="success-icon">✅</div>
         <h3>Спасибо! Ваше сообщение отправлено.</h3>
@@ -475,18 +318,11 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
     <div class="section-title">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M18 5a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h2l3 3 3-3h2a3 3 0 0 0 3-3V5z" stroke="currentColor" stroke-width="1.5"/></svg>
       Мы в соцсетях
-  <!-- ═══ BLOCK 3: SOCIAL (not expandable — buttons always visible) ═══ -->
-  <div class="block social-block">
-    <div class="block-header">
-      <div class="block-icon social-ic">💬</div>
-      <div class="block-info">
-        <div class="block-title">Мы в соцсетях</div>
-        <div class="block-desc">Подписывайтесь — будем на связи</div>
-      </div>
     </div>
+
     <div class="social-cards">
       <!-- Telegram -->
-      <a class="social-card" href="https://t.me/+frMAx8nVtUNkODMy" target="_blank" rel="noopener">
+      <a class="social-card" href="https://t.me/ВАША_ССЫЛКА" target="_blank" rel="noopener">
         <div class="social-icon tg">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="#0088cc"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
         </div>
@@ -495,14 +331,10 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
           <div class="social-desc">Новости, обновления, анонсы</div>
         </div>
         <span class="social-arrow">→</span>
-    <div class="social-btns">
-      <a class="social-btn" href="https://t.me/ВАША_ССЫЛКА" target="_blank" rel="noopener">
-        <div class="social-btn-icon tg"><svg width="24" height="24" viewBox="0 0 24 24" fill="#0088cc"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></div>
-        <div><div class="social-btn-name">Telegram</div><div class="social-btn-desc">Новости и обновления</div></div>
-        <span class="social-btn-arrow">→</span>
       </a>
+
       <!-- YouTube -->
-      <a class="social-card" href="https://youtube.com/@igorpopov2174" target="_blank" rel="noopener">
+      <a class="social-card" href="https://youtube.com/@ВАША_ССЫЛКА" target="_blank" rel="noopener">
         <div class="social-icon yt">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 0 0 .5 6.19 31.7 31.7 0 0 0 0 12a31.7 31.7 0 0 0 .5 5.81 3.02 3.02 0 0 0 2.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.7 31.7 0 0 0 24 12a31.7 31.7 0 0 0-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
         </div>
@@ -511,10 +343,6 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
           <div class="social-desc">Видео и познавательный контент</div>
         </div>
         <span class="social-arrow">→</span>
-      <a class="social-btn" href="https://youtube.com/@ВАША_ССЫЛКА" target="_blank" rel="noopener">
-        <div class="social-btn-icon yt"><svg width="24" height="24" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 0 0 .5 6.19 31.7 31.7 0 0 0 0 12a31.7 31.7 0 0 0 .5 5.81 3.02 3.02 0 0 0 2.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.7 31.7 0 0 0 24 12a31.7 31.7 0 0 0-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg></div>
-        <div><div class="social-btn-name">YouTube</div><div class="social-btn-desc">Видео и контент</div></div>
-        <span class="social-btn-arrow">→</span>
       </a>
     </div>
   </div>
@@ -525,17 +353,13 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 <footer>
   <div class="fi">
     <span>© 2025 Тихая гавань</span>
-@@ -359,56 +267,46 @@
+    <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
+    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
+  </div>
 </footer>
 
 <script>
 /* ── FAQ toggle ── */
-function toggleBlock(id) {
-  var block = document.getElementById(id);
-  var wasOpen = block.classList.contains('open');
-  document.querySelectorAll('.block:not(.social-block)').forEach(function(b) { b.classList.remove('open'); });
-  if (!wasOpen) block.classList.add('open');
-}
 function toggleFaq(el) {
   var item = el.parentElement;
   var wasOpen = item.classList.contains('open');
@@ -549,7 +373,6 @@ function toggleFaq(el) {
 function updateCount() {
   var ta = document.getElementById('f-message');
   document.getElementById('msg-count').textContent = ta.value.length;
-  document.getElementById('msg-count').textContent = document.getElementById('f-message').value.length;
 }
 
 /* ── Submit ── */
@@ -558,31 +381,30 @@ async function submitForm() {
   var email = document.getElementById('f-email').value.trim();
   var subject = document.getElementById('f-subject').value;
   var message = document.getElementById('f-message').value.trim();
+
   if (!name) { alert('Пожалуйста, укажите ваше имя'); return; }
   if (!email || !email.includes('@')) { alert('Пожалуйста, укажите корректный email'); return; }
   if (!message) { alert('Пожалуйста, напишите сообщение'); return; }
+
   var btn = document.getElementById('send-btn');
   btn.disabled = true;
   btn.textContent = 'Отправляем...';
-  btn.disabled = true; btn.textContent = 'Отправляем...';
+
   try {
     var res = await fetch('/api/support', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: name, email: email, subject: subject, message: message })
     });
+
     if (!res.ok) throw new Error('Ошибка сервера');
-    var res = await fetch('/api/support', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:name,email:email,subject:subject,message:message}) });
-    if (!res.ok) throw new Error('Ошибка');
+
     document.getElementById('form-fields').style.display = 'none';
     document.getElementById('form-success').classList.add('show');
   } catch (err) {
     alert('Не удалось отправить сообщение. Попробуйте позже или напишите на support@greenandsnowstudio.com');
-  } catch(e) {
-    alert('Не удалось отправить. Напишите на support@greenandsnowstudio.com');
     btn.disabled = false;
     btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9l6-6M2 9l6 6M2 9h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="rotate(180 9 9)"/></svg> Отправить';
-    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M16 9l-6-6M16 9l-6 6M16 9H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Отправить';
   }
 }
 
@@ -590,19 +412,15 @@ async function submitForm() {
 function resetForm() {
   document.getElementById('f-name').value = '';
   document.getElementById('f-email').value = '';
-@@ -419,7 +317,7 @@
+  document.getElementById('f-subject').value = 'general';
+  document.getElementById('f-message').value = '';
+  document.getElementById('msg-count').textContent = '0';
+  document.getElementById('form-fields').style.display = '';
   document.getElementById('form-success').classList.remove('show');
   var btn = document.getElementById('send-btn');
   btn.disabled = false;
   btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9l6-6M2 9l6 6M2 9h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="rotate(180 9 9)"/></svg> Отправить';
-  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M16 9l-6-6M16 9l-6 6M16 9H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Отправить';
 }
 </script>
 </body>
-0 commit comments
-Comments
-0
- (0)
-Comment
-You're not receiving notifications from this thread.
-There are no files selected for viewing
+</html>
