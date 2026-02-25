@@ -179,13 +179,20 @@ JSON (без markdown, без \`\`\`):
     // ── Шаг 4: Сохраняем как draft ──
     var today = new Date().toISOString().split('T')[0];
     var saved = 0;
+    var skipped = [];
     var required = ['west', 'ukraine', 'russia', 'china'];
 
     for (var item of newsItems) {
-      if (!item.sources || item.sources.length < 4) continue;
+      if (!item.sources || item.sources.length < 4) {
+        skipped.push({ headline: item.headline, reason: 'sources < 4', count: item.sources ? item.sources.length : 0 });
+        continue;
+      }
       var perspectives = item.sources.map(function(s) { return s.perspective; });
       var hasAll = required.every(function(r) { return perspectives.includes(r); });
-      if (!hasAll) continue;
+      if (!hasAll) {
+        skipped.push({ headline: item.headline, reason: 'missing perspectives', has: perspectives, needs: required });
+        continue;
+      }
 
       var insertResp = await fetch(supabaseUrl + '/rest/v1/news', {
         method: 'POST',
@@ -205,7 +212,12 @@ JSON (без markdown, без \`\`\`):
         })
       });
 
-      if (insertResp.ok) saved++;
+      if (insertResp.ok) {
+        saved++;
+      } else {
+        var errText = await insertResp.text();
+        skipped.push({ headline: item.headline, reason: 'supabase error', status: insertResp.status, error: errText.substring(0, 200) });
+      }
     }
 
     return res.status(200).json({
@@ -213,7 +225,10 @@ JSON (без markdown, без \`\`\`):
       date: today,
       feeds: stats,
       total_articles: total,
+      claude_items: newsItems.length,
       drafts_saved: saved,
+      skipped: skipped,
+      debug_claude_raw: claudeText.substring(0, 500),
       message: 'Темы сохранены как черновики. Откройте /admin-news для модерации.'
     });
 
