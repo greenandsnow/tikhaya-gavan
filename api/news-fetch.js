@@ -19,15 +19,17 @@ module.exports = async function handler(req, res) {
     western: [
       { name: 'BBC Russian', url: 'https://feeds.bbci.co.uk/russian/rss.xml' },
       { name: 'DW Russian', url: 'https://rss.dw.com/rdf/rss-ru-all' },
-      { name: 'Meduza', url: 'https://meduza.io/rss/news' }
+      { name: 'Медуза', url: 'https://meduza.io/rss/news' },
+      { name: 'Euronews Russian', url: 'https://ru.euronews.com/rss' }
     ],
     ukrainian: [
       { name: 'Украинская правда', url: 'https://www.pravda.com.ua/rss/' },
       { name: 'УНИАН', url: 'https://rss.unian.net/site/news_rus.rss' }
     ],
     russian: [
-      { name: 'ТАСС', url: 'https://tass.com/rss/v2.xml' },
-      { name: 'РИА Новости', url: 'https://ria.ru/export/rss2/archive/index.xml' }
+      { name: 'ТАСС', url: 'https://tass.ru/rss/v2.xml' },
+      { name: 'РИА Новости', url: 'https://ria.ru/export/rss2/archive/index.xml' },
+      { name: 'Лента.ру', url: 'https://lenta.ru/rss' }
     ]
   };
 
@@ -93,29 +95,44 @@ module.exports = async function handler(req, res) {
         max_tokens: 4000,
         system: `Ты — редактор новостной ленты для русскоязычной аудитории 50+ за рубежом.
 
-Твоя задача: из списка статей от разных источников выбери 6 главных мировых событий дня.
+Твоя задача: из списка статей от разных источников выбери 6 главных МИРОВЫХ событий дня.
 
-ВАЖНЫЕ ПРАВИЛА:
-1. Для КАЖДОГО события найди ТРИ источника — по одному от каждой перспективы: western (западный), ukrainian (украинский), russian (российский).
-2. Если для какого-то события нет источника из одной перспективы — НЕ включай это событие. Все 6 новостей ДОЛЖНЫ иметь три источника.
-3. Напиши нейтральный заголовок (headline) и краткий анонс (summary, 2-3 предложения) на русском языке. Анонс должен быть нейтральным — без оценок, просто факты.
-4. Для каждого источника укажи: perspective, name (название СМИ), title (оригинальный заголовок статьи), url (ссылку).
+СТРОГИЕ ПРАВИЛА:
+
+1. РАЗНООБРАЗИЕ ТЕМ — это главный приоритет!
+   - Новости должны охватывать РАЗНЫЕ регионы мира: Ближний Восток, Азия, Европа, Северная и Южная Америка, Африка — не только Россию и Украину.
+   - Максимум 2 новости из 6 могут быть напрямую связаны с Россией или Украиной. Остальные 4 должны быть о других мировых событиях.
+   - Ищи новости про: США, Иран, Китай, Ближний Восток, Латинскую Америку, ЕС, Африку, Азию, климат, экономику, технологии.
+
+2. ТРИ ИСТОЧНИКА — строго по одному от КАЖДОЙ группы:
+   - Ровно ОДИН источник с меткой WESTERN (западный: BBC Russian, DW Russian, Медуза, Euronews)
+   - Ровно ОДИН источник с меткой UKRAINIAN (украинский: Украинская правда, УНИАН)
+   - Ровно ОДИН источник с меткой RUSSIAN (российский: ТАСС, РИА Новости, Лента.ру)
+   - ЗАПРЕЩЕНО: два источника из одной группы. Если нет статьи из какой-то группы — НЕ включай это событие.
+
+3. ВСЁ НА РУССКОМ ЯЗЫКЕ:
+   - Заголовок (headline) и анонс (summary) — только на русском.
+   - Если оригинальный заголовок статьи на другом языке — переведи его на русский.
+
+4. НЕЙТРАЛЬНОСТЬ:
+   - Анонс должен быть нейтральным — только факты, без оценок, комментариев и эмоций.
+   - Не принимай сторону ни одного из источников.
 
 Ответ СТРОГО в формате JSON (без markdown, без \`\`\`):
 [
   {
-    "headline": "Заголовок события",
-    "summary": "Краткий нейтральный анонс 2-3 предложения.",
+    "headline": "Заголовок события на русском",
+    "summary": "Краткий нейтральный анонс 2-3 предложения на русском.",
     "topic_tag": "одно слово-тег: мир/политика/экономика/конфликт/дипломатия/общество",
     "sources": [
-      { "perspective": "western", "name": "BBC Russian", "title": "Заголовок статьи", "url": "https://..." },
-      { "perspective": "ukrainian", "name": "УНИАН", "title": "Заголовок статьи", "url": "https://..." },
-      { "perspective": "russian", "name": "ТАСС", "title": "Заголовок статьи", "url": "https://..." }
+      { "perspective": "western", "name": "Название СМИ", "title": "Заголовок статьи на русском", "url": "https://..." },
+      { "perspective": "ukrainian", "name": "Название СМИ", "title": "Заголовок статьи на русском", "url": "https://..." },
+      { "perspective": "russian", "name": "Название СМИ", "title": "Заголовок статьи на русском", "url": "https://..." }
     ]
   }
 ]
 
-Верни ровно 6 объектов. Только JSON, ничего больше.`,
+Верни ровно 6 объектов. Каждый объект — ровно 3 источника (western, ukrainian, russian). Только JSON, ничего больше.`,
         messages: [
           { role: 'user', content: 'Вот статьи за сегодня:\n\n' + articlesSummary }
         ]
@@ -151,10 +168,13 @@ module.exports = async function handler(req, res) {
     var saved = 0;
 
     for (var item of newsItems) {
-      // Валидация: должно быть 3 источника с разными перспективами
+      // Валидация: должно быть ровно 3 источника с РАЗНЫМИ перспективами
       if (!item.sources || item.sources.length < 3) continue;
       var perspectives = item.sources.map(function(s) { return s.perspective; });
       if (!perspectives.includes('western') || !perspectives.includes('ukrainian') || !perspectives.includes('russian')) continue;
+      // Проверка: нет дубликатов перспектив
+      var uniqueP = new Set(perspectives);
+      if (uniqueP.size < 3) continue;
 
       var insertResp = await fetch(supabaseUrl + '/rest/v1/news', {
         method: 'POST',
