@@ -8,9 +8,8 @@ module.exports = async function handler(req, res) {
 
   try {
     var supabaseUrl = process.env.SUPABASE_URL;
-    var supabaseKey = process.env.SUPABASE_SECRET_KEY;
+    var supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
-    // Дата: из параметра или сегодня
     var date = req.query.date || new Date().toISOString().split('T')[0];
 
     var r = await fetch(
@@ -25,7 +24,7 @@ module.exports = async function handler(req, res) {
 
     var news = await r.json();
 
-    // Если за сегодня ничего нет — попробовать вчера
+    // Если за сегодня ничего — попробовать вчера
     if ((!news || news.length === 0) && !req.query.date) {
       var yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
