@@ -8,16 +8,16 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --sand: #f5f0e8; --sand-dark: #e8e0d0; --sea: #4a7c8e; --sea-pale: #d6e8ed;
+      --sand: #f5f0e8; --sand-dark: #e8e0d0; --sea: #4a7c8e; --sea-light: #6a9cae; --sea-pale: #d6e8ed;
       --white: #fdfcfa; --text: #3a3530; --text-light: #6b6560; --ink: #2a2520;
-      --green: #3a8a5c; --red: #b84040; --stone: #8a8278;
+      --green: #3a8a5c; --red: #b84040; --orange: #c47a30; --stone: #8a8278;
     }
     body { font-family: 'Jost', sans-serif; background: var(--sand); color: var(--text); min-height: 100vh; }
 
     .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
 
     h1 { font-size: 1.5rem; color: var(--ink); margin-bottom: .5rem; }
-    .subtitle { font-size: .85rem; color: var(--stone); margin-bottom: 2rem; }
+    .subtitle { font-size: .85rem; color: var(--stone); margin-bottom: 1.5rem; }
 
     /* Login */
     .login-box {
@@ -36,6 +36,18 @@
     }
     .login-box button:hover { opacity: .9; }
 
+    /* Tabs */
+    .tabs {
+      display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid var(--sand-dark);
+    }
+    .tab-btn {
+      padding: .6rem 1.2rem; background: none; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; font-family: 'Jost', sans-serif; font-size: .9rem; font-weight: 500;
+      color: var(--stone); cursor: pointer; transition: all .2s;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--sea); border-bottom-color: var(--sea); }
+
     /* Toolbar */
     .toolbar {
       display: flex; align-items: center; justify-content: space-between;
@@ -51,9 +63,11 @@
       cursor: pointer; transition: opacity .2s;
     }
     .btn:hover { opacity: .85; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
     .btn-green { background: var(--green); color: white; }
     .btn-sea { background: var(--sea); color: white; }
     .btn-red { background: var(--red); color: white; }
+    .btn-orange { background: var(--orange); color: white; }
     .btn-outline { background: transparent; border: 1.5px solid var(--sand-dark); color: var(--text-light); }
 
     .stats { font-size: .8rem; color: var(--stone); }
@@ -61,8 +75,9 @@
     /* Card */
     .draft-card {
       background: var(--white); border: 1px solid var(--sand-dark); border-radius: 10px;
-      padding: 1.25rem; margin-bottom: 1rem;
+      padding: 1.25rem; margin-bottom: 1rem; transition: opacity .3s;
     }
+    .draft-card.fading { opacity: .3; }
     .draft-header {
       display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
       margin-bottom: .75rem;
@@ -95,6 +110,18 @@
 
     .empty-msg { text-align: center; padding: 3rem; color: var(--stone); }
 
+    /* Replacing spinner */
+    .replacing-msg {
+      text-align: center; padding: 2rem; color: var(--orange); font-size: .9rem;
+    }
+    .replacing-msg .spinner {
+      display: inline-block; width: 18px; height: 18px; border: 2px solid var(--sand-dark);
+      border-top-color: var(--orange); border-radius: 50%; animation: spin .8s linear infinite;
+      vertical-align: middle; margin-right: .5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast */
     .toast {
       position: fixed; bottom: 2rem; right: 2rem; padding: .6rem 1.2rem;
       background: var(--ink); color: white; border-radius: 8px; font-size: .85rem;
@@ -102,6 +129,14 @@
     }
     .toast.show { display: block; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Hidden badge */
+    .status-badge {
+      display: inline-block; padding: .1rem .4rem; border-radius: 8px; font-size: .6rem;
+      font-weight: 500; margin-left: .5rem; vertical-align: middle;
+    }
+    .status-published { background: #d4edda; color: #155724; }
+    .status-hidden { background: #f8d7da; color: #721c24; }
   </style>
 </head>
 <body>
@@ -117,20 +152,26 @@
   <!-- ADMIN -->
   <div id="admin-screen" style="display:none">
     <h1>📰 Модерация новостей</h1>
-    <div class="subtitle">Черновики собраны в 00:00 UTC. Проверьте и опубликуйте.</div>
+    <div class="subtitle">Черновики собраны в 05:00 UTC. Проверьте и опубликуйте.</div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-drafts" onclick="switchTab('drafts')">📝 Черновики</button>
+      <button class="tab-btn" id="tab-published" onclick="switchTab('published')">✅ Опубликованные</button>
+    </div>
 
     <div class="toolbar">
       <div style="display:flex;gap:.5rem;align-items:center">
-        <input type="date" id="date-picker" onchange="loadDrafts()" />
-        <button class="btn btn-sea" onclick="loadDrafts()">Загрузить</button>
+        <input type="date" id="date-picker" onchange="loadCurrentTab()" />
+        <button class="btn btn-sea" onclick="loadCurrentTab()">Загрузить</button>
       </div>
       <div style="display:flex;gap:.5rem;align-items:center">
         <span class="stats" id="stats-text"></span>
-        <button class="btn btn-green" onclick="publishAll()">✓ Опубликовать все</button>
+        <button class="btn btn-green" id="publish-all-btn" onclick="publishAll()" style="display:none">✓ Опубликовать все</button>
       </div>
     </div>
 
-    <div id="drafts-list"></div>
+    <div id="items-list"></div>
   </div>
 </div>
 
@@ -139,10 +180,11 @@
 <script>
 var adminPassword = '';
 var currentDate = new Date().toISOString().split('T')[0];
-var drafts = [];
+var currentTab = 'drafts';
+var items = [];
 
-var FLAGS = { west: '🌍', ukraine: '🇺🇦', russia: '🇷🇺', china: '🇨🇳' };
-var LABELS = { west: 'Запад', ukraine: 'Украина', russia: 'Россия', china: 'Китай' };
+var FLAGS = { west: '🌍', ukraine: '🇺🇦', russia: '🇷🇺', china: '🌏' };
+var LABELS = { west: 'Запад', ukraine: 'Украина', russia: 'Россия', china: 'Глобальный Юг' };
 
 function esc(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -152,7 +194,7 @@ function toast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2500);
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
 function doLogin() {
@@ -161,75 +203,107 @@ function doLogin() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('admin-screen').style.display = 'block';
   document.getElementById('date-picker').value = currentDate;
-  loadDrafts();
+  loadCurrentTab();
 }
 
-async function loadDrafts() {
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-drafts').classList.toggle('active', tab === 'drafts');
+  document.getElementById('tab-published').classList.toggle('active', tab === 'published');
+  document.getElementById('publish-all-btn').style.display = (tab === 'drafts') ? '' : 'none';
+  loadCurrentTab();
+}
+
+function loadCurrentTab() {
   currentDate = document.getElementById('date-picker').value || currentDate;
-  var list = document.getElementById('drafts-list');
+  if (currentTab === 'drafts') {
+    loadItems('draft');
+  } else {
+    loadItems('published');
+  }
+}
+
+async function loadItems(status) {
+  var list = document.getElementById('items-list');
   list.innerHTML = '<div class="empty-msg">Загружаем...</div>';
 
   try {
-    var r = await fetch('/api/news?date=' + currentDate + '&status=draft');
+    var r = await fetch('/api/news?date=' + currentDate + '&status=' + status);
     var data = await r.json();
-    drafts = Array.isArray(data) ? data : [];
+    items = Array.isArray(data) ? data : [];
   } catch (e) {
-    drafts = [];
+    items = [];
   }
 
-  document.getElementById('stats-text').textContent = 'Черновиков: ' + drafts.length;
+  var label = status === 'draft' ? 'Черновиков' : 'Опубликовано';
+  document.getElementById('stats-text').textContent = label + ': ' + items.length;
 
-  if (drafts.length === 0) {
-    list.innerHTML = '<div class="empty-msg">Нет черновиков за эту дату</div>';
+  if (items.length === 0) {
+    var emptyMsg = status === 'draft' ? 'Нет черновиков за эту дату' : 'Нет опубликованных тем за эту дату';
+    list.innerHTML = '<div class="empty-msg">' + emptyMsg + '</div>';
     return;
   }
 
   var html = '';
-  for (var i = 0; i < drafts.length; i++) {
-    var n = drafts[i];
-    var srcHtml = '';
-    var order = ['west', 'ukraine', 'russia', 'china'];
-    for (var k = 0; k < order.length; k++) {
-      for (var j = 0; j < (n.sources || []).length; j++) {
-        var s = n.sources[j];
-        if (s.perspective === order[k]) {
-          srcHtml +=
-            '<div class="draft-src">' +
-              '<div class="draft-src-flag">' + (FLAGS[s.perspective] || '📰') + '</div>' +
-              '<div class="draft-src-info">' +
-                '<div class="draft-src-name">' + esc(s.name) + ' <span style="color:var(--stone);font-weight:400">(' + (LABELS[s.perspective] || '') + ')</span></div>' +
-                '<div class="draft-src-title">' + esc(s.title) + '</div>' +
-                (s.excerpt ? '<div class="draft-src-excerpt">' + esc(s.excerpt).substring(0, 200) + '...</div>' : '') +
-                '<div class="draft-src-url"><a href="' + esc(s.url) + '" target="_blank">' + esc(s.url).substring(0, 70) + '...</a></div>' +
-              '</div>' +
-            '</div>';
-          break;
-        }
-      }
-    }
-
-    html +=
-      '<div class="draft-card" id="card-' + n.id + '">' +
-        '<div class="draft-header">' +
-          '<div class="draft-headline">' + esc(n.headline) + '</div>' +
-          '<span class="draft-tag">' + esc(n.topic_tag) + '</span>' +
-        '</div>' +
-        '<div class="draft-summary">' + esc(n.summary) + '</div>' +
-        '<div class="draft-sources">' + srcHtml + '</div>' +
-        '<div class="draft-actions">' +
-          '<button class="btn btn-green" onclick="publishOne(\'' + n.id + '\')">✓ Опубликовать</button>' +
-          '<button class="btn btn-red" onclick="deleteOne(\'' + n.id + '\')">✕ Удалить</button>' +
-        '</div>' +
-      '</div>';
+  for (var i = 0; i < items.length; i++) {
+    html += renderCard(items[i], status);
   }
   list.innerHTML = html;
 }
 
-async function adminAction(action, id) {
+function renderCard(n, mode) {
+  var srcHtml = '';
+  var order = ['west', 'ukraine', 'russia', 'china'];
+  for (var k = 0; k < order.length; k++) {
+    for (var j = 0; j < (n.sources || []).length; j++) {
+      var s = n.sources[j];
+      if (s.perspective === order[k]) {
+        srcHtml +=
+          '<div class="draft-src">' +
+            '<div class="draft-src-flag">' + (FLAGS[s.perspective] || '📰') + '</div>' +
+            '<div class="draft-src-info">' +
+              '<div class="draft-src-name">' + esc(s.name) + ' <span style="color:var(--stone);font-weight:400">(' + (LABELS[s.perspective] || '') + ')</span></div>' +
+              '<div class="draft-src-title">' + esc(s.title) + '</div>' +
+              (s.excerpt ? '<div class="draft-src-excerpt">' + esc(s.excerpt).substring(0, 200) + '</div>' : '') +
+              '<div class="draft-src-url"><a href="' + esc(s.url) + '" target="_blank">' + esc(s.url).substring(0, 70) + '...</a></div>' +
+            '</div>' +
+          '</div>';
+        break;
+      }
+    }
+  }
+
+  var actions = '';
+  if (mode === 'draft') {
+    actions =
+      '<button class="btn btn-green" onclick="publishOne(\'' + n.id + '\')">✓ Опубликовать</button>' +
+      '<button class="btn btn-red" onclick="deleteOne(\'' + n.id + '\')">✕ Удалить</button>';
+  } else {
+    actions =
+      '<button class="btn btn-outline" onclick="hideOne(\'' + n.id + '\')">👁 Скрыть</button>' +
+      '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Заменить</button>';
+  }
+
+  return (
+    '<div class="draft-card" id="card-' + n.id + '">' +
+      '<div class="draft-header">' +
+        '<div class="draft-headline">' + esc(n.headline) + '</div>' +
+        '<span class="draft-tag">' + esc(n.topic_tag) + '</span>' +
+      '</div>' +
+      '<div class="draft-summary">' + esc(n.summary) + '</div>' +
+      '<div class="draft-sources">' + srcHtml + '</div>' +
+      '<div class="draft-actions" id="actions-' + n.id + '">' + actions + '</div>' +
+    '</div>'
+  );
+}
+
+async function adminAction(action, id, extra) {
   try {
     var body = { action: action, password: adminPassword };
     if (id) body.id = id;
-    if (action === 'publish_all') body.date = currentDate;
+    if (extra) {
+      for (var k in extra) body[k] = extra[k];
+    }
 
     var r = await fetch('/api/news-admin', {
       method: 'POST',
@@ -247,15 +321,16 @@ async function adminAction(action, id) {
 async function publishOne(id) {
   var res = await adminAction('publish', id);
   if (res && res.ok) {
-    document.getElementById('card-' + id).style.opacity = '0.3';
+    document.getElementById('card-' + id).classList.add('fading');
     toast('Опубликовано ✓');
+    setTimeout(loadCurrentTab, 600);
   } else {
     toast('Ошибка публикации');
   }
 }
 
 async function deleteOne(id) {
-  if (!confirm('Удалить эту тему?')) return;
+  if (!confirm('Удалить эту тему навсегда?')) return;
   var res = await adminAction('delete', id);
   if (res && res.ok) {
     document.getElementById('card-' + id).remove();
@@ -265,10 +340,44 @@ async function deleteOne(id) {
 
 async function publishAll() {
   if (!confirm('Опубликовать все черновики за ' + currentDate + '?')) return;
-  var res = await adminAction('publish_all');
+  var res = await adminAction('publish_all', null, { date: currentDate });
   if (res && res.ok) {
     toast('Все опубликованы ✓');
-    setTimeout(loadDrafts, 500);
+    setTimeout(loadCurrentTab, 500);
+  }
+}
+
+async function hideOne(id) {
+  if (!confirm('Скрыть эту тему? Она исчезнет с сайта.')) return;
+  var res = await adminAction('hide', id);
+  if (res && res.ok) {
+    document.getElementById('card-' + id).classList.add('fading');
+    toast('Скрыто 👁');
+    setTimeout(loadCurrentTab, 600);
+  } else {
+    toast('Ошибка');
+  }
+}
+
+async function replaceOne(id) {
+  if (!confirm('Скрыть эту тему и сгенерировать новую на замену?\n\nЭто займёт 30-60 секунд (парсинг RSS + Claude).')) return;
+
+  // Показываем спиннер вместо кнопок
+  var actionsDiv = document.getElementById('actions-' + id);
+  actionsDiv.innerHTML = '<div class="replacing-msg"><span class="spinner"></span> Генерируем замену...</div>';
+
+  var res = await adminAction('replace', id, { date: currentDate });
+
+  if (res && res.ok) {
+    toast('Тема заменена ✓');
+    setTimeout(loadCurrentTab, 500);
+  } else {
+    var errMsg = (res && res.error) ? res.error : 'Ошибка замены';
+    toast(errMsg);
+    // Восстанавливаем кнопки
+    actionsDiv.innerHTML =
+      '<button class="btn btn-outline" onclick="hideOne(\'' + id + '\')">👁 Скрыть</button>' +
+      '<button class="btn btn-orange" onclick="replaceOne(\'' + id + '\')">🔄 Заменить</button>';
   }
 }
 </script>
