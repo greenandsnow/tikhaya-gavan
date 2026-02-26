@@ -21,6 +21,8 @@ module.exports = async function handler(req, res) {
     var url = supabaseUrl + '/rest/v1/news?date=eq.' + date + '&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,created_at';
     if (status === 'draft') {
       url += '&status=eq.draft';
+    } else {
+      url += '&status=eq.published';
     }
 
     var r = await fetch(url, {
@@ -35,7 +37,7 @@ module.exports = async function handler(req, res) {
       var yDate = yesterday.toISOString().split('T')[0];
 
       var r2 = await fetch(
-        supabaseUrl + '/rest/v1/news?date=eq.' + yDate + '&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,created_at',
+        supabaseUrl + '/rest/v1/news?date=eq.' + yDate + '&status=eq.published&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,created_at',
         { headers: { 'apikey': key, 'Authorization': 'Bearer ' + key } }
       );
       news = await r2.json();
