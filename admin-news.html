@@ -407,8 +407,9 @@ async function runFetch() {
   btn.innerHTML = '📡 Собрать новости';
 
   if (res && res.ok) {
-    showAlert('Собрано ' + (res.topics || '?') + ' тем!\nПереключитесь на «Черновики» чтобы проверить.', '✅');
-    switchTab('drafts');
+    var count = res.published || res.claude_items || res.topics || '?';
+    showAlert('Собрано ' + count + ' тем!\nОни уже опубликованы — проверьте во вкладке «Опубликованные».', '✅');
+    switchTab('published');
   } else {
     showAlert((res && res.error) || 'Ошибка сбора новостей', '⚠️');
   }
@@ -427,10 +428,13 @@ async function hideOne(id) {
   if (!confirm('Скрыть тему целиком?\nОна исчезнет с сайта.')) return;
   var res = await adminAction('hide', id);
   if (res && res.ok) {
-    document.getElementById('card-' + id).classList.add('fading');
+    var card = document.getElementById('card-' + id);
+    if (card) card.remove();
     toast('Тема скрыта 👁');
-    setTimeout(loadCurrentTab, 600);
-  } else { toast('Ошибка'); }
+    // Обновим счётчик
+    var remaining = document.querySelectorAll('.draft-card').length;
+    document.getElementById('stats-text').textContent = 'Опубликовано: ' + remaining;
+  } else { showAlert('Ошибка скрытия', '⚠️'); }
 }
 
 async function replaceOne(id) {
