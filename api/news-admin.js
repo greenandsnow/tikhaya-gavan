@@ -482,8 +482,7 @@ module.exports = async function handler(req, res) {
     if (action === 'run_fetch') {
       try {
         var cronSecret = process.env.CRON_SECRET || '';
-        var baseUrl = process.env.VERCEL_URL ? ('https://' + process.env.VERCEL_URL) : 'https://www.greenandsnowstudio.com';
-        var fetchResp = await fetch(baseUrl + '/api/news-fetch', {
+        var fetchResp = await fetch('https://www.greenandsnowstudio.com/api/news-fetch', {
           method: 'GET',
           headers: { 'Authorization': 'Bearer ' + cronSecret },
           signal: AbortSignal.timeout(120000)
