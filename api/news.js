@@ -18,8 +18,8 @@ module.exports = async function handler(req, res) {
     var key = serviceKey;
 
     var url = supabaseUrl + '/rest/v1/news?date=eq.' + date + '&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,created_at';
-    if (status === 'draft') {
-      url += '&status=eq.draft';
+    if (status === 'draft' || status === 'hidden' || status === 'published') {
+      url += '&status=eq.' + status;
     } else {
       url += '&status=eq.published';
     }
