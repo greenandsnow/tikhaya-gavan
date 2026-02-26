@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Чтиво — Тихая гавань</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -18,8 +18,8 @@ body{font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:
 
 /* HEADER */
 header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;position:sticky;top:0;z-index:100}
-.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:2rem}
-.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.1}
+.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:88px;gap:2rem}
+.logo{text-decoration:none;display:flex;align-items:center;gap:.75rem;line-height:1.1}.logo-img{height:68px;width:auto;display:block}.logo-text{display:flex;flex-direction:column}
 .logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
 .logo-tag{font-size:.65rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
 nav ul{list-style:none;display:flex;gap:.25rem}
@@ -31,7 +31,7 @@ nav a.active{color:var(--sea);font-weight:600}
 main{flex:1}
 .hero{padding:4rem 2rem 2rem;text-align:center;background:linear-gradient(180deg,var(--white) 0%,var(--sand) 100%)}
 .eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);margin-bottom:1rem}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,4.5vw,3.2rem);color:var(--ink);line-height:1.18;margin-bottom:1.25rem}
+.hero h1{font-family:'Jost',sans-serif;font-weight:600;font-size:clamp(2rem,4.5vw,3.2rem);color:var(--ink);line-height:1.18;margin-bottom:1.25rem}
 .hero h1 em{font-style:italic;color:var(--terra)}
 .hero-sub{font-size:.95rem;color:var(--text-light);line-height:1.9}
 
@@ -98,7 +98,7 @@ main{flex:1}
 
 .book-icon{font-size:3rem;margin-bottom:1.2rem;position:relative;z-index:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.3))}
 .book-title{
-  font-family:'Playfair Display',serif;
+  font-family:'Jost',sans-serif;font-weight:600;
   font-size:1.5rem;font-weight:700;
   color:rgba(255,255,255,0.95);
   text-transform:uppercase;letter-spacing:.07em;
@@ -132,7 +132,7 @@ main{flex:1}
   display:inline-block;
   padding:.65rem 1.8rem;
   border-radius:5px;
-  font-family:'Playfair Display',serif;
+  font-family:'Jost',sans-serif;font-weight:600;
   font-size:.8rem;font-weight:700;
   letter-spacing:.14em;text-transform:uppercase;
   color:rgba(255,255,255,0.9);
@@ -163,19 +163,8 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 .book:nth-child(2){animation-delay:.15s}
 
 /* MOBILE */
-@media(max-width:620px){
+@media(max-width:768px){.logo-img{height:52px}.logo-name{font-size:1.2rem!important}}@media(max-width:620px){
   .doors{grid-template-columns:1fr;gap:2rem;padding:0 1.25rem 3rem}
-}
-
-/* BURGER */
-.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
-.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
-@media(max-width:768px){
-.burger{display:flex}
-nav{display:none;position:absolute;top:72px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}
-nav.open{display:block}
-nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}
-nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
 }
 </style>
 </head>
@@ -183,11 +172,13 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
 <header>
   <div class="hi">
     <a href="/" class="logo">
-      <span class="logo-name">Тихая гавань</span>
-      <span class="logo-tag">Место для вашего досуга</span>
+      <img src="/logo_tg.png" alt="Тихая гавань" class="logo-img"/>
+      <div class="logo-text">
+        <span class="logo-name">Тихая гавань</span>
+        <span class="logo-tag">Место для вашего досуга</span>
+      </div>
     </a>
-    <button class="burger" id="burger" aria-label="Меню" onclick="document.getElementById('main-nav').classList.toggle('open')"><span></span><span></span><span></span></button>
-    <nav id="main-nav"><ul>
+    <nav><ul>
       <li><a href="/crosswords">Кроссворды</a></li>
       <li><a href="/ask">Задай вопрос</a></li>
       <li><a href="/reading" class="active">Чтиво</a></li>
@@ -258,4 +249,4 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
       <a href="/privacy">Политика конфиденциальности</a>
       <a href="/terms">Условия</a>
     </div>
-    <a href="/cdn-cgi/l/email-protection#ec9f999c9c839e98ac8b9e8989828d82889f82839b9f9899888583c28f8381"><span class="__cf
+    <a href="/cdn-cgi/l/email-protection#92e1e7e2e2fde0e6d2f5e0f7f7fcf3fcf6e1fcfde5e1e6e7f6fbfdbcf1fdff"><span class="__cf

@@ -60,14 +60,26 @@
       align-items: center;
       justify-content: space-between;
       gap: 2rem;
-      height: 72px;
+      height: 88px;
     }
 
     .logo {
       text-decoration: none;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
       line-height: 1.1;
+    }
+
+    .logo-img {
+      height: 68px;
+      width: auto;
+      display: block;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
     }
 
     .logo-name {
@@ -80,10 +92,11 @@
     }
 
     .logo-tagline {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       color: var(--stone);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
+      margin-top: 2px;
     }
 
     /* ─── NAV ─── */
@@ -301,7 +314,7 @@
       nav {
         display: none;
         position: absolute;
-        top: 72px;
+        top: 88px;
         left: 0;
         right: 0;
         background: var(--white);
@@ -324,6 +337,10 @@
         width: 100%;
       }
 
+      .logo-img { height: 52px; }
+      .logo-name { font-size: 1.2rem; }
+      .logo-tagline { font-size: 0.5rem; }
+
       .hero h1 { font-size: 1.8rem; }
       .cards { grid-template-columns: 1fr; }
       .footer-inner { flex-direction: column; align-items: flex-start; }
@@ -336,8 +353,11 @@
   <header>
     <div class="header-inner">
       <a href="/" class="logo">
-        <span class="logo-name">Тихая гавань</span>
-        <span class="logo-tagline">Место для вашего досуга</span>
+        <img src="/logo_tg.png" alt="Тихая гавань" class="logo-img" />
+        <div class="logo-text">
+          <span class="logo-name">Тихая гавань</span>
+          <span class="logo-tagline">Место для вашего досуга</span>
+        </div>
       </a>
 
       <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
@@ -437,12 +457,11 @@
           <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="52" height="52" rx="10" fill="#e8e0d0"/>
             <rect x="2" y="2" width="48" height="48" rx="9" fill="white" opacity="0.6"/>
-            <!-- globe with meridians -->
-            <circle cx="26" cy="26" r="14" fill="#4a7c8e"/>
-            <ellipse cx="26" cy="26" rx="6" ry="14" fill="none" stroke="white" stroke-width="1.2" opacity="0.7"/>
-            <line x1="12" y1="26" x2="40" y2="26" stroke="white" stroke-width="1.2" opacity="0.7"/>
-            <line x1="15" y1="19" x2="37" y2="19" stroke="white" stroke-width="1" opacity="0.5"/>
-            <line x1="15" y1="33" x2="37" y2="33" stroke="white" stroke-width="1" opacity="0.5"/>
+            <circle cx="26" cy="26" r="14" stroke="#4a7c8e" stroke-width="2.5" fill="none"/>
+            <ellipse cx="26" cy="26" rx="6" ry="14" stroke="#4a7c8e" stroke-width="1.5" fill="none"/>
+            <line x1="12" y1="26" x2="40" y2="26" stroke="#4a7c8e" stroke-width="1.5"/>
+            <path d="M14 19 Q26 17 38 19" fill="none" stroke="#4a7c8e" stroke-width="1.2"/>
+            <path d="M14 33 Q26 35 38 33" fill="none" stroke="#4a7c8e" stroke-width="1.2"/>
           </svg>
         </div>
         <h2>Новости</h2>

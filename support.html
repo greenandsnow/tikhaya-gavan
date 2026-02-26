@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Поддержка — Тихая гавань</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -19,8 +19,10 @@ body{font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:
 
 /* HEADER */
 header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;position:sticky;top:0;z-index:100}
-.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:2rem}
-.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.1}
+.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:88px;gap:2rem}
+.logo{text-decoration:none;display:flex;align-items:center;gap:.75rem;line-height:1.1}
+.logo-img{height:68px;width:auto;display:block}
+.logo-text{display:flex;flex-direction:column}
 .logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
 .logo-tag{font-size:.65rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
 nav ul{list-style:none;display:flex;gap:.25rem}
@@ -37,7 +39,7 @@ main{flex:1;padding:3rem 2rem 4rem}
 /* PAGE TITLE */
 .page-title{text-align:center;margin-bottom:2.5rem}
 .page-eyebrow{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);margin-bottom:.75rem}
-.page-title h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.4rem);color:var(--ink);line-height:1.2}
+.page-title h1{font-family:'Jost',sans-serif;font-weight:600;font-size:clamp(1.8rem,3.5vw,2.4rem);color:var(--ink);line-height:1.2}
 .page-title p{font-size:.92rem;color:var(--text-light);margin-top:.6rem;line-height:1.6}
 
 /* TILE CARD */
@@ -46,7 +48,7 @@ main{flex:1;padding:3rem 2rem 4rem}
 .tile.clickable:hover{box-shadow:0 6px 24px rgba(74,124,142,0.12);transform:translateY(-2px)}
 .tile-icon{font-size:2rem;flex-shrink:0}
 .tile-body{flex:1}
-.tile-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ink);margin-bottom:.2rem}
+.tile-title{font-family:'Jost',sans-serif;font-weight:500;font-size:1.1rem;color:var(--ink);margin-bottom:.2rem}
 .tile-desc{font-size:.82rem;color:var(--text-light);line-height:1.5}
 .tile-chevron{font-size:.8rem;color:var(--stone);transition:transform .3s;flex-shrink:0}
 .tile.open .tile-chevron{transform:rotate(180deg)}
@@ -104,9 +106,11 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 .fl{display:flex;gap:1.5rem}
 
 /* MOBILE */
-@media(max-width:600px){
+@media(max-width:768px){
   .burger{display:flex}
-  nav{display:none;position:absolute;top:72px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06)}
+  .logo-img{height:52px}
+  .logo-name{font-size:1.2rem!important}
+  nav{display:none;position:absolute;top:88px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06)}
   nav.open{display:block}
   nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}
   nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
@@ -122,7 +126,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 <!-- HEADER -->
 <header>
   <div class="hi">
-    <a href="/" class="logo"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></a>
+    <a href="/" class="logo"><img src="/logo_tg.png" alt="Тихая гавань" class="logo-img"/><div class="logo-text"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></div></a>
     <button class="burger" id="burger" aria-label="Меню" onclick="document.getElementById('main-nav').classList.toggle('open')">
       <span></span><span></span><span></span>
     </button>
@@ -130,7 +134,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
       <li><a href="/crosswords">Кроссворды</a></li>
       <li><a href="/ask">Задай вопрос</a></li>
       <li><a href="/reading">Чтиво</a></li>
-      <li><a href="/videos">Видео</a></li>
+      <li><a href="/news">Новости</a></li>
       <li><a href="/games">Игры</a></li>
       <li><a href="/support" class="active">Поддержка</a></li>
     </ul></nav>
@@ -178,7 +182,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
           <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)"><span>Как удалить свою книгу из библиотеки?</span><span class="faq-arrow">&#9660;</span></div>
-            <div class="faq-a"><div class="faq-a-inner">Напишите нам через форму на этой странице или на <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a> — укажите название книги и email, который вы использовали при публикации. Книга будет удалена в течение 5 рабочих дней.</div></div>
+            <div class="faq-a"><div class="faq-a-inner">Напишите нам через форму на этой странице или на <a href="/cdn-cgi/l/email-protection#d8abada8a8b7aaac98bfaabdbdb6b9b6bcabb6b7afabacadbcb1b7f6bbb7b5"><span class="__cf_email__" data-cfemail="53202623233c212713342136363d323d37203d3c24202726373a3c7d303c3e">[email&#160;protected]</span></a> — укажите название книги и email, который вы использовали при публикации. Книга будет удалена в течение 5 рабочих дней.</div></div>
           </div>
 
           <div class="faq-item">
@@ -301,11 +305,11 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
   <div class="fi">
     <span>&copy; 2025 Тихая гавань</span>
     <div class="fl"><a href="/privacy">Политика конфиденциальности</a><a href="/terms">Условия</a></div>
-    <a href="mailto:support@greenandsnowstudio.com">support@greenandsnowstudio.com</a>
+    <a href="/cdn-cgi/l/email-protection#c5b6b0b5b5aab7b185a2b7a0a0aba4aba1b6abaab2b6b1b0a1acaaeba6aaa8"><span class="__cf_email__" data-cfemail="71020401011e030531160314141f101f15021f1e0602050415181e5f121e1c">[email&#160;protected]</span></a>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* Toggle panels */
 function togglePanel(id) {
   var panel = document.getElementById('panel-' + id);
@@ -370,18 +374,4 @@ function sendSupport() {
   .then(function() {
     showToast('Спасибо! Ваше сообщение отправлено. Мы ответим в ближайшее время.');
     document.getElementById('s-name').value = '';
-    document.getElementById('s-email').value = '';
-    document.getElementById('s-message').value = '';
-    document.getElementById('s-topic').selectedIndex = 0;
-  })
-  .catch(function() {
-    showToast('Не удалось отправить. Напишите нам на support@greenandsnowstudio.com', true);
-  })
-  .finally(function() {
-    btn.disabled = false;
-    btnText.textContent = 'Отправить';
-  });
-}
-</script>
-</body>
-</html>
+    document.getElementById

@@ -6,7 +6,7 @@
   <title>Темы дня — Тихая гавань</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -20,8 +20,8 @@
 
     /* HEADER */
     header { background: var(--white); border-bottom: 1px solid var(--sand-dark); padding: 0 2rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 8px rgba(74,124,142,0.06); }
-    .hi { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 2rem; height: 72px; }
-    .logo { text-decoration: none; display: flex; flex-direction: column; line-height: 1.1; }
+    .hi { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 2rem; height: 88px; }
+    .logo { text-decoration: none; display: flex; align-items: center; gap: .75rem; line-height: 1.1; } .logo-img { height: 68px; width: auto; display: block; } .logo-text { display: flex; flex-direction: column; }
     .logo-name { font-weight: 700; font-size: 1.45rem; color: var(--sea); letter-spacing: 0.1em; text-transform: uppercase; }
     .logo-tag { font-size: 0.65rem; color: var(--stone); letter-spacing: 0.12em; text-transform: uppercase; }
     nav ul { list-style: none; display: flex; gap: 0.3rem; }
@@ -32,7 +32,7 @@
     /* HERO */
     .hero { text-align: center; padding: 3.5rem 2rem 2rem; background: linear-gradient(180deg, var(--white) 0%, var(--sand) 100%); }
     .eyebrow { font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--stone); margin-bottom: 1rem; }
-    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4.5vw, 3rem); color: var(--ink); line-height: 1.18; margin-bottom: 1rem; }
+    .hero h1 { font-family: 'Jost', sans-serif; font-weight: 600; font-size: clamp(2rem, 4.5vw, 3rem); color: var(--ink); line-height: 1.18; margin-bottom: 1rem; }
     .hero h1 em { font-style: italic; color: var(--sea); }
     .hero-sub { font-size: .92rem; color: var(--text-light); line-height: 1.8; max-width: 620px; margin: 0 auto; }
     .hero-date { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.25rem; padding: .5rem 1.25rem; background: var(--white); border: 1px solid var(--sand-dark); border-radius: 24px; font-size: .82rem; color: var(--stone-dark); font-weight: 500; }
@@ -124,28 +124,16 @@
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
-    @media (max-width: 720px) { .news-grid { grid-template-columns: 1fr; } .hi { gap: 1rem; } nav ul { gap: 0.15rem; } nav a { padding: .35rem .5rem; font-size: .78rem; } .hero h1 { font-size: 1.7rem; } .modal { margin: 1rem; max-height: 90vh; } .legend { flex-wrap: wrap; gap: .75rem; } .modal-body { padding: 1rem; } }
-    @media (max-width: 500px) { .hero { padding: 2.5rem 1.25rem 1.5rem; } .news-container { padding: .75rem 1rem 2rem; } }
-  
-/* BURGER */
-.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
-.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
-@media(max-width:768px){
-.burger{display:flex}
-nav{display:none;position:absolute;top:72px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}
-nav.open{display:block}
-nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}
-nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
-}
-</style>
+    @media (max-width: 768px) { .logo-img { height: 52px; } .logo-name { font-size: 1.2rem !important; } .news-grid { grid-template-columns: 1fr; } .hi { gap: 1rem; } nav ul { gap: 0.15rem; } nav a { padding: .35rem .5rem; font-size: .78rem; } .hero h1 { font-size: 1.7rem; } .modal { margin: 1rem; max-height: 90vh; } .legend { flex-wrap: wrap; gap: .75rem; } .modal-body { padding: 1rem; } }
+    @media (max-width: 500px) { nav { display: none; } .hero { padding: 2.5rem 1.25rem 1.5rem; } .news-container { padding: .75rem 1rem 2rem; } }
+  </style>
 </head>
 <body>
 
 <header>
   <div class="hi">
-    <a href="/" class="logo"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></a>
-    <button class="burger" id="burger" aria-label="Меню" onclick="document.getElementById('main-nav').classList.toggle('open')"><span></span><span></span><span></span></button>
-    <nav id="main-nav"><ul>
+    <a href="/" class="logo"><img src="/logo_tg.png" alt="Тихая гавань" class="logo-img"/><div class="logo-text"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></div></a>
+    <nav><ul>
       <li><a href="/crosswords">Кроссворды</a></li>
       <li><a href="/ask">Задай вопрос</a></li>
       <li><a href="/reading">Чтиво</a></li>
