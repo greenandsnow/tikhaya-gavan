@@ -182,6 +182,7 @@
       <div style="display:flex;gap:.5rem;align-items:center">
         <input type="date" id="date-picker" onchange="loadCurrentTab()" />
         <button class="btn btn-sea" onclick="loadCurrentTab()">Загрузить</button>
+        <button class="btn btn-orange" id="fetch-btn" onclick="runFetch()">📡 Собрать новости</button>
       </div>
       <div style="display:flex;gap:.5rem;align-items:center">
         <span class="stats" id="stats-text"></span>
@@ -392,6 +393,24 @@ async function deleteOne(id) {
   if (res && res.ok) {
     document.getElementById('card-' + id).remove();
     toast('Удалено');
+  }
+}
+
+async function runFetch() {
+  if (!confirm('Собрать свежие новости?\nЗаймёт 60-90 секунд. Результат появится в «Черновиках».')) return;
+  var btn = document.getElementById('fetch-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-inline"></span> Собираем...';
+
+  var res = await adminAction('run_fetch');
+  btn.disabled = false;
+  btn.innerHTML = '📡 Собрать новости';
+
+  if (res && res.ok) {
+    showAlert('Собрано ' + (res.topics || '?') + ' тем!\nПереключитесь на «Черновики» чтобы проверить.', '✅');
+    switchTab('drafts');
+  } else {
+    showAlert((res && res.error) || 'Ошибка сбора новостей', '⚠️');
   }
 }
 
