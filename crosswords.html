@@ -450,7 +450,7 @@
 
 <main>
   <div class="page-title">Кроссворды</div>
-  <div class="page-subtitle">Кроссворд недели — бесплатно. Новый каждый понедельник.</div>
+  <div class="page-subtitle">Кроссворд недели — бесплатно. Новый каждую пятницу.</div>
 
   <!-- Complete banner -->
   <div class="complete-banner" id="complete-banner">
@@ -573,65 +573,17 @@
       <a href="/privacy">Политика конфиденциальности</a>
       <a href="/terms">Условия</a>
     </div>
-    <span class="footer-email">Написать нам: <a href="/cdn-cgi/l/email-protection#9feceaefeff0edebdff8edfafaf1fef1fbecf1f0e8ecebeafbf6f0b1fcf0f2"><span class="__cf_email__" data-cfemail="b7c4c2c7c7d8c5c3f7d0c5d2d2d9d6d9d3c4d9d8c0c4c3c2d3ded899d4d8da">[email&#160;protected]</span></a></span>
+    <span class="footer-email">Написать нам: <a href="mailto:info@greenandsnowstudio.com">info@greenandsnowstudio.com</a></span>
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ═══════════════════════════════════════════════
-// PUZZLE DATA — replace with fetch() from server
+// LOAD PUZZLE FROM SERVER
 // ═══════════════════════════════════════════════
-const PUZZLE = {
-  "schema_version": 1,
-  "id": "0b7fa1e7-3999-4dc5-ad10-22396e3ab3c6",
-  "size": { "rows": 15, "cols": 15 },
-  "grid": [
-    ".....#####.....",".###.##.##.###.",".##.........##.",
-    ".#.#.##.##.#.#.",".....##.##.....",
-    "##.##.....##.##","##.##.#.#.##.##","#......#......#",
-    "##.##.#.#.##.##","##.##.....##.##",
-    ".....##.##.....",".#.#.##.##.#.#.",".##.........##.",
-    ".###.##.##.###.",".....#####....."
-  ],
-  "entries": [
-    {"dir":"across","num":1,"row":0,"col":0,"answer":"ЦЗЕСЮ","clue":"Городской уезд городского округа Цзиньчжун в Китае"},
-    {"dir":"across","num":2,"row":0,"col":10,"answer":"ПОВАР","clue":"Специалист в области приготовления пищи"},
-    {"dir":"across","num":3,"row":2,"col":3,"answer":"ФИЛИППИНЫ","clue":"Островное государство в Азии"},
-    {"dir":"across","num":4,"row":4,"col":0,"answer":"АСЬЮТ","clue":"Бывшая столица 13-го нома Верхнего Египта"},
-    {"dir":"across","num":5,"row":4,"col":10,"answer":"АТЛАС","clue":"Сборник карт, таблиц, рисунков, изданный в виде отдельной книги"},
-    {"dir":"across","num":6,"row":5,"col":5,"answer":"БЕКАС","clue":"Болотная птица с очень длинным клювом, пестрой спинкой и с белыми брюшком и грудью"},
-    {"dir":"across","num":7,"row":7,"col":1,"answer":"БОГЕМА","clue":"Среда актеров, музыкантов, художников, литераторов"},
-    {"dir":"across","num":8,"row":7,"col":8,"answer":"ОДЕЖДА","clue":"Совокупность предметов, которые надевают на тело"},
-    {"dir":"across","num":9,"row":9,"col":5,"answer":"ОМЕГА","clue":"Название последней буквы греческого алфавита"},
-    {"dir":"across","num":10,"row":10,"col":0,"answer":"ОПЕРА","clue":"Музыкально-драматическое произведение, в котором действующие лица поют в сопровождении оркестра"},
-    {"dir":"across","num":11,"row":10,"col":10,"answer":"ДОКЕР","clue":"Рабочий в порту; портовый грузчик"},
-    {"dir":"across","num":12,"row":12,"col":3,"answer":"АРХИПЕЛАГ","clue":"Группа морских островов, расположенных на небольшом расстоянии друг от друга"},
-    {"dir":"across","num":13,"row":14,"col":0,"answer":"АМБРА","clue":"Смолистое ароматическое вещество, образующееся в пищеварительных органах кашалота"},
-    {"dir":"across","num":14,"row":14,"col":10,"answer":"АКЦИЯ","clue":"Ценная бумага, удостоверяющая внесение пая в акционерное общество"},
-    {"dir":"down","num":1,"row":0,"col":0,"answer":"ЦИСТА","clue":"Форма существования одноклеточного животного или растения"},
-    {"dir":"down","num":2,"row":0,"col":4,"answer":"ЮРИСТ","clue":"Практический деятель в области права"},
-    {"dir":"down","num":3,"row":0,"col":10,"answer":"ПЕНКА","clue":"Пенистый верхний слой сиропа при варке варенья"},
-    {"dir":"down","num":4,"row":0,"col":14,"answer":"РИПУС","clue":"Рыба семейства лососевых"},
-    {"dir":"down","num":5,"row":1,"col":7,"answer":"СПЯЧКА","clue":"Состояние сна у некоторых животных, наступающее зимой"},
-    {"dir":"down","num":6,"row":3,"col":2,"answer":"НЬЮЙОРКЕЦ","clue":"Житель самого большого города в США по численности населения"},
-    {"dir":"down","num":7,"row":3,"col":12,"answer":"БЛОНДИНКА","clue":"Белокурая, светловолосая женщина"},
-    {"dir":"down","num":8,"row":5,"col":5,"answer":"БУМБО","clue":"Любимый напиток пиратов Вест-Индии в XVII–XVIII в. на основе рома"},
-    {"dir":"down","num":9,"row":5,"col":9,"answer":"САДЖА","clue":"Пустынная птица семейства рябков, копытка"},
-    {"dir":"down","num":10,"row":8,"col":7,"answer":"РЕЦЕПТ","clue":"Описание способа приготовления блюда"},
-    {"dir":"down","num":11,"row":10,"col":0,"answer":"ОКАЛА","clue":"Город в округе Марион, штат Флорида"},
-    {"dir":"down","num":12,"row":10,"col":4,"answer":"АОРТА","clue":"Главная артерия кровеносной системы человека"},
-    {"dir":"down","num":13,"row":10,"col":10,"answer":"ДРАГА","clue":"Землечерпальная машина для углубления дна водоемов"},
-    {"dir":"down","num":14,"row":10,"col":14,"answer":"РЕЗНЯ","clue":"Жестокая драка с поножовщиной"}
-  ]
-};
-
-// ═══════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════
-const ROWS = PUZZLE.size.rows;
-const COLS = PUZZLE.size.cols;
-let userGrid = Array.from({length: ROWS}, () => Array(COLS).fill(''));
-let lockedCells = Array.from({length: ROWS}, () => Array(COLS).fill(false));
+let PUZZLE = null;
+let ROWS, COLS;
+let userGrid, lockedCells;
 let selectedRow = -1, selectedCol = -1;
 let selectedDir = 'across';
 let currentEntry = null;
@@ -640,22 +592,50 @@ let seconds = 0;
 let score = 100;
 let isStarted = false;
 let isComplete = false;
+const cellEntries = {};
+const cellNumbers = {};
 
-// Build cell->entry map
-const cellEntries = {}; // "r,c" -> {across: entry, down: entry}
-const cellNumbers = {}; // "r,c" -> number
+(async function loadPuzzle() {
+  const grid = document.getElementById('crossword-grid');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#8a8278;font-size:1rem;">Загружаем кроссворд…</div>';
 
-PUZZLE.entries.forEach(e => {
-  for (let i = 0; i < e.answer.length; i++) {
-    const r = e.dir === 'across' ? e.row : e.row + i;
-    const c = e.dir === 'across' ? e.col + i : e.col;
-    const key = `${r},${c}`;
-    if (!cellEntries[key]) cellEntries[key] = {};
-    cellEntries[key][e.dir] = e;
+  try {
+    const resp = await fetch('/api/crossword');
+    const data = await resp.json();
+    PUZZLE = data.puzzle;
+  } catch(e) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#a0614a;font-size:1rem;">Не удалось загрузить кроссворд. Попробуйте обновить страницу.</div>';
+    return;
   }
-  const startKey = `${e.row},${e.col}`;
-  if (!cellNumbers[startKey]) cellNumbers[startKey] = e.num;
-});
+
+  if (!PUZZLE || !PUZZLE.size) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#a0614a;font-size:1rem;">Кроссворд временно недоступен.</div>';
+    return;
+  }
+
+  ROWS = PUZZLE.size.rows;
+  COLS = PUZZLE.size.cols;
+  userGrid = Array.from({length: ROWS}, () => Array(COLS).fill(''));
+  lockedCells = Array.from({length: ROWS}, () => Array(COLS).fill(false));
+
+  // Build cell->entry map
+  PUZZLE.entries.forEach(e => {
+    for (let i = 0; i < e.answer.length; i++) {
+      const r = e.dir === 'across' ? e.row : e.row + i;
+      const c = e.dir === 'across' ? e.col + i : e.col;
+      const key = `${r},${c}`;
+      if (!cellEntries[key]) cellEntries[key] = {};
+      cellEntries[key][e.dir] = e;
+    }
+    const startKey = `${e.row},${e.col}`;
+    if (!cellNumbers[startKey]) cellNumbers[startKey] = e.num;
+  });
+
+  buildGrid();
+  buildClueLists();
+  updateWordCount();
+  focusInput();
+})();
 
 // ═══════════════════════════════════════════════
 // BUILD GRID
@@ -1109,14 +1089,8 @@ function toggleHowto() {
 }
 
 // ═══════════════════════════════════════════════
-
+// INIT — called from loadPuzzle() above
 // ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
-buildGrid();
-buildClueLists();
-updateWordCount();
-focusInput();
 </script>
 </body>
 </html>
