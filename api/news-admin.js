@@ -47,9 +47,12 @@ module.exports = async function handler(req, res) {
     async function fetchCampRSS(camp) {
       var CAMP_FEEDS = {
         west: [
-          { name: 'BBC Russian', url: 'https://feeds.bbci.co.uk/russian/rss.xml' },
-          { name: 'DW Russian', url: 'https://rss.dw.com/rdf/rss-ru-all' },
-          { name: 'Медуза', url: 'https://meduza.io/rss/all' }
+          { name: 'BBC Russian', url: 'https://feeds.bbci.co.uk/russian/rss.xml', lang: 'ru' },
+          { name: 'DW Russian', url: 'https://rss.dw.com/rdf/rss-ru-all', lang: 'ru' },
+          { name: 'BBC World (англ.)', url: 'https://feeds.bbci.co.uk/news/world/rss.xml', lang: 'en' },
+          { name: 'DW English', url: 'https://rss.dw.com/rdf/rss-en-all', lang: 'en' },
+          { name: 'Медуза', url: 'https://meduza.io/rss/all', lang: 'ru' },
+          { name: 'Медиазона', url: 'https://zona.media/rss', lang: 'ru' }
         ],
         ukraine: [
           { name: 'УНИАН', url: 'https://rss.unian.net/site/news_rus.rss' },
@@ -60,8 +63,8 @@ module.exports = async function handler(req, res) {
           { name: 'РИА Новости', url: 'https://ria.ru/export/rss2/archive/index.xml' }
         ],
         china: [
-          { name: 'Синьхуа', url: 'https://russian.news.cn/ewjkxml.xml' },
-          { name: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml' }
+          { name: 'Синьхуа', url: 'https://russian.news.cn/ewjkxml.xml', lang: 'ru' },
+          { name: 'Al Jazeera (англ.)', url: 'https://www.aljazeera.com/xml/rss/all.xml', lang: 'en' }
         ]
       };
 
@@ -85,7 +88,8 @@ module.exports = async function handler(req, res) {
             var link = linkMatch ? linkMatch[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim() : '';
             var desc = descMatch ? descMatch[1].replace(/<!\[CDATA\[|\]\]>/g, '').replace(/<[^>]*>/g, '').trim() : '';
             if (title) {
-              articles.push({ source: feed.name, title: title, url: link, excerpt: desc.substring(0, 300) });
+              var langTag = (feed.lang === 'en') ? ' [АНГЛ]' : '';
+              articles.push({ source: feed.name + langTag, title: title, url: link, excerpt: desc.substring(0, 300), lang: feed.lang || 'ru' });
             }
           }
         } catch (e) { /* skip */ }
@@ -348,16 +352,21 @@ module.exports = async function handler(req, res) {
             'Текущая статья от лагеря «' + (campLabels[camp] || camp) + '» (НЕ ПОВТОРЯЙ ЕЁ):\n' +
             '- Заголовок: ' + (currentSource ? currentSource.title : '') + '\n' +
             '- URL: ' + (currentSource ? currentSource.url : '') + '\n\n' +
-            'ЗАДАЧА: Найди в списке ниже ДРУГУЮ статью от того же лагеря, которая НАПРЯМУЮ относится к теме «' + item3.headline + '».\n\n' +
+            'ЗАДАЧА: Найди в списке ниже ДРУГУЮ статью, которая НАПРЯМУЮ относится к теме «' + item3.headline + '».\n\n' +
+            'ПРИОРИТЕТ ВЫБОРА (для лагеря «Запад»):\n' +
+            '1. BBC Russian или DW Russian (русскоязычные)\n' +
+            '2. BBC World [АНГЛ] или DW English [АНГЛ] (англоязычные)\n' +
+            '3. Медуза или Медиазона (русская оппозиция)\n' +
+            'Выбирай по приоритету: сначала русскоязычные BBC/DW, потом английские, потом Медуза/Медиазона.\n\n' +
             'СТРОГИЕ ПРАВИЛА:\n' +
-            '- Статья ДОЛЖНА быть про ту же тему (не про другие события!)\n' +
-            '- Статья ДОЛЖНА быть от ДРУГОГО источника или иметь ДРУГОЙ заголовок\n' +
+            '- Статья ДОЛЖНА быть про тему «' + item3.headline + '» (не про другие события!)\n' +
             '- URL должен быть ДРУГОЙ (не тот же, что у текущей статьи)\n' +
-            '- Excerpt копируй из RSS дословно\n' +
-            '- Если в списке НЕТ подходящей статьи по этой теме — верни: {"none": true}\n' +
+            '- Для русскоязычных статей: excerpt копируй из RSS дословно\n' +
+            '- Для англоязычных статей (с пометкой [АНГЛ]): ПЕРЕВЕДИ заголовок на русский и напиши excerpt — краткое содержание 2-3 предложения на русском своими словами. В поле name пиши без [АНГЛ] (например просто \"BBC World\").\n' +
+            '- Если в списке НЕТ ни одной подходящей статьи по этой теме — верни: {"none": true}\n' +
             '- НЕ ПРИДУМЫВАЙ статьи. Используй ТОЛЬКО те, что есть в списке.\n\n' +
             'JSON без ```:\n' +
-            'Если нашёл: {"name":"Имя СМИ","title":"Заголовок","excerpt":"Текст","url":"https://..."}\n' +
+            'Если нашёл: {"name":"Имя СМИ","title":"Заголовок на русском","excerpt":"Текст на русском","url":"https://..."}\n' +
             'Если не нашёл: {"none": true}',
           messages: [{ role: 'user', content: campList }]
         })
