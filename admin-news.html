@@ -332,9 +332,15 @@ function renderCard(n, mode) {
       '<button class="btn btn-green" onclick="publishOne(\'' + n.id + '\')">✓ Опубликовать</button>' +
       '<button class="btn btn-red" onclick="deleteOne(\'' + n.id + '\')">✕ Удалить</button>';
   } else {
-    topActions =
-      '<button class="btn btn-outline" onclick="hideOne(\'' + n.id + '\')">👁 Скрыть тему</button>' +
-      '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Заменить тему</button>';
+    var isWar = (n.headline || '').indexOf('Война в Украине') !== -1;
+    if (isWar) {
+      topActions =
+        '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Обновить статьи</button>';
+    } else {
+      topActions =
+        '<button class="btn btn-outline" onclick="hideOne(\'' + n.id + '\')">👁 Скрыть тему</button>' +
+        '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Заменить тему</button>';
+    }
   }
 
   return (
@@ -409,19 +415,35 @@ async function hideOne(id) {
 }
 
 async function replaceOne(id) {
-  if (!confirm('Скрыть тему и сгенерировать новую?\nЗаймёт 30-60 секунд.')) return;
+  // Найдём headline темы
+  var card = document.getElementById('card-' + id);
+  var headlineEl = card ? card.querySelector('.draft-headline') : null;
+  var headline = headlineEl ? headlineEl.textContent : '';
+  var isWar = headline.indexOf('Война в Украине') !== -1;
+
+  var msg = isWar
+    ? 'Обновить статьи в рубрике «Война в Украине»?\nРубрика останется, статьи будут заменены.\nЗаймёт 30-60 секунд.'
+    : 'Скрыть тему и сгенерировать новую?\nЗаймёт 30-60 секунд.';
+  if (!confirm(msg)) return;
+
   var actionsDiv = document.getElementById('actions-' + id);
-  actionsDiv.innerHTML = '<div class="replacing-msg"><span class="spinner"></span> Генерируем замену...</div>';
+  var spinnerText = isWar ? 'Обновляем статьи...' : 'Генерируем замену...';
+  actionsDiv.innerHTML = '<div class="replacing-msg"><span class="spinner"></span> ' + spinnerText + '</div>';
 
   var res = await adminAction('replace', id, { date: currentDate });
   if (res && res.ok) {
-    toast('Тема заменена ✓');
+    toast(isWar ? 'Статьи обновлены ✓' : 'Тема заменена ✓');
     setTimeout(loadCurrentTab, 500);
   } else {
-    showAlert((res && res.error) || 'Ошибка замены темы', '⚠️');
-    actionsDiv.innerHTML =
-      '<button class="btn btn-outline" onclick="hideOne(\'' + id + '\')">👁 Скрыть тему</button>' +
-      '<button class="btn btn-orange" onclick="replaceOne(\'' + id + '\')">🔄 Заменить тему</button>';
+    showAlert((res && res.error) || 'Ошибка замены', '⚠️');
+    if (isWar) {
+      actionsDiv.innerHTML =
+        '<button class="btn btn-orange" onclick="replaceOne(\'' + id + '\')">🔄 Обновить статьи</button>';
+    } else {
+      actionsDiv.innerHTML =
+        '<button class="btn btn-outline" onclick="hideOne(\'' + id + '\')">👁 Скрыть тему</button>' +
+        '<button class="btn btn-orange" onclick="replaceOne(\'' + id + '\')">🔄 Заменить тему</button>';
+    }
   }
 }
 
