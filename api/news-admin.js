@@ -342,11 +342,23 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 600,
-          system: 'Ты — редактор. Подбери ОДНУ статью от лагеря «' + (campLabels[camp] || camp) + '» по теме «' + item3.headline + '».\n\n' +
-            'Текущая статья (НЕ ПОВТОРЯЙ ЕЁ): ' + (currentSource ? currentSource.title : '') + '\n\n' +
-            'Выбери ДРУГУЮ статью на ту же тему из списка ниже.\n' +
-            'Excerpt копируй дословно. Всё на русском.\n\n' +
-            'JSON без ```:\n{"name":"Имя СМИ","title":"Заголовок","excerpt":"Текст из RSS","url":"https://..."}',
+          system: 'Ты — редактор новостной ленты.\n\n' +
+            'Тема новости: «' + item3.headline + '»\n' +
+            'Описание темы: ' + (item3.summary || '') + '\n\n' +
+            'Текущая статья от лагеря «' + (campLabels[camp] || camp) + '» (НЕ ПОВТОРЯЙ ЕЁ):\n' +
+            '- Заголовок: ' + (currentSource ? currentSource.title : '') + '\n' +
+            '- URL: ' + (currentSource ? currentSource.url : '') + '\n\n' +
+            'ЗАДАЧА: Найди в списке ниже ДРУГУЮ статью от того же лагеря, которая НАПРЯМУЮ относится к теме «' + item3.headline + '».\n\n' +
+            'СТРОГИЕ ПРАВИЛА:\n' +
+            '- Статья ДОЛЖНА быть про ту же тему (не про другие события!)\n' +
+            '- Статья ДОЛЖНА быть от ДРУГОГО источника или иметь ДРУГОЙ заголовок\n' +
+            '- URL должен быть ДРУГОЙ (не тот же, что у текущей статьи)\n' +
+            '- Excerpt копируй из RSS дословно\n' +
+            '- Если в списке НЕТ подходящей статьи по этой теме — верни: {"none": true}\n' +
+            '- НЕ ПРИДУМЫВАЙ статьи. Используй ТОЛЬКО те, что есть в списке.\n\n' +
+            'JSON без ```:\n' +
+            'Если нашёл: {"name":"Имя СМИ","title":"Заголовок","excerpt":"Текст","url":"https://..."}\n' +
+            'Если не нашёл: {"none": true}',
           messages: [{ role: 'user', content: campList }]
         })
       });
@@ -360,6 +372,11 @@ module.exports = async function handler(req, res) {
         newSource = JSON.parse(cText2.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim());
       } catch (pe2) {
         return res.status(200).json({ ok: false, error: 'Claude parse error', raw: cText2.substring(0, 200) });
+      }
+
+      // If Claude found no matching article
+      if (newSource.none === true) {
+        return res.status(200).json({ ok: false, error: 'Нет подходящей статьи по теме «' + item3.headline + '» у этого лагеря. Попробуйте «Скрыть» вместо «Заменить».' });
       }
 
       // Update the source in the array
