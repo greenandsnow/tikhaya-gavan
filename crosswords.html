@@ -662,7 +662,7 @@ PUZZLE.entries.forEach(e => {
 // ═══════════════════════════════════════════════
 function buildGrid() {
   const grid = document.getElementById('crossword-grid');
-  grid.style.gridTemplateColumns = `repeat(${COLS}, auto)`;
+  grid.style.gridTemplateColumns = `repeat(${COLS}, 36px)`;
   grid.innerHTML = '';
 
   for (let r = 0; r < ROWS; r++) {
