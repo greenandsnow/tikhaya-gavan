@@ -382,18 +382,47 @@
     }
 
     /* ── COMPLETE BANNER ── */
-    .complete-banner {
+    /* ── COMPLETE MODAL ── */
+    .complete-overlay {
       display: none;
-      background: linear-gradient(135deg, #43a047, #66bb6a);
-      border-radius: 12px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.25rem;
-      color: white;
-      text-align: center;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
     }
-    .complete-banner.show { display: block; }
-    .complete-banner h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.3rem; }
-    .complete-banner p { font-size: 0.88rem; opacity: 0.9; }
+    .complete-overlay.show { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .complete-modal {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 2rem 2.5rem;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: popIn 0.4s ease;
+    }
+    .complete-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+    .complete-modal h3 { font-size: 1.4rem; font-weight: 700; color: var(--sea); margin-bottom: 0.2rem; }
+    .complete-main { font-size: 1rem; color: var(--text); margin-bottom: 1rem; }
+    .complete-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: var(--sand);
+      border-radius: 10px;
+    }
+    .complete-stat { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+    .complete-stat-label { font-size: 0.7rem; color: var(--stone); text-transform: uppercase; letter-spacing: 0.1em; }
+    .complete-stat-value { font-size: 1.3rem; font-weight: 700; color: var(--sea); }
+    .complete-next { font-size: 0.85rem; color: var(--text-light); margin-bottom: 1.25rem; }
+    .complete-ok { padding: 0.6rem 2.5rem; font-size: 1rem; border-radius: 10px; }
 
     /* ── FOOTER ── */
     footer {
@@ -572,9 +601,19 @@
   <div class="page-subtitle">Кроссворд недели — бесплатно. Новый каждую пятницу.</div>
 
   <!-- Complete banner -->
-  <div class="complete-banner" id="complete-banner">
-    <h3>🎉 Поздравляем! Кроссворд разгадан!</h3>
-    <p id="complete-time-text">Время: 00:00</p>
+  <!-- Complete modal (overlay) -->
+  <div class="complete-overlay" id="complete-overlay">
+    <div class="complete-modal">
+      <div class="complete-icon">🎉</div>
+      <h3>Поздравляем!</h3>
+      <p class="complete-main">Кроссворд разгадан!</p>
+      <div class="complete-stats">
+        <div class="complete-stat"><span class="complete-stat-label">Время</span><span class="complete-stat-value" id="complete-time">00:00</span></div>
+        <div class="complete-stat"><span class="complete-stat-label">Очки</span><span class="complete-stat-value" id="complete-score">100</span></div>
+      </div>
+      <p class="complete-next">Следующий кроссворд выйдет в пятницу</p>
+      <button class="btn btn-sea complete-ok" onclick="closeComplete()">Ок</button>
+    </div>
   </div>
 
   <!-- Top bar: timer + score + buttons -->
@@ -1147,6 +1186,31 @@ function updateWordCount() {
 // ═══════════════════════════════════════════════
 // COMPLETE
 // ═══════════════════════════════════════════════
+function playFanfare() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + i * 0.15);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.15 + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.8);
+      osc.start(ctx.currentTime + i * 0.15);
+      osc.stop(ctx.currentTime + i * 0.15 + 0.8);
+    });
+  } catch(e) {}
+}
+
+function closeComplete() {
+  document.getElementById('complete-overlay').classList.remove('show');
+}
+
 function checkComplete() {
   const allDone = PUZZLE.entries.every(e => {
     for (let i = 0; i < e.answer.length; i++) {
@@ -1159,10 +1223,12 @@ function checkComplete() {
   if (allDone) {
     isComplete = true;
     stopTimer();
-    const banner = document.getElementById('complete-banner');
-    banner.classList.add('show');
-    document.getElementById('complete-time-text').textContent = `Время: ${formatTime(seconds)} · Очки: ${score}`;
-    banner.scrollIntoView({ behavior: 'smooth' });
+    playFanfare();
+    document.getElementById('complete-time').textContent = formatTime(seconds);
+    document.getElementById('complete-score').textContent = score;
+    setTimeout(function() {
+      document.getElementById('complete-overlay').classList.add('show');
+    }, 300);
   }
 }
 
@@ -1179,10 +1245,8 @@ function startTimer() {
   if (window.innerWidth <= 480) {
     var pt = document.querySelector('.page-title');
     var ps = document.querySelector('.page-subtitle');
-    var cb = document.querySelector('.complete-banner');
     if (pt) pt.style.display = 'none';
     if (ps) ps.style.display = 'none';
-    if (cb) cb.style.marginTop = '0';
     window.scrollTo(0, 0);
   }
 }
@@ -1258,7 +1322,7 @@ function resetPuzzle() {
   selectedRow = -1; selectedCol = -1; currentEntry = null;
   document.getElementById('timer').textContent = '00:00';
   document.getElementById('score').textContent = '100';
-  document.getElementById('complete-banner').classList.remove('show');
+  document.getElementById('complete-overlay').classList.remove('show');
   document.getElementById('clue-text').textContent = 'Нажмите на клетку, чтобы начать';
   document.getElementById('clue-num').textContent = '';
   document.getElementById('clue-dir').textContent = '—';
