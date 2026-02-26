@@ -427,13 +427,51 @@
       #crossword-grid { gap: 1px; }
       .grid-wrapper { padding: 0.5rem; }
       .clues-panel, .appstore-banner, .howto, .ad-slot { display: none !important; }
-      .top-bar { padding: 0.5rem 0.75rem; gap: 0.75rem; }
-      .page-title { font-size: 1.2rem; }
-      .page-subtitle { font-size: 0.78rem; margin-bottom: 1rem; }
-      .clue-bar { padding: 0.6rem 1rem; min-height: 44px; margin-bottom: 0.75rem; }
-      .clue-text { font-size: 0.85rem; }
-      main { padding: 1rem 0.5rem 0.5rem; }
+      .page-title { font-size: 1.1rem; margin-bottom: 0.15rem; }
+      .page-subtitle { font-size: 0.75rem; margin-bottom: 0.5rem; }
+      main { padding: 0.5rem 0.5rem 0.5rem; }
       #hidden-input { display: none; }
+
+      /* Compact top bar — single line */
+      .top-bar {
+        padding: 0.35rem 0.6rem;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        flex-wrap: nowrap;
+        align-items: center;
+      }
+      .stat-icon { font-size: 0.85rem; }
+      .stat-label { font-size: 0.6rem; }
+      .stat-value { font-size: 0.8rem; min-width: auto; }
+      .stat-block { gap: 0.3rem; }
+      .divider { height: 20px; }
+      .top-bar-spacer { display: none; }
+      .top-bar .btn { padding: 0.25rem 0.5rem; font-size: 0.68rem; white-space: nowrap; }
+
+      /* Fixed-height clue bar — no jumping */
+      .clue-bar {
+        padding: 0.4rem 0.6rem;
+        min-height: 56px;
+        max-height: 56px;
+        overflow: hidden;
+        margin-bottom: 0.4rem;
+        gap: 0.4rem;
+        align-items: flex-start;
+      }
+      .clue-direction { display: none; }
+      .clue-num { font-size: 0.8rem; flex-shrink: 0; padding-top: 1px; }
+      .clue-text { font-size: 0.8rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+      /* Fix grid position after input starts */
+      .game-area-fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        background: var(--sand);
+        padding: 0.4rem;
+      }
     }
 
     /* ── MOBILE KEYBOARD ── */
@@ -1137,6 +1175,16 @@ function startTimer() {
     seconds++;
     document.getElementById('timer').textContent = formatTime(seconds);
   }, 1000);
+  // On mobile: hide titles, scroll to top and lock
+  if (window.innerWidth <= 480) {
+    var pt = document.querySelector('.page-title');
+    var ps = document.querySelector('.page-subtitle');
+    var cb = document.querySelector('.complete-banner');
+    if (pt) pt.style.display = 'none';
+    if (ps) ps.style.display = 'none';
+    if (cb) cb.style.marginTop = '0';
+    window.scrollTo(0, 0);
+  }
 }
 function stopTimer() { clearInterval(timerInterval); }
 function formatTime(s) {
