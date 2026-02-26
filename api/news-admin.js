@@ -55,8 +55,12 @@ module.exports = async function handler(req, res) {
           { name: 'Медиазона', url: 'https://zona.media/rss', lang: 'ru' }
         ],
         ukraine: [
-          { name: 'УНИАН', url: 'https://rss.unian.net/site/news_rus.rss' },
-          { name: 'Украинская правда', url: 'https://www.pravda.com.ua/rus/rss/' }
+          { name: 'УНИАН', url: 'https://rss.unian.net/site/news_rus.rss', lang: 'ru' },
+          { name: 'Украинская правда', url: 'https://www.pravda.com.ua/rus/rss/', lang: 'ru' },
+          { name: 'Укрінформ', url: 'https://www.ukrinform.ru/rss/block-lastnews', lang: 'ru' },
+          { name: 'НВ', url: 'https://nv.ua/rss/all.xml', lang: 'ru' },
+          { name: 'Цензор.НЕТ', url: 'https://censor.net/includes/news_ru.xml', lang: 'ru' },
+          { name: 'Обозреватель', url: 'https://www.obozrevatel.com/rss.xml', lang: 'ru' }
         ],
         russia: [
           { name: 'ТАСС', url: 'https://tass.ru/rss/v2.xml' },
@@ -189,23 +193,12 @@ module.exports = async function handler(req, res) {
     if (action === 'replace') {
       if (!id) return res.status(400).json({ error: 'id required' });
 
-      // Hide current
-      await fetch(supabaseUrl + '/rest/v1/news?id=eq.' + id, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json', 'apikey': serviceKey,
-          'Authorization': 'Bearer ' + serviceKey, 'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ status: 'hidden' })
-      });
+      // Get current topic
+      var currentTopic = await getNewsItem(id);
+      if (!currentTopic) return res.status(404).json({ error: 'Topic not found' });
 
+      var isWarTopic = (currentTopic.headline || '').indexOf('Война в Украине') !== -1;
       var today = body.date || new Date().toISOString().split('T')[0];
-      var existingResp = await fetch(
-        supabaseUrl + '/rest/v1/news?date=eq.' + today + '&status=in.(published,hidden)&select=headline',
-        { headers: { 'apikey': serviceKey, 'Authorization': 'Bearer ' + serviceKey } }
-      );
-      var existing = await existingResp.json();
-      var existingHeadlines = (existing || []).map(function(e) { return e.headline; });
 
       var allArticles = await fetchAllRSS();
       if (allArticles.length < 10) {
@@ -217,51 +210,130 @@ module.exports = async function handler(req, res) {
         return i + '. [' + a.source + '] ' + a.title + ' — ' + a.excerpt.substring(0, 150) + ' | URL: ' + a.url;
       }).join('\n');
 
-      var claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': anthropicKey,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1500,
-          system: 'Ты — редактор новостной ленты. Сгенерируй ОДНУ новую тему дня.\n\nУЖЕ ОПУБЛИКОВАННЫЕ (НЕ ДУБЛИРУЙ):\n' + existingHeadlines.join(', ') +
-            '\n\nПравила:\n- Тема ОТЛИЧНАЯ от уже опубликованных\n- 4 источника: west, ukraine, russia, china\n- headline = короткое название\n- summary = 2-3 предложения\n- excerpt копируй дословно\n- Всё на русском\n\nJSON без ```:\n{"headline":"...","summary":"...","topic_tag":"мир","sources":[{"perspective":"west","name":"...","title":"...","excerpt":"...","url":"..."},{"perspective":"ukraine","name":"...","title":"...","excerpt":"...","url":"..."},{"perspective":"russia","name":"...","title":"...","excerpt":"...","url":"..."},{"perspective":"china","name":"...","title":"...","excerpt":"...","url":"..."}]}',
-          messages: [{ role: 'user', content: articlesList }]
-        })
-      });
+      if (isWarTopic) {
+        // ── РУБРИКА «Война в Украине» — обновляем содержимое, headline не трогаем ──
+        var currentUrls = (currentTopic.sources || []).map(function(s) { return s.url; }).join(', ');
 
-      var cData = await claudeResp.json();
-      var cText = '';
-      if (cData.content) { for (var bl of cData.content) { if (bl.type === 'text') cText += bl.text; } }
+        var claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': anthropicKey,
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1500,
+            system: 'Ты — редактор новостной ленты. Рубрика «Война в Украине» — ПОСТОЯННАЯ.\n\n' +
+              'Текущие статьи в рубрике (НЕ ПОВТОРЯЙ ИХ):\n' + currentUrls + '\n\n' +
+              'ЗАДАЧА: Подбери 4 НОВЫХ (ДРУГИХ) статьи по теме войны в Украине — по одной от каждого лагеря.\n' +
+              'Сюда входит: обстрелы, фронт, жертвы, переговоры, Трамп/Зеленский/Путин в контексте войны, санкции, оружие.\n' +
+              '«СВО», «Специальная военная операция» = война в Украине.\n\n' +
+              'Правила:\n' +
+              '- 4 источника: west, ukraine, russia, china\n' +
+              '- summary = новый нейтральный анонс 2-3 предложения\n' +
+              '- excerpt для русскоязычных — дословно из RSS. Для англоязычных [АНГЛ] — переведи.\n' +
+              '- URL должны быть ДРУГИЕ (не те что в текущих статьях)\n' +
+              '- Если по теме нет статьи у какого-то лагеря — всё равно найди ближайшую по смыслу\n\n' +
+              'JSON без ```:\n{"summary":"...","sources":[{"perspective":"west","name":"...","title":"...","excerpt":"...","url":"..."},{"perspective":"ukraine","name":"...","title":"...","excerpt":"...","url":"..."},{"perspective":"russia","name":"...","title":"...","excerpt":"...","url":"..."},{"perspective":"china","name":"...","title":"...","excerpt":"...","url":"..."}]}',
+            messages: [{ role: 'user', content: articlesList }]
+          })
+        });
 
-      var newItem;
-      try {
-        newItem = JSON.parse(cText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim());
-      } catch (pe) {
-        return res.status(200).json({ ok: false, action: 'replace', error: 'Claude parse error', raw: cText.substring(0, 300) });
+        var cData = await claudeResp.json();
+        var cText = '';
+        if (cData.content) { for (var bl of cData.content) { if (bl.type === 'text') cText += bl.text; } }
+
+        var newContent;
+        try {
+          newContent = JSON.parse(cText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim());
+        } catch (pe) {
+          return res.status(200).json({ ok: false, error: 'Claude parse error', raw: cText.substring(0, 300) });
+        }
+
+        if (!newContent.sources || newContent.sources.length < 4) {
+          return res.status(200).json({ ok: false, error: 'Менее 4 источников' });
+        }
+
+        // Обновляем на месте — headline и topic_tag НЕ меняем
+        var updateResp = await fetch(supabaseUrl + '/rest/v1/news?id=eq.' + id, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json', 'apikey': serviceKey,
+            'Authorization': 'Bearer ' + serviceKey, 'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            summary: newContent.summary,
+            sources: newContent.sources
+          })
+        });
+
+        return res.status(200).json({ ok: updateResp.ok, action: 'refreshed', headline: 'Война в Украине' });
+
+      } else {
+        // ── Обычная тема — скрыть + создать новую ──
+        await fetch(supabaseUrl + '/rest/v1/news?id=eq.' + id, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json', 'apikey': serviceKey,
+            'Authorization': 'Bearer ' + serviceKey, 'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ status: 'hidden' })
+        });
+
+        var existingResp = await fetch(
+          supabaseUrl + '/rest/v1/news?date=eq.' + today + '&status=in.(published,hidden)&select=headline',
+          { headers: { 'apikey': serviceKey, 'Authorization': 'Bearer ' + serviceKey } }
+        );
+        var existing = await existingResp.json();
+        var existingHeadlines = (existing || []).map(function(e) { return e.headline; });
+
+        var claudeResp2 = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': anthropicKey,
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1500,
+            system: 'Ты — редактор новостной ленты. Сгенерируй ОДНУ новую тему дня.\n\nУЖЕ ОПУБЛИКОВАННЫЕ (НЕ ДУБЛИРУЙ):\n' + existingHeadlines.join(', ') +
+              '\n\nПравила:\n- Тема ОТЛИЧНАЯ от уже опубликованных\n- 4 источника: west, ukraine, russia, china\n- headline = короткое название\n- summary = 2-3 предложения\n- excerpt копируй дословно\n- Всё на русском\n\nJSON без ```:\n{"headline":"...","summary":"...","topic_tag":"мир","sources":[{"perspective":"west","name":"...","title":"...","excerpt":"...","url":"..."},{"perspective":"ukraine","name":"...","title":"...","excerpt":"...","url":"..."},{"perspective":"russia","name":"...","title":"...","excerpt":"...","url":"..."},{"perspective":"china","name":"...","title":"...","excerpt":"...","url":"..."}]}',
+            messages: [{ role: 'user', content: articlesList }]
+          })
+        });
+
+        var cData2 = await claudeResp2.json();
+        var cText2 = '';
+        if (cData2.content) { for (var bl2 of cData2.content) { if (bl2.type === 'text') cText2 += bl2.text; } }
+
+        var newItem;
+        try {
+          newItem = JSON.parse(cText2.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim());
+        } catch (pe) {
+          return res.status(200).json({ ok: false, action: 'replace', error: 'Claude parse error', raw: cText2.substring(0, 300) });
+        }
+
+        if (!newItem.sources || newItem.sources.length < 4) {
+          return res.status(200).json({ ok: false, action: 'replace', error: 'Менее 4 источников' });
+        }
+
+        var insertResp = await fetch(supabaseUrl + '/rest/v1/news', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', 'apikey': serviceKey,
+            'Authorization': 'Bearer ' + serviceKey, 'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({
+            date: today, headline: newItem.headline, summary: newItem.summary,
+            sources: newItem.sources, topic_tag: newItem.topic_tag || 'мир', status: 'published'
+          })
+        });
+
+        var inserted = await insertResp.json();
+        return res.status(200).json({ ok: insertResp.ok, action: 'replaced', new_item: Array.isArray(inserted) ? inserted[0] : inserted });
       }
-
-      if (!newItem.sources || newItem.sources.length < 4) {
-        return res.status(200).json({ ok: false, action: 'replace', error: 'Менее 4 источников' });
-      }
-
-      var insertResp = await fetch(supabaseUrl + '/rest/v1/news', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', 'apikey': serviceKey,
-          'Authorization': 'Bearer ' + serviceKey, 'Prefer': 'return=representation'
-        },
-        body: JSON.stringify({
-          date: today, headline: newItem.headline, summary: newItem.summary,
-          sources: newItem.sources, topic_tag: newItem.topic_tag || 'мир', status: 'published'
-        })
-      });
-
-      var inserted = await insertResp.json();
-      return res.status(200).json({ ok: insertResp.ok, action: 'replaced', new_item: Array.isArray(inserted) ? inserted[0] : inserted });
     }
 
     // ═══════════════════════════════════════
