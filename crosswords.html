@@ -409,6 +409,13 @@
       .cell-letter { font-size: 0.8rem; }
       .cell-num { font-size: 6px; }
     }
+    @media (max-width: 480px) {
+      .cell { width: 22px; height: 22px; }
+      .cell-letter { font-size: 0.7rem; }
+      .cell-num { font-size: 5px; }
+      #crossword-grid { gap: 1px; }
+      .grid-wrapper { padding: 0.5rem; }
+    }
     /* ── BURGER ── */
     .burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
     .burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}
@@ -642,7 +649,8 @@ const cellNumbers = {};
 // ═══════════════════════════════════════════════
 function buildGrid() {
   const grid = document.getElementById('crossword-grid');
-  grid.style.gridTemplateColumns = `repeat(${COLS}, 36px)`;
+  const cellSize = window.innerWidth <= 480 ? 22 : (window.innerWidth <= 900 ? 28 : 36);
+  grid.style.gridTemplateColumns = `repeat(${COLS}, ${cellSize}px)`;
   grid.innerHTML = '';
 
   for (let r = 0; r < ROWS; r++) {
@@ -877,6 +885,56 @@ function selectNextEntry(delta) {
 // ═══════════════════════════════════════════════
 // CHECK WORD
 // ═══════════════════════════════════════════════
+function playDing() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
+}
+
+function selectNextUnsolved() {
+  if (!PUZZLE || !currentEntry) return;
+  const allEntries = PUZZLE.entries;
+  const idx = allEntries.indexOf(currentEntry);
+  for (let d = 1; d <= allEntries.length; d++) {
+    const next = allEntries[(idx + d) % allEntries.length];
+    // Check if this entry is not fully locked
+    let solved = true;
+    for (let i = 0; i < next.answer.length; i++) {
+      const r = next.dir === 'across' ? next.row : next.row + i;
+      const c = next.dir === 'across' ? next.col + i : next.col;
+      if (!lockedCells[r][c]) { solved = false; break; }
+    }
+    if (!solved) {
+      currentEntry = next;
+      selectedDir = next.dir;
+      selectedRow = next.row;
+      selectedCol = next.col;
+      // Move to first empty cell in this entry
+      for (let i = 0; i < next.answer.length; i++) {
+        const r = next.dir === 'across' ? next.row : next.row + i;
+        const c = next.dir === 'across' ? next.col + i : next.col;
+        if (!lockedCells[r][c] && !userGrid[r][c]) {
+          selectedRow = r; selectedCol = c; break;
+        }
+      }
+      updateHighlight();
+      updateClueBar();
+      return;
+    }
+  }
+}
+
 function checkWord(entry) {
   if (!entry) return;
   let correct = true;
@@ -886,9 +944,11 @@ function checkWord(entry) {
     if (userGrid[r][c] !== entry.answer[i]) { correct = false; break; }
   }
   if (correct) {
+    playDing();
     lockWord(entry);
     updateWordCount();
     checkComplete();
+    if (!isComplete) selectNextUnsolved();
   }
 }
 
