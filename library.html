@@ -114,17 +114,18 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 .cover-adventure{background:linear-gradient(135deg,#1a3a1a,#2e7d32)}
 .cover-history{background:linear-gradient(135deg,#3a2a1a,#795548)}
 .cover-other{background:linear-gradient(135deg,#2a2a2a,#5a5a5a)}
-@media(max-width:768px){.logo-img{height:80px}.logo-name{font-size:1.2rem!important}}</style>
+@media(max-width:768px){.logo-img{height:80px}.logo-name{font-size:1.2rem!important}.burger{display:flex}nav{display:none;position:absolute;top:88px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}nav.open{display:block}nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}nav a{font-size:1rem;padding:.6rem .5rem;width:100%}}.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}</style>
 </head>
 <body>
 <header>
   <div class="hi">
     <a href="/" class="logo"><img src="/logo_tg.png" alt="Тихая гавань" class="logo-img"/><div class="logo-text"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></div></a>
-    <nav><ul>
+    <button class="burger" onclick="document.getElementById('main-nav').classList.toggle('open')" aria-label="Меню"><span></span><span></span><span></span></button>
+    <nav id="main-nav"><ul>
       <li><a href="/crosswords">Кроссворды</a></li>
       <li><a href="/ask">Задай вопрос</a></li>
       <li><a href="/reading" class="active">Чтиво</a></li>
-      <li><a href="/videos">Видео</a></li>
+      <li><a href="/news">Новости</a></li>
       <li><a href="/games">Игры</a></li>
       <li><a href="/support">Поддержка</a></li>
     </ul></nav>

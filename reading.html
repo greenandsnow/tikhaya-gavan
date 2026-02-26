@@ -163,10 +163,10 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 .book:nth-child(2){animation-delay:.15s}
 
 /* MOBILE */
-@media(max-width:768px){.logo-img{height:80px}.logo-name{font-size:1.2rem!important}}@media(max-width:620px){
+@media(max-width:768px){.logo-img{height:80px}.logo-name{font-size:1.2rem!important}.burger{display:flex}nav{display:none;position:absolute;top:88px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}nav.open{display:block}nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}nav a{font-size:1rem;padding:.6rem .5rem;width:100%}}@media(max-width:620px){
   .doors{grid-template-columns:1fr;gap:2rem;padding:0 1.25rem 3rem}
 }
-</style>
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}</style>
 </head>
 <body>
 <header>
@@ -178,7 +178,8 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
         <span class="logo-tag">Место для вашего досуга</span>
       </div>
     </a>
-    <nav><ul>
+    <button class="burger" onclick="document.getElementById('main-nav').classList.toggle('open')" aria-label="Меню"><span></span><span></span><span></span></button>
+    <nav id="main-nav"><ul>
       <li><a href="/crosswords">Кроссворды</a></li>
       <li><a href="/ask">Задай вопрос</a></li>
       <li><a href="/reading" class="active">Чтиво</a></li>
