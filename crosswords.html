@@ -171,6 +171,7 @@
       border-radius: 12px;
       padding: 1rem;
       display: inline-block;
+      position: relative;
     }
     #crossword-grid {
       display: grid;
@@ -221,8 +222,18 @@
 
     /* hidden input for keyboard */
     #hidden-input {
-      position: fixed; opacity: 0; width: 1px; height: 1px;
-      top: -9999px; left: -9999px;
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      top: 50%;
+      left: 50%;
+      border: none;
+      outline: none;
+      padding: 0;
+      margin: 0;
+      font-size: 16px; /* prevents iOS zoom */
+      pointer-events: none;
     }
 
     /* ── CLUES PANEL ── */
@@ -763,7 +774,12 @@ function updateClueBar() {
 // KEYBOARD INPUT
 // ═══════════════════════════════════════════════
 function focusInput() {
-  document.getElementById('hidden-input').focus();
+  const inp = document.getElementById('hidden-input');
+  const scrollY = window.scrollY;
+  const scrollX = window.scrollX;
+  inp.focus({ preventScroll: true });
+  // iOS fallback — restore scroll position
+  window.scrollTo(scrollX, scrollY);
 }
 
 document.getElementById('hidden-input').addEventListener('keydown', e => {
