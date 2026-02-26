@@ -8,15 +8,14 @@ module.exports = async function handler(req, res) {
 
   try {
     var supabaseUrl = process.env.SUPABASE_URL;
-    var supabaseAnonKey = process.env.SUPABASE_SECRET_KEY;
+    var supabaseAnonKey = process.env.SUPABASE_PUBLISHABLE_KEY;
     var serviceKey = process.env.SUPABASE_SERVICE_KEY;
 
     var date = req.query.date || new Date().toISOString().split('T')[0];
     var status = req.query.status || 'published';
 
-    // Для draft — используем service key (обходит RLS)
-    // Для published — anon key (RLS фильтрует)
-    var key = (status === 'draft') ? serviceKey : supabaseAnonKey;
+    // Используем service key для всех запросов (обходит RLS)
+    var key = serviceKey;
 
     var url = supabaseUrl + '/rest/v1/news?date=eq.' + date + '&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,created_at';
     if (status === 'draft') {
