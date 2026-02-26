@@ -6,8 +6,8 @@ export default async function handler(req, res) {
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbGx0b2Zka2ppdW5lcXplbWhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3OTg5OTksImV4cCI6MjA4NzM3NDk5OX0.FPwKW_8M33M32OWhzhcfF_yftinL7ZlfiEBiZQ4vIG4';
 
   try {
-    // Start date: Friday Feb 27, 2026 (first crossword week)
-    const startDate = new Date('2026-02-27T00:00:00Z');
+    // Start date: Saturday Feb 28, 2026 — new crossword appears at 00:00 UTC Saturday
+    const startDate = new Date('2026-02-28T00:00:00Z');
     const now = new Date();
 
     // Calculate weeks since start
