@@ -32,8 +32,8 @@
     /* HERO */
     .hero { text-align: center; padding: 3.5rem 2rem 2rem; background: linear-gradient(180deg, var(--white) 0%, var(--sand) 100%); }
     .eyebrow { font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--stone); margin-bottom: 1rem; }
-    .hero h1 { font-family: 'Jost', sans-serif; font-weight: 600; font-size: clamp(2rem, 4.5vw, 3rem); color: var(--ink); line-height: 1.18; margin-bottom: 1rem; }
-    .hero h1 em { font-style: italic; color: var(--sea); }
+    .hero h1 { font-family: 'Jost', sans-serif; font-weight: 600; font-size: 1.5rem; color: var(--sea); line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: 0.03em; }
+    .hero h1 em { font-style: normal; color: var(--sea); }
     .hero-sub { font-size: .92rem; color: var(--text-light); line-height: 1.8; max-width: 620px; margin: 0 auto; }
     .hero-date { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.25rem; padding: .5rem 1.25rem; background: var(--white); border: 1px solid var(--sand-dark); border-radius: 24px; font-size: .82rem; color: var(--stone-dark); font-weight: 500; }
     .hero-date svg { width: 16px; height: 16px; fill: var(--sea); }
@@ -124,7 +124,7 @@
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
-    @media (max-width: 768px) { .logo-img { height: 80px; } .logo-name { font-size: 1.2rem !important; } .burger { display: flex; } .news-grid { grid-template-columns: 1fr; } .hi { gap: 1rem; } nav ul { gap: 0.15rem; } nav a { padding: .35rem .5rem; font-size: .78rem; } .hero h1 { font-size: 1.7rem; } .modal { margin: 1rem; max-height: 90vh; } .legend { flex-wrap: wrap; gap: .75rem; } .modal-body { padding: 1rem; } }
+    @media (max-width: 768px) { .logo-img { height: 80px; } .logo-name { font-size: 1.2rem !important; } .burger { display: flex; } .news-grid { grid-template-columns: 1fr; } .hi { gap: 1rem; } nav ul { gap: 0.15rem; } nav a { padding: .35rem .5rem; font-size: .78rem; } .hero h1 { font-size: 1.3rem; } .modal { margin: 1rem; max-height: 90vh; } .legend { flex-wrap: wrap; gap: .75rem; } .modal-body { padding: 1rem; } }
     @media (max-width: 500px) { nav { display: none; position: absolute; top: 88px; left: 0; right: 0; background: var(--white); border-bottom: 1px solid var(--sand-dark); padding: 1rem 1.5rem; box-shadow: 0 4px 16px rgba(0,0,0,0.06); z-index: 90; } nav.open { display: block; } nav ul { flex-direction: column; align-items: flex-start; gap: .25rem; } nav a { font-size: 1rem; padding: .6rem .5rem; width: 100%; } .hero { padding: 2.5rem 1.25rem 1.5rem; } .news-container { padding: .75rem 1rem 2rem; } }
   .burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}</style>
 </head>
@@ -147,7 +147,7 @@
 
 <div class="hero">
   <div class="eyebrow">Четыре взгляда на мир</div>
-  <h1>Темы <em>дня</em></h1>
+  <h1>Новости</h1>
   <div class="hero-sub">
     Главные темы — четыре точки зрения на каждую.<br>
     Запад, Украина, Россия и Китай. Читайте оригиналы и думайте сами.
