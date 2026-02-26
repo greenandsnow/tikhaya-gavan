@@ -1,13 +1,9 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const supabase = createClient(
-  'https://nclltofdkjiuneqzemhd.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbGx0b2Zka2ppdW5lcXplbWhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3OTg5OTksImV4cCI6MjA4NzM3NDk5OX0.FPwKW_8M33M32OWhzhcfF_yftinL7ZlfiEBiZQ4vIG4'
-);
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
+
+  const SUPABASE_URL = 'https://nclltofdkjiuneqzemhd.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbGx0b2Zka2ppdW5lcXplbWhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3OTg5OTksImV4cCI6MjA4NzM3NDk5OX0.FPwKW_8M33M32OWhzhcfF_yftinL7ZlfiEBiZQ4vIG4';
 
   try {
     // Start date: Friday Feb 27, 2026 (first crossword week)
@@ -25,34 +21,47 @@ export default async function handler(req, res) {
     const testWeek = parseInt(req.query?.week);
     const targetWeek = (testWeek >= 1 && testWeek <= 50) ? testWeek : weekNumber;
 
-    const { data, error } = await supabase
-      .from('crosswords')
-      .select('id, week_number, puzzle_data')
-      .eq('week_number', targetWeek)
-      .single();
+    // Direct REST API call to Supabase
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/crosswords?week_number=eq.${targetWeek}&select=id,week_number,puzzle_data&limit=1`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
 
-    if (error || !data) {
+    const rows = await response.json();
+
+    if (!rows || rows.length === 0) {
       // Fallback to week 1
-      const { data: fallback } = await supabase
-        .from('crosswords')
-        .select('id, week_number, puzzle_data')
-        .eq('week_number', 1)
-        .single();
-
+      const fb = await fetch(
+        `${SUPABASE_URL}/rest/v1/crosswords?week_number=eq.1&select=id,week_number,puzzle_data&limit=1`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      const fbRows = await fb.json();
       return res.status(200).json({
         week: 1,
         total: 50,
-        puzzle: fallback?.puzzle_data || null
+        puzzle: fbRows[0]?.puzzle_data || null
       });
     }
 
     return res.status(200).json({
       week: targetWeek,
       total: 50,
-      puzzle: data.puzzle_data
+      puzzle: rows[0].puzzle_data
     });
 
   } catch (err) {
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error', details: err.message });
   }
 }
