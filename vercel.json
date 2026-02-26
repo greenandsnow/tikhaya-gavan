@@ -2,11 +2,10 @@
   "rewrites": [
     { "source": "/crosswords", "destination": "/crosswords.html" },
     { "source": "/ask", "destination": "/ask.html" },
-    { "source": "/games", "destination": "/spider.html" },
+    { "source": "/games", "destination": "/games.html" },
     { "source": "/reading", "destination": "/reading.html" },
     { "source": "/publisher", "destination": "/publisher.html" },
     { "source": "/library", "destination": "/library.html" },
-    { "source": "/videos", "destination": "/videos.html" },
     { "source": "/news", "destination": "/news.html" },
     { "source": "/admin-news", "destination": "/admin-news.html" },
     { "source": "/support", "destination": "/support.html" },
@@ -14,6 +13,9 @@
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/book/:id", "destination": "/book.html" },
     { "source": "/read/:id", "destination": "/read.html" }
+  ],
+  "redirects": [
+    { "source": "/videos", "destination": "/news", "permanent": true }
   ],
   "crons": [
     {
