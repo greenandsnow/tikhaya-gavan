@@ -80,7 +80,7 @@ module.exports = async function handler(req, res) {
           if (!resp.ok) continue;
           var xml = await resp.text();
           var items = xml.match(/<item[\s\S]*?<\/item>/gi) || [];
-          for (var i = 0; i < Math.min(items.length, 15); i++) {
+          for (var i = 0; i < Math.min(items.length, 30); i++) {
             var titleMatch = items[i].match(/<title[^>]*>([\s\S]*?)<\/title>/i);
             var linkMatch = items[i].match(/<link[^>]*>([\s\S]*?)<\/link>/i);
             var descMatch = items[i].match(/<description[^>]*>([\s\S]*?)<\/description>/i);
@@ -353,6 +353,7 @@ module.exports = async function handler(req, res) {
             '- Заголовок: ' + (currentSource ? currentSource.title : '') + '\n' +
             '- URL: ' + (currentSource ? currentSource.url : '') + '\n\n' +
             'ЗАДАЧА: Найди в списке ниже ДРУГУЮ статью, которая НАПРЯМУЮ относится к теме «' + item3.headline + '».\n\n' +
+            'ВАЖНО: Тема в разных СМИ может быть описана разными словами. Например «Встреча Си Цзиньпина и канцлера Германии» = «Merz meets Xi» = «Germany-China talks». Ищи по СМЫСЛУ, а не по точному совпадению слов. Если в статье упоминаются те же страны, лидеры или события — она подходит.\n\n' +
             'ПРИОРИТЕТ ВЫБОРА (для лагеря «Запад»):\n' +
             '1. BBC Russian или DW Russian (русскоязычные)\n' +
             '2. BBC World [АНГЛ] или DW English [АНГЛ] (англоязычные)\n' +
