@@ -137,6 +137,25 @@
     }
     .toast.show { display: block; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* Alert modal */
+    .alert-overlay {
+      position: fixed; inset: 0; background: rgba(42,37,32,0.5); backdrop-filter: blur(3px);
+      z-index: 1000; display: none; align-items: center; justify-content: center; padding: 2rem;
+    }
+    .alert-overlay.show { display: flex; }
+    .alert-box {
+      background: var(--white); border-radius: 12px; padding: 2rem; max-width: 420px; width: 100%;
+      text-align: center; box-shadow: 0 16px 48px rgba(0,0,0,0.2); animation: alertIn .25s ease;
+    }
+    @keyframes alertIn { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
+    .alert-icon { font-size: 2.2rem; margin-bottom: .75rem; }
+    .alert-text { font-size: .9rem; color: var(--text); line-height: 1.6; margin-bottom: 1.5rem; }
+    .alert-ok {
+      padding: .55rem 2rem; background: var(--sea); color: white; border: none; border-radius: 8px;
+      font-family: 'Jost', sans-serif; font-size: .9rem; font-weight: 500; cursor: pointer;
+      transition: opacity .2s;
+    }
+    .alert-ok:hover { opacity: .85; }
   </style>
 </head>
 <body>
@@ -176,6 +195,15 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Alert modal for important messages -->
+<div class="alert-overlay" id="alert-overlay" onclick="closeAlert(event)">
+  <div class="alert-box">
+    <div class="alert-icon" id="alert-icon">⚠️</div>
+    <div class="alert-text" id="alert-text"></div>
+    <button class="alert-ok" onclick="closeAlert()">Понятно</button>
+  </div>
+</div>
+
 <script>
 var adminPassword = '';
 var currentDate = new Date().toISOString().split('T')[0];
@@ -194,6 +222,17 @@ function toast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+function showAlert(msg, icon) {
+  document.getElementById('alert-icon').textContent = icon || '⚠️';
+  document.getElementById('alert-text').textContent = msg;
+  document.getElementById('alert-overlay').classList.add('show');
+}
+
+function closeAlert(e) {
+  if (e && e.target && e.target.id !== 'alert-overlay') return;
+  document.getElementById('alert-overlay').classList.remove('show');
 }
 
 function doLogin() {
@@ -379,7 +418,7 @@ async function replaceOne(id) {
     toast('Тема заменена ✓');
     setTimeout(loadCurrentTab, 500);
   } else {
-    toast((res && res.error) || 'Ошибка замены');
+    showAlert((res && res.error) || 'Ошибка замены темы', '⚠️');
     actionsDiv.innerHTML =
       '<button class="btn btn-outline" onclick="hideOne(\'' + id + '\')">👁 Скрыть тему</button>' +
       '<button class="btn btn-orange" onclick="replaceOne(\'' + id + '\')">🔄 Заменить тему</button>';
@@ -395,20 +434,20 @@ async function hideSource(newsId, perspective) {
 
   var res = await adminAction('hide_source', newsId, { perspective: perspective });
   if (res && res.ok) {
-    toast('Источник скрыт ✓');
+    toast('Статья скрыта ✓');
     setTimeout(loadCurrentTab, 500);
   } else {
     if (srcDiv) srcDiv.classList.remove('src-hidden');
-    toast((res && res.error) || 'Ошибка');
+    showAlert((res && res.error) || 'Ошибка скрытия', '⚠️');
   }
 }
 
 async function restoreSource(newsId, perspective) {
   var res = await adminAction('restore_source', newsId, { perspective: perspective });
   if (res && res.ok) {
-    toast('Источник восстановлен ✓');
+    toast('Статья восстановлена ✓');
     setTimeout(loadCurrentTab, 500);
-  } else { toast((res && res.error) || 'Ошибка'); }
+  } else { showAlert((res && res.error) || 'Ошибка восстановления', '⚠️'); }
 }
 
 async function replaceSource(newsId, perspective) {
@@ -419,10 +458,10 @@ async function replaceSource(newsId, perspective) {
 
   var res = await adminAction('replace_source', newsId, { perspective: perspective, date: currentDate });
   if (res && res.ok) {
-    toast('Источник заменён ✓');
+    toast('Статья заменена ✓');
     setTimeout(loadCurrentTab, 500);
   } else {
-    toast((res && res.error) || 'Ошибка замены');
+    showAlert((res && res.error) || 'Ошибка замены статьи', '⚠️');
     if (btn) btn.innerHTML = '🔄 Заменить';
   }
 }
