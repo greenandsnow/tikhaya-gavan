@@ -405,6 +405,37 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: ok3, action: 'source_replaced', perspective: camp, new_source: newSource });
     }
 
+    // ── Debug: check which feeds are accessible ──
+    if (action === 'debug_feeds') {
+      var testFeeds = [
+        { name: 'BBC Russian', url: 'https://feeds.bbci.co.uk/russian/rss.xml' },
+        { name: 'BBC World EN', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+        { name: 'DW Russian', url: 'https://rss.dw.com/rdf/rss-ru-all' },
+        { name: 'DW English', url: 'https://rss.dw.com/rdf/rss-en-all' },
+        { name: 'Медуза', url: 'https://meduza.io/rss/all' },
+        { name: 'Медиазона', url: 'https://zona.media/rss' },
+        { name: 'УНИАН', url: 'https://rss.unian.net/site/news_rus.rss' },
+        { name: 'ТАСС', url: 'https://tass.ru/rss/v2.xml' },
+        { name: 'Синьхуа', url: 'https://russian.news.cn/ewjkxml.xml' },
+        { name: 'Al Jazeera EN', url: 'https://www.aljazeera.com/xml/rss/all.xml' }
+      ];
+      var results = [];
+      for (var tf of testFeeds) {
+        try {
+          var tfr = await fetch(tf.url, {
+            headers: { 'User-Agent': 'TikhayaGavan/1.0' },
+            signal: AbortSignal.timeout(8000)
+          });
+          var txt = await tfr.text();
+          var count = (txt.match(/<item/gi) || []).length;
+          results.push({ name: tf.name, status: tfr.status, items: count });
+        } catch (e) {
+          results.push({ name: tf.name, status: 'ERROR', error: e.message });
+        }
+      }
+      return res.status(200).json({ ok: true, feeds: results });
+    }
+
     return res.status(400).json({ error: 'Unknown action' });
   } catch (err) {
     return res.status(500).json({ error: err.message });
