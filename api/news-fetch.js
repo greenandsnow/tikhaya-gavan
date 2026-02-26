@@ -20,6 +20,10 @@ module.exports = async function handler(req, res) {
 
   const FEEDS = [
     { name: 'Украинская правда', url: 'https://www.pravda.com.ua/rus/rss/', camp: 'ukraine', lang: 'ru' },
+    { name: 'Укрінформ', url: 'https://www.ukrinform.ru/rss/block-lastnews', camp: 'ukraine', lang: 'ru' },
+    { name: 'НВ', url: 'https://nv.ua/rss/all.xml', camp: 'ukraine', lang: 'ru' },
+    { name: 'Цензор.НЕТ', url: 'https://censor.net/includes/news_ru.xml', camp: 'ukraine', lang: 'ru' },
+    { name: 'Обозреватель', url: 'https://www.obozrevatel.com/rss.xml', camp: 'ukraine', lang: 'ru' },
     { name: 'BBC Russian', url: 'https://feeds.bbci.co.uk/russian/rss.xml', camp: 'west', lang: 'ru', priority: true },
     { name: 'DW Russian', url: 'https://rss.dw.com/rdf/rss-ru-all', camp: 'west', lang: 'ru', priority: true },
     { name: 'Медуза', url: 'https://meduza.io/rss/all', camp: 'west', lang: 'ru', priority: false },
@@ -69,7 +73,7 @@ module.exports = async function handler(req, res) {
     // ── Шаг 1: Парсим УНИАН (якорь) ──
     var anchorArticles = await fetchFeed(ANCHOR);
     if (anchorArticles.length < 3) {
-      return res.status(200).json({ ok: false, message: 'УНИАН feed too small', count: anchorArticles.length });
+      console.log('УНИАН feed small:', anchorArticles.length, '- continuing with other sources');
     }
 
     // ── Шаг 2: Парсим остальные ──
@@ -81,16 +85,22 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    // Проверяем общий объём
+    if (anchorArticles.length < 3 && pool.ukraine.length < 5) {
+      return res.status(200).json({ ok: false, message: 'Not enough Ukrainian sources', anchor: anchorArticles.length, ukraine: pool.ukraine.length });
+    }
+
     var stats = {
-      anchor: anchorArticles.length,
-      ukraine: pool.ukraine.length,
+      ukraine: pool.ukraine.length + anchorArticles.length,
       west: pool.west.length,
       russia: pool.russia.length,
       china: pool.china.length
     };
-    var total = stats.anchor + stats.ukraine + stats.west + stats.russia + stats.china;
+    // Добавляем УНИАН в общий пул Украины
+    for (var aa of anchorArticles) { pool.ukraine.push(aa); }
+    var total = stats.ukraine + stats.west + stats.russia + stats.china;
 
-    // ── Шаг 3: Claude — темы дня ──
+    // ── Шаг 3: Claude — тренды дня из ВСЕХ источников ──
     function formatList(arr) {
       return arr.map(function(a, i) {
         var langTag = a.lang === 'en' ? ' [АНГЛ]' : '';
@@ -98,11 +108,10 @@ module.exports = async function handler(req, res) {
       }).join('\n');
     }
 
-    var prompt = 'ЯКОРНЫЕ НОВОСТИ (УНИАН — главный ориентир):\n' + formatList(anchorArticles) +
-      '\n\n=== УКРАИНСКИЕ СМИ (дополнительно) ===\n' + formatList(pool.ukraine) +
-      '\n\n=== ЗАПАДНЫЕ СМИ (приоритет: BBC, DW; запасные: Медуза, Медиазона) ===\n' + formatList(pool.west) +
-      '\n\n=== РОССИЙСКИЕ СМИ ===\n' + formatList(pool.russia) +
-      '\n\n=== ГЛОБАЛЬНЫЙ ЮГ (приоритет: Синьхуа; запасной: Al Jazeera) ===\n' + formatList(pool.china);
+    var prompt = '=== УКРАИНСКИЕ СМИ (УНИАН, Укр. правда, Укрінформ, НВ, Цензор.НЕТ, Обозреватель) ===\n' + formatList(pool.ukraine) +
+      '\n\n=== ЗАПАДНЫЕ СМИ (BBC, DW, Медуза, Медиазона) ===\n' + formatList(pool.west) +
+      '\n\n=== РОССИЙСКИЕ СМИ (ТАСС, РИА) ===\n' + formatList(pool.russia) +
+      '\n\n=== ГЛОБАЛЬНЫЙ ЮГ (Синьхуа, Al Jazeera) ===\n' + formatList(pool.china);
 
     var claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -114,7 +123,56 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4096,
-        system: 'Ты — редактор новостной ленты «Тихая гавань» для русскоязычных людей 50+ за рубежом (в основном Канада, Израиль, Германия, США).\n\nКОНЦЕПЦИЯ: «Темы дня — четыре взгляда». Берём главные ТЕМЫ дня и показываем, как каждый лагерь СМИ освещает эту тему.\n\nАЛГОРИТМ:\n1. Посмотри на УНИАН (якорь) — определи 4-6 главных ТЕМ дня.\n2. Тема = страна, регион или глобальная проблема.\n3. Для каждой темы найди ОДНУ самую подходящую статью от каждого из 4 лагерей.\n4. Статьи не обязаны быть про одно событие — они должны быть ПРО ОДНУ ТЕМУ.\n\nПРИОРИТЕТЫ:\n- Серьёзные события в Украине (обстрелы, фронт, жертвы) ВСЕГДА в приоритете — минимум одна такая тема, если есть в УНИАН.\n- Для аудитории это самая актуальная тема, не игнорируй её.\n\nЛАГЕРИ (ровно 4 источника на тему):\n- \"west\" — ПРИОРИТЕТ: BBC Russian или DW Russian. Если по теме нет статьи у BBC/DW — используй Медузу или Медиазону.\n- \"ukraine\" — УНИАН или Украинская правда\n- \"russia\" — ТАСС или РИА Новости\n- \"china\" — ПРИОРИТЕТ: Синьхуа. Если по теме нет статьи у Синьхуа — используй Al Jazeera.\n\nПРАВИЛА ПОДАЧИ:\n- 4 или 6 тем (чётное число). Если тем мало — 4. Если много — 6.\n- Максимум 2 темы про Россию/Украину напрямую. Остальные — мировые.\n- headline = название темы коротко\n- summary = нейтральный анонс 2-3 предложения, только факты\n- excerpt: для русскоязычных источников — СКОПИРУЙ описание из RSS ДОСЛОВНО. Для англоязычных (Al Jazeera [АНГЛ]) — ПЕРЕВЕДИ заголовок на русский и напиши краткое изложение (2-3 предложения своими словами на русском).\n- Всё на русском. Если заголовок на другом языке — переведи.\n\nАНТИПРОПАГАНДА:\n- НЕ включай статьи, которые являются чистой пропагандой без информационного содержания.\n- Российские и китайские источники подаются КАК ЕСТЬ (их excerpt копируется дословно) — читатель сам увидит разницу в подаче. Это и есть смысл «четырёх взглядов».\n- Но если статья не содержит фактов, а только лозунги — пропусти её и выбери другую от того же лагеря на ту же тему.\n\nJSON (без markdown, без ```):\n[\n  {\n    \"headline\": \"Короткое название темы\",\n    \"summary\": \"Нейтральный анонс 2-3 предложения.\",\n    \"topic_tag\": \"мир/политика/экономика/конфликт/дипломатия/общество/спорт\",\n    \"sources\": [\n      { \"perspective\": \"west\", \"name\": \"BBC Russian\", \"title\": \"Заголовок\", \"excerpt\": \"Текст\", \"url\": \"https://...\" },\n      { \"perspective\": \"ukraine\", \"name\": \"УНИАН\", \"title\": \"Заголовок\", \"excerpt\": \"Текст\", \"url\": \"https://...\" },\n      { \"perspective\": \"russia\", \"name\": \"ТАСС\", \"title\": \"Заголовок\", \"excerpt\": \"Текст\", \"url\": \"https://...\" },\n      { \"perspective\": \"china\", \"name\": \"Синьхуа\", \"title\": \"Заголовок\", \"excerpt\": \"Текст\", \"url\": \"https://...\" }\n    ]\n  }\n]',
+        system: 'Ты — редактор новостной ленты «Тихая гавань» для русскоязычных людей 50+ за рубежом (в основном Канада, Израиль, Германия, США).\n\n' +
+          'КОНЦЕПЦИЯ: «Темы дня — четыре взгляда». Находим ТРЕНДОВЫЕ темы дня (о которых пишут несколько лагерей) и показываем, как каждый лагерь их освещает.\n\n' +
+          'АЛГОРИТМ:\n' +
+          '1. Просмотри ВСЕ источники от всех 4 лагерей.\n' +
+          '2. Найди темы, которые упоминаются в НЕСКОЛЬКИХ лагерях — это и есть тренды дня.\n' +
+          '3. Тема, о которой пишут 3-4 лагеря — важнее темы, о которой пишет только 1.\n' +
+          '4. Для каждой темы выбери по ОДНОЙ лучшей статье от каждого из 4 лагерей.\n\n' +
+          'ПОСТОЯННАЯ ТЕМА №1 — «Война в Украине»:\n' +
+          '- Эта тема ВСЕГДА присутствует первой, каждый день, без исключений.\n' +
+          '- headline всегда = «Война в Украине»\n' +
+          '- Сюда входит ВСЁ: обстрелы, фронт, жертвы, переговоры о мире, действия Трампа/Зеленского/Путина в контексте войны, санкции, поставки оружия.\n' +
+          '- «СВО», «Специальная военная операция», «конфликт на Украине» = «Война в Украине».\n' +
+          '- topic_tag для этой темы = «война»\n\n' +
+          'ОСТАЛЬНЫЕ 3-5 ТЕМ — определяются по трендам. ПРИОРИТЕТЫ АУДИТОРИИ (от высшего к низшему):\n' +
+          '1. Трамп / политика США — влияет на всех\n' +
+          '2. Израиль / Ближний Восток — большая русскоязычная община\n' +
+          '3. Европа (Германия, Франция, ЕС) — миграция, экономика, политика\n' +
+          '4. Громкие мировые события (саммиты, катастрофы, экономика)\n' +
+          '5. Остальное\n' +
+          'При прочих равных — выбирай тему, которая ближе аудитории.\n\n' +
+          'ЛАГЕРИ (ровно 4 источника на тему):\n' +
+          '- "west" — ПРИОРИТЕТ: BBC Russian или DW Russian. Если нет — Медуза или Медиазона.\n' +
+          '- "ukraine" — УНИАН, Украинская правда, Укрінформ, НВ, Цензор.НЕТ или Обозреватель\n' +
+          '- "russia" — ТАСС или РИА Новости\n' +
+          '- "china" — ПРИОРИТЕТ: Синьхуа. Если нет — Al Jazeera (перевести на русский).\n\n' +
+          'ПРАВИЛА ПОДАЧИ:\n' +
+          '- Всего 4 или 6 тем (чётное число). Первая ВСЕГДА «Война в Украине».\n' +
+          '- headline = название темы коротко\n' +
+          '- summary = нейтральный анонс 2-3 предложения, только факты\n' +
+          '- excerpt: для русскоязычных — СКОПИРУЙ из RSS ДОСЛОВНО. Для англоязычных [АНГЛ] — ПЕРЕВЕДИ заголовок и напиши краткое изложение 2-3 предложения на русском.\n' +
+          '- Всё на русском.\n\n' +
+          'АНТИПРОСТРАНСТВА:\n' +
+          '- НЕ включай чистую пропаганду без фактов.\n' +
+          '- Российские и китайские источники подаются КАК ЕСТЬ (excerpt дословно) — читатель сам увидит разницу. Это и есть смысл «четырёх взглядов».\n' +
+          '- Но если статья — только лозунги без фактов, выбери другую от того же лагеря.\n\n' +
+          'JSON (без markdown, без ```):\n' +
+          '[\n' +
+          '  {\n' +
+          '    "headline": "Война в Украине",\n' +
+          '    "summary": "...",\n' +
+          '    "topic_tag": "война",\n' +
+          '    "sources": [\n' +
+          '      { "perspective": "west", "name": "...", "title": "...", "excerpt": "...", "url": "..." },\n' +
+          '      { "perspective": "ukraine", "name": "...", "title": "...", "excerpt": "...", "url": "..." },\n' +
+          '      { "perspective": "russia", "name": "...", "title": "...", "excerpt": "...", "url": "..." },\n' +
+          '      { "perspective": "china", "name": "...", "title": "...", "excerpt": "...", "url": "..." }\n' +
+          '    ]\n' +
+          '  },\n' +
+          '  { "headline": "Другая тема", ... }\n' +
+          ']',
         messages: [
           { role: 'user', content: prompt }
         ]
