@@ -247,7 +247,7 @@ async function loadNews(date) {
     var pills = '';
     for (var k = 0; k < ORDER.length; k++) {
       for (var j = 0; j < (n.sources||[]).length; j++) {
-        if (n.sources[j].perspective === ORDER[k]) {
+        if (n.sources[j].perspective === ORDER[k] && !n.sources[j].hidden) {
           var c = CAMP[ORDER[k]];
           pills += '<span class="source-pill '+c.pillCss+'"><span class="dot"></span>'+esc(n.sources[j].name)+'</span>';
           break;
@@ -273,7 +273,7 @@ function openModal(idx) {
   var blocks = '';
   for (var k=0;k<ORDER.length;k++) {
     for (var j=0;j<(n.sources||[]).length;j++) {
-      if (n.sources[j].perspective===ORDER[k]) {
+      if (n.sources[j].perspective===ORDER[k] && !n.sources[j].hidden) {
         var s=n.sources[j], c=CAMP[s.perspective];
         blocks +=
           '<div class="src-block">'+
@@ -291,6 +291,9 @@ function openModal(idx) {
       }
     }
   }
+  var visibleCount = 0;
+  for (var vc=0;vc<(n.sources||[]).length;vc++) { if (!n.sources[vc].hidden) visibleCount++; }
+  var viewsLabel = visibleCount === 4 ? 'Четыре точки зрения' : visibleCount === 3 ? 'Три точки зрения' : visibleCount === 2 ? 'Две точки зрения' : 'Точки зрения';
   document.getElementById('modal').innerHTML =
     '<div class="modal-header">'+
       '<span class="modal-tag">'+(TAG_ICONS[n.topic_tag]||'📰')+' '+esc(n.topic_tag)+'</span>'+
@@ -298,7 +301,7 @@ function openModal(idx) {
     '</div>'+
     '<div class="modal-body">'+
       '<div class="modal-summary">'+esc(n.summary)+'</div>'+
-      '<div class="modal-sources-title">Четыре точки зрения</div>'+blocks+
+      '<div class="modal-sources-title">'+viewsLabel+'</div>'+blocks+
     '</div>'+
     '<button class="modal-close" onclick="closeModal()">Закрыть</button>';
   document.getElementById('modal-overlay').classList.add('show');

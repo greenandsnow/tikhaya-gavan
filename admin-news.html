@@ -13,9 +13,7 @@
       --green: #3a8a5c; --red: #b84040; --orange: #c47a30; --stone: #8a8278;
     }
     body { font-family: 'Jost', sans-serif; background: var(--sand); color: var(--text); min-height: 100vh; }
-
     .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
-
     h1 { font-size: 1.5rem; color: var(--ink); margin-bottom: .5rem; }
     .subtitle { font-size: .85rem; color: var(--stone); margin-bottom: 1.5rem; }
 
@@ -31,15 +29,12 @@
     }
     .login-box button {
       width: 100%; padding: .6rem; background: var(--sea); color: white; border: none;
-      border-radius: 6px; font-family: 'Jost', sans-serif; font-size: .9rem; font-weight: 500;
-      cursor: pointer;
+      border-radius: 6px; font-family: 'Jost', sans-serif; font-size: .9rem; font-weight: 500; cursor: pointer;
     }
     .login-box button:hover { opacity: .9; }
 
     /* Tabs */
-    .tabs {
-      display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid var(--sand-dark);
-    }
+    .tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid var(--sand-dark); }
     .tab-btn {
       padding: .6rem 1.2rem; background: none; border: none; border-bottom: 2px solid transparent;
       margin-bottom: -2px; font-family: 'Jost', sans-serif; font-size: .9rem; font-weight: 500;
@@ -69,7 +64,7 @@
     .btn-red { background: var(--red); color: white; }
     .btn-orange { background: var(--orange); color: white; }
     .btn-outline { background: transparent; border: 1.5px solid var(--sand-dark); color: var(--text-light); }
-
+    .btn-sm { padding: .25rem .55rem; font-size: .7rem; }
     .stats { font-size: .8rem; color: var(--stone); }
 
     /* Card */
@@ -92,16 +87,24 @@
     .draft-sources { margin-bottom: .75rem; }
     .draft-src {
       display: flex; align-items: flex-start; gap: .5rem;
-      padding: .5rem 0; border-bottom: 1px solid var(--sand-dark);
-      font-size: .8rem;
+      padding: .6rem 0; border-bottom: 1px solid var(--sand-dark);
+      font-size: .8rem; transition: opacity .3s;
     }
     .draft-src:last-child { border-bottom: none; }
-    .draft-src-flag { font-size: .9rem; flex-shrink: 0; width: 24px; text-align: center; }
+    .draft-src-flag { font-size: .9rem; flex-shrink: 0; width: 24px; text-align: center; padding-top: .1rem; }
     .draft-src-info { flex: 1; }
     .draft-src-name { font-weight: 600; color: var(--text); }
     .draft-src-title { color: var(--text-light); margin-top: .15rem; }
     .draft-src-excerpt { color: var(--stone); font-size: .75rem; margin-top: .25rem; line-height: 1.5; }
     .draft-src-url { font-size: .72rem; color: var(--sea); word-break: break-all; }
+    .draft-src-actions { display: flex; gap: .35rem; margin-top: .4rem; }
+
+    .src-hidden .draft-src-info { opacity: .35; text-decoration: line-through; }
+    .src-hidden .draft-src-flag { opacity: .35; }
+    .draft-src-status {
+      display: inline-block; padding: .1rem .4rem; border-radius: 6px; font-size: .6rem;
+      font-weight: 500; background: #f8d7da; color: #721c24; margin-left: .4rem;
+    }
 
     .draft-actions {
       display: flex; gap: .5rem; padding-top: .75rem;
@@ -110,7 +113,12 @@
 
     .empty-msg { text-align: center; padding: 3rem; color: var(--stone); }
 
-    /* Replacing spinner */
+    /* Spinner */
+    .spinner-inline {
+      display: inline-block; width: 14px; height: 14px; border: 2px solid var(--sand-dark);
+      border-top-color: var(--orange); border-radius: 50%; animation: spin .8s linear infinite;
+      vertical-align: middle; margin-right: .3rem;
+    }
     .replacing-msg {
       text-align: center; padding: 2rem; color: var(--orange); font-size: .9rem;
     }
@@ -129,14 +137,6 @@
     }
     .toast.show { display: block; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Hidden badge */
-    .status-badge {
-      display: inline-block; padding: .1rem .4rem; border-radius: 8px; font-size: .6rem;
-      font-weight: 500; margin-left: .5rem; vertical-align: middle;
-    }
-    .status-published { background: #d4edda; color: #155724; }
-    .status-hidden { background: #f8d7da; color: #721c24; }
   </style>
 </head>
 <body>
@@ -154,7 +154,6 @@
     <h1>📰 Модерация новостей</h1>
     <div class="subtitle">Черновики собраны в 05:00 UTC. Проверьте и опубликуйте.</div>
 
-    <!-- Tabs -->
     <div class="tabs">
       <button class="tab-btn active" id="tab-drafts" onclick="switchTab('drafts')">📝 Черновики</button>
       <button class="tab-btn" id="tab-published" onclick="switchTab('published')">✅ Опубликованные</button>
@@ -216,11 +215,7 @@ function switchTab(tab) {
 
 function loadCurrentTab() {
   currentDate = document.getElementById('date-picker').value || currentDate;
-  if (currentTab === 'drafts') {
-    loadItems('draft');
-  } else {
-    loadItems('published');
-  }
+  loadItems(currentTab === 'drafts' ? 'draft' : 'published');
 }
 
 async function loadItems(status) {
@@ -258,14 +253,33 @@ function renderCard(n, mode) {
     for (var j = 0; j < (n.sources || []).length; j++) {
       var s = n.sources[j];
       if (s.perspective === order[k]) {
+        var isHidden = s.hidden === true;
+        var rowClass = isHidden ? ' src-hidden' : '';
+        var hiddenBadge = isHidden ? '<span class="draft-src-status">скрыт</span>' : '';
+
+        var srcActions = '';
+        if (mode === 'published') {
+          if (isHidden) {
+            srcActions = '<div class="draft-src-actions">' +
+              '<button class="btn btn-sm btn-green" onclick="restoreSource(\'' + n.id + '\',\'' + s.perspective + '\')">↩ Вернуть</button>' +
+              '</div>';
+          } else {
+            srcActions = '<div class="draft-src-actions">' +
+              '<button class="btn btn-sm btn-outline" onclick="hideSource(\'' + n.id + '\',\'' + s.perspective + '\')">👁 Скрыть</button>' +
+              '<button class="btn btn-sm btn-orange" id="srcbtn-' + n.id + '-' + s.perspective + '" onclick="replaceSource(\'' + n.id + '\',\'' + s.perspective + '\')">🔄 Заменить</button>' +
+              '</div>';
+          }
+        }
+
         srcHtml +=
-          '<div class="draft-src">' +
+          '<div class="draft-src' + rowClass + '" id="src-' + n.id + '-' + s.perspective + '">' +
             '<div class="draft-src-flag">' + (FLAGS[s.perspective] || '📰') + '</div>' +
             '<div class="draft-src-info">' +
-              '<div class="draft-src-name">' + esc(s.name) + ' <span style="color:var(--stone);font-weight:400">(' + (LABELS[s.perspective] || '') + ')</span></div>' +
+              '<div class="draft-src-name">' + esc(s.name) + ' <span style="color:var(--stone);font-weight:400">(' + (LABELS[s.perspective] || '') + ')</span>' + hiddenBadge + '</div>' +
               '<div class="draft-src-title">' + esc(s.title) + '</div>' +
               (s.excerpt ? '<div class="draft-src-excerpt">' + esc(s.excerpt).substring(0, 200) + '</div>' : '') +
               '<div class="draft-src-url"><a href="' + esc(s.url) + '" target="_blank">' + esc(s.url).substring(0, 70) + '...</a></div>' +
+              srcActions +
             '</div>' +
           '</div>';
         break;
@@ -273,15 +287,15 @@ function renderCard(n, mode) {
     }
   }
 
-  var actions = '';
+  var topActions = '';
   if (mode === 'draft') {
-    actions =
+    topActions =
       '<button class="btn btn-green" onclick="publishOne(\'' + n.id + '\')">✓ Опубликовать</button>' +
       '<button class="btn btn-red" onclick="deleteOne(\'' + n.id + '\')">✕ Удалить</button>';
   } else {
-    actions =
-      '<button class="btn btn-outline" onclick="hideOne(\'' + n.id + '\')">👁 Скрыть</button>' +
-      '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Заменить</button>';
+    topActions =
+      '<button class="btn btn-outline" onclick="hideOne(\'' + n.id + '\')">👁 Скрыть тему</button>' +
+      '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Заменить тему</button>';
   }
 
   return (
@@ -292,31 +306,31 @@ function renderCard(n, mode) {
       '</div>' +
       '<div class="draft-summary">' + esc(n.summary) + '</div>' +
       '<div class="draft-sources">' + srcHtml + '</div>' +
-      '<div class="draft-actions" id="actions-' + n.id + '">' + actions + '</div>' +
+      '<div class="draft-actions" id="actions-' + n.id + '">' + topActions + '</div>' +
     '</div>'
   );
 }
+
+// ── API helper ──
 
 async function adminAction(action, id, extra) {
   try {
     var body = { action: action, password: adminPassword };
     if (id) body.id = id;
-    if (extra) {
-      for (var k in extra) body[k] = extra[k];
-    }
-
+    if (extra) { for (var k in extra) body[k] = extra[k]; }
     var r = await fetch('/api/news-admin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-    var data = await r.json();
-    return data;
+    return await r.json();
   } catch (e) {
     toast('Ошибка: ' + e.message);
     return null;
   }
 }
+
+// ── Topic-level actions ──
 
 async function publishOne(id) {
   var res = await adminAction('publish', id);
@@ -324,9 +338,7 @@ async function publishOne(id) {
     document.getElementById('card-' + id).classList.add('fading');
     toast('Опубликовано ✓');
     setTimeout(loadCurrentTab, 600);
-  } else {
-    toast('Ошибка публикации');
-  }
+  } else { toast('Ошибка публикации'); }
 }
 
 async function deleteOne(id) {
@@ -348,36 +360,70 @@ async function publishAll() {
 }
 
 async function hideOne(id) {
-  if (!confirm('Скрыть эту тему? Она исчезнет с сайта.')) return;
+  if (!confirm('Скрыть тему целиком?\nОна исчезнет с сайта.')) return;
   var res = await adminAction('hide', id);
   if (res && res.ok) {
     document.getElementById('card-' + id).classList.add('fading');
-    toast('Скрыто 👁');
+    toast('Тема скрыта 👁');
     setTimeout(loadCurrentTab, 600);
-  } else {
-    toast('Ошибка');
-  }
+  } else { toast('Ошибка'); }
 }
 
 async function replaceOne(id) {
-  if (!confirm('Скрыть эту тему и сгенерировать новую на замену?\n\nЭто займёт 30-60 секунд (парсинг RSS + Claude).')) return;
-
-  // Показываем спиннер вместо кнопок
+  if (!confirm('Скрыть тему и сгенерировать новую?\nЗаймёт 30-60 секунд.')) return;
   var actionsDiv = document.getElementById('actions-' + id);
   actionsDiv.innerHTML = '<div class="replacing-msg"><span class="spinner"></span> Генерируем замену...</div>';
 
   var res = await adminAction('replace', id, { date: currentDate });
-
   if (res && res.ok) {
     toast('Тема заменена ✓');
     setTimeout(loadCurrentTab, 500);
   } else {
-    var errMsg = (res && res.error) ? res.error : 'Ошибка замены';
-    toast(errMsg);
-    // Восстанавливаем кнопки
+    toast((res && res.error) || 'Ошибка замены');
     actionsDiv.innerHTML =
-      '<button class="btn btn-outline" onclick="hideOne(\'' + id + '\')">👁 Скрыть</button>' +
-      '<button class="btn btn-orange" onclick="replaceOne(\'' + id + '\')">🔄 Заменить</button>';
+      '<button class="btn btn-outline" onclick="hideOne(\'' + id + '\')">👁 Скрыть тему</button>' +
+      '<button class="btn btn-orange" onclick="replaceOne(\'' + id + '\')">🔄 Заменить тему</button>';
+  }
+}
+
+// ── Source-level actions ──
+
+async function hideSource(newsId, perspective) {
+  if (!confirm('Скрыть «' + (LABELS[perspective] || perspective) + '»?\nЭтот взгляд исчезнет, остальные останутся.')) return;
+  var srcDiv = document.getElementById('src-' + newsId + '-' + perspective);
+  if (srcDiv) srcDiv.classList.add('src-hidden');
+
+  var res = await adminAction('hide_source', newsId, { perspective: perspective });
+  if (res && res.ok) {
+    toast('Источник скрыт ✓');
+    setTimeout(loadCurrentTab, 500);
+  } else {
+    if (srcDiv) srcDiv.classList.remove('src-hidden');
+    toast((res && res.error) || 'Ошибка');
+  }
+}
+
+async function restoreSource(newsId, perspective) {
+  var res = await adminAction('restore_source', newsId, { perspective: perspective });
+  if (res && res.ok) {
+    toast('Источник восстановлен ✓');
+    setTimeout(loadCurrentTab, 500);
+  } else { toast((res && res.error) || 'Ошибка'); }
+}
+
+async function replaceSource(newsId, perspective) {
+  if (!confirm('Заменить «' + (LABELS[perspective] || perspective) + '»?\nClaude подберёт другую статью.\nЗаймёт 20-40 секунд.')) return;
+
+  var btn = document.getElementById('srcbtn-' + newsId + '-' + perspective);
+  if (btn) btn.innerHTML = '<span class="spinner-inline"></span> Ищем...';
+
+  var res = await adminAction('replace_source', newsId, { perspective: perspective, date: currentDate });
+  if (res && res.ok) {
+    toast('Источник заменён ✓');
+    setTimeout(loadCurrentTab, 500);
+  } else {
+    toast((res && res.error) || 'Ошибка замены');
+    if (btn) btn.innerHTML = '🔄 Заменить';
   }
 }
 </script>
