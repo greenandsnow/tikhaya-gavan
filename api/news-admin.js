@@ -478,6 +478,28 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: ok3, action: 'source_replaced', perspective: camp, new_source: newSource });
     }
 
+    // ── Run news fetch manually from admin ──
+    if (action === 'run_fetch') {
+      try {
+        var cronSecret = process.env.CRON_SECRET || '';
+        var baseUrl = process.env.VERCEL_URL ? ('https://' + process.env.VERCEL_URL) : 'https://www.greenandsnowstudio.com';
+        var fetchResp = await fetch(baseUrl + '/api/news-fetch', {
+          method: 'GET',
+          headers: { 'Authorization': 'Bearer ' + cronSecret },
+          signal: AbortSignal.timeout(120000)
+        });
+        var fetchData = await fetchResp.json();
+        return res.status(200).json({
+          ok: fetchData.ok || false,
+          topics: fetchData.topics || 0,
+          stats: fetchData.stats || null,
+          error: fetchData.error || fetchData.message || null
+        });
+      } catch (e) {
+        return res.status(200).json({ ok: false, error: 'Fetch timeout or error: ' + e.message });
+      }
+    }
+
     // ── Debug: check which feeds are accessible ──
     if (action === 'debug_feeds') {
       var testFeeds = [
