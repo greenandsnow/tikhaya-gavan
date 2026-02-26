@@ -406,12 +406,20 @@ async function runFetch() {
   btn.disabled = false;
   btn.innerHTML = '📡 Собрать новости';
 
-  if (res && res.ok) {
-    var count = res.published || res.claude_items || res.topics || '?';
-    showAlert('Собрано ' + count + ' тем!\nОни уже опубликованы — проверьте во вкладке «Опубликованные».', '✅');
+  if (res && (res.ok || res.published > 0)) {
+    var count = res.published || res.claude_items || 0;
+    var skippedInfo = '';
+    if (res.skipped && res.skipped.length > 0) {
+      skippedInfo = '\n\nПропущено: ' + res.skipped.length + ' тем (' + res.skipped.map(function(s){ return s.reason; }).join(', ') + ')';
+    }
+    showAlert('Собрано и опубликовано: ' + count + ' тем.' + skippedInfo, '✅');
     switchTab('published');
   } else {
-    showAlert((res && res.error) || 'Ошибка сбора новостей', '⚠️');
+    var errMsg = (res && res.error) || 'Ошибка сбора новостей';
+    if (res && res.skipped && res.skipped.length > 0) {
+      errMsg += '\n\nПропущено: ' + JSON.stringify(res.skipped);
+    }
+    showAlert(errMsg, '⚠️');
   }
 }
 
