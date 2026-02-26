@@ -488,12 +488,8 @@ module.exports = async function handler(req, res) {
           signal: AbortSignal.timeout(120000)
         });
         var fetchData = await fetchResp.json();
-        return res.status(200).json({
-          ok: fetchData.ok || false,
-          topics: fetchData.topics || 0,
-          stats: fetchData.stats || null,
-          error: fetchData.error || fetchData.message || null
-        });
+        // Pass through full response
+        return res.status(200).json(fetchData);
       } catch (e) {
         return res.status(200).json({ ok: false, error: 'Fetch timeout or error: ' + e.message });
       }
