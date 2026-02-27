@@ -201,7 +201,7 @@ var L={
 
 function calcLayout(){
   var felt=document.getElementById('felt');
-  var W=felt.clientWidth, H=felt.clientHeight;
+  var W=felt.offsetWidth, H=felt.offsetHeight;
   var p=L.pad, g=L.gap;
   // Вычисляем CW так чтобы 7 колонн + стопка + отбой + 4 фундамента влезли
   // Верхний ряд: stock + waste + spacer(~20px) + 4 found = 8 карт + зазоры
@@ -358,7 +358,10 @@ function onDragStart(e,src,ci){
   g.style.width=CW+'px'; g.style.height=CH+'px';
   g.style.left=(p.x-CW/2)+'px'; g.style.top=(p.y-CH/2)+'px';
   g.style.display='block';
-  render(); // перерисуем чтобы src карта стала прозрачной
+  // НЕ вызываем render() — иначе DOM пересоздаётся и теряется mouseup
+  // Просто визуально помечаем исходную карту прозрачной
+  var srcEl = findCardEl();
+  if(srcEl) srcEl.style.opacity='0.3';
   e.preventDefault();
 }
 
@@ -383,7 +386,7 @@ function onDragEnd(e){
   var t=findTarget(p.x,p.y);
   if(t) doMove(t);
   D.on=false; D.card=null;
-  render();
+  if(!t) render(); // render только если ход не выполнен (doMove уже вызывает render)
 }
 
 function onDblClick(e,src,ci){
@@ -404,7 +407,10 @@ function feltRect(){return document.getElementById('felt').getBoundingClientRect
 
 function findTarget(px,py){
   var fr=feltRect();
-  var x=px-fr.left, y=py-fr.top; // координаты внутри felt
+  var felt=document.getElementById('felt');
+  // Масштаб: offsetWidth (логические пиксели layout) / clientRect.width (CSS-пиксели экрана)
+  var scale=felt.offsetWidth/fr.width;
+  var x=(px-fr.left)*scale, y=(py-fr.top)*scale; // координаты в логических пикселях layout
   // Фундаменты
   for(var fi=0;fi<4;fi++){
     var fx=L.foundX[fi], fy=L.foundY;
@@ -432,8 +438,10 @@ function findTarget(px,py){
 }
 
 function hlTarget(t){
-  if(t.type==='f') document.getElementById('fs'+t.fi).classList.add('highlight');
-  else document.getElementById('cs'+t.ci).classList.add('highlight');
+  // Подсвечиваем слот
+  var id=(t.type==='f')?'fs'+t.fi:'cs'+t.ci;
+  var el=document.getElementById(id);
+  if(el) el.classList.add('highlight');
 }
 function clearHL(){
   document.querySelectorAll('.highlight').forEach(function(el){el.classList.remove('highlight');});
