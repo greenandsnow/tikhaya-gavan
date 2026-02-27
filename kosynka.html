@@ -324,6 +324,20 @@ function checkWin(){
   }
 }
 
+// ══ ВСПОМОГАТЕЛЬНЫЕ ══
+// Проверяем можно ли тащить стопку начиная с cardIdx — все карты одной масти по убыванию
+function canDragStack(ci, fromIdx){
+  var col=tab[ci];
+  if(fromIdx>=col.length-1) return true; // одна карта — всегда можно
+  var suit=col[fromIdx].s;
+  for(var i=fromIdx;i<col.length-1;i++){
+    if(!col[i].up) return false;
+    if(col[i+1].s!==suit) return false; // разные масти
+    if(RV[col[i+1].r]!==RV[col[i].r]-1) return false; // не по убыванию
+  }
+  return true;
+}
+
 // ══ DRAG STATE ══
 var D={on:false,card:null,src:null,ci:-1,ox:0,oy:0};
 
@@ -333,69 +347,121 @@ function pointerXY(e){
   return{x:e.clientX,y:e.clientY};
 }
 
-function onDragStart(e,src,ci){
+function resetDrag(){
+  D.on=false; D.card=null; D.src=null; D.ci=-1;
+  D.stackFrom=undefined; D._moved=false; D._hlId=null;
+  document.getElementById('ghost').style.display='none';
+  clearHL();
+}
+
+function buildGhost(src, ci, card){
+  var stackCards = (src==='col') ? tab[ci].slice(D.stackFrom) : [card];
+  var stackH = CH + (stackCards.length-1) * L.offsetUp;
+  var g = document.getElementById('ghost');
+  g.innerHTML = '';
+  g.style.cssText = 'display:none;position:fixed;pointer-events:none;z-index:9999;width:'+CW+'px;height:'+stackH+'px;';
+  for(var i=0; i<stackCards.length; i++){
+    var d=document.createElement('div');
+    d.style.cssText='position:absolute;width:'+CW+'px;height:'+CH+'px;top:'+(i*L.offsetUp)+'px;left:0;border-radius:8px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.55)';
+    var im=document.createElement('img');
+    im.src=img(stackCards[i].r, stackCards[i].s);
+    im.style.cssText='width:100%;height:100%;display:block';
+    d.appendChild(im); g.appendChild(d);
+  }
+}
+
+function onDragStart(e, src, ci){
   if(over) return;
-  var p=pointerXY(e);
-  var card, col;
-  if(src==='stock'){dealStock();return;}
+  // Сбрасываем любой предыдущий drag
+  resetDrag();
+
+  var p = pointerXY(e);
+  var card;
+
+  if(src==='stock'){ dealStock(); return; }
+
   if(src==='waste'){
     if(!waste.length) return;
-    card=waste[waste.length-1];
+    card = waste[waste.length-1];
+    if(!card.up) return;
+    D.stackFrom = undefined;
   } else {
-    col=tab[ci];
+    var col = tab[ci];
     if(!col.length) return;
-    card=col[col.length-1];
-    if(!card.up){
-      // открываем рубашку
-      save(); card.up=true; moves++; updateBar(); render(); return;
+    // Определяем по Y за какую карту взялись
+    var fr = document.getElementById('felt').getBoundingClientRect();
+    var clickY = p.y - fr.top;
+    var yPos = L.colY;
+    var clickedIdx = col.length-1;
+    for(var i=0; i<col.length-1; i++){
+      var nextY = yPos + (col[i].up ? L.offsetUp : L.offsetDown);
+      if(clickY < nextY){ clickedIdx = i; break; }
+      yPos = nextY;
     }
+    card = col[clickedIdx];
+    if(!card.up){
+      if(clickedIdx===col.length-1){ save(); card.up=true; moves++; updateBar(); render(); }
+      return;
+    }
+    if(!canDragStack(ci, clickedIdx)) return;
+    D.stackFrom = clickedIdx;
   }
+
   D.on=true; D.card=card; D.src=src; D.ci=ci;
-  // Показываем призрак
-  var g=document.getElementById('ghost');
-  var gi=document.getElementById('ghostImg');
-  gi.src=img(card.r,card.s);
-  g.style.width=CW+'px'; g.style.height=CH+'px';
-  g.style.left=(p.x-CW/2)+'px'; g.style.top=(p.y-CH/2)+'px';
-  g.style.display='block';
-  // НЕ вызываем render() — иначе DOM пересоздаётся и теряется mouseup
-  // Просто визуально помечаем исходную карту прозрачной
-  var felt2=document.getElementById('felt');
-  var cards2=felt2.querySelectorAll('.card-el');
-  var targetX=(src==='waste')?L.wasteX:L.colX[ci];
-  var targetY=(src==='waste')?L.wasteY:L.colY;
-  // Ищем последнюю карту в нужной позиции X
-  var srcEl=null;
-  for(var i=cards2.length-1;i>=0;i--){
-    var ex=parseInt(cards2[i].style.left);
-    if(Math.abs(ex-targetX)<5){ srcEl=cards2[i]; break; }
-  }
-  if(srcEl) srcEl.style.opacity='0.3';
+  D._startX=p.x; D._startY=p.y; D._moved=false; D._hlId=null;
+  buildGhost(src, ci, card);
   e.preventDefault();
 }
 
 function onDragMove(e){
   if(!D.on) return;
-  var p=pointerXY(e);
-  var g=document.getElementById('ghost');
-  g.style.left=(p.x-CW/2)+'px'; g.style.top=(p.y-CH/2)+'px';
-  // Подсветка цели
-  clearHL();
-  var t=findTarget(p.x,p.y);
-  if(t) hlTarget(t);
+  var p = pointerXY(e);
+  if(!D._moved){
+    if(Math.abs(p.x-D._startX)<6 && Math.abs(p.y-D._startY)<6) return;
+    D._moved = true;
+    document.getElementById('ghost').style.display = 'block';
+  }
+  var g = document.getElementById('ghost');
+  g.style.left = (p.x - CW/2) + 'px';
+  g.style.top  = (p.y - CH/2) + 'px';
+  var t = findTarget(p.x, p.y);
+  var newId = t ? (t.type==='f' ? 'fs'+t.fi : 'cs'+t.ci) : null;
+  if(D._hlId !== newId){
+    clearHL(); D._hlId = newId;
+    if(t) hlTarget(t);
+  }
   e.preventDefault();
 }
 
 function onDragEnd(e){
   if(!D.on) return;
-  var p=pointerXY(e);
-  document.getElementById('ghost').style.display='none';
-  clearHL();
-  // Ищем цель по координатам напрямую — без elementFromPoint
-  var t=findTarget(p.x,p.y);
+  var p = pointerXY(e);
+  var moved = D._moved;
+  var card = D.card;
+  var src = D.src;
+  var ci = D.ci;
+  resetDrag();
+
+  if(!moved){
+    // Клик — отправляем в фундамент если можно
+    if(card){
+      var fi = autoFound(card);
+      if(fi>=0){
+        save();
+        if(src==='waste') waste.pop(); else tab[ci].pop();
+        found[fi].push(card);
+        autoFlip(); moves++; updateBar(); render(); checkWin();
+        return;
+      }
+    }
+    render();
+    return;
+  }
+
+  // Drag — ищем цель
+  var t = findTarget(p.x, p.y);
   if(t) doMove(t);
-  D.on=false; D.card=null;
-  if(!t) render(); // render только если ход не выполнен (doMove уже вызывает render)
+  else render();
 }
 
 function onDblClick(e,src,ci){
@@ -458,10 +524,21 @@ function clearHL(){
 
 function doMove(t){
   save();
-  var card=D.card;
-  if(D.src==='waste') waste.pop(); else tab[D.ci].pop();
-  if(t.type==='f') found[t.fi].push(card);
-  else tab[t.ci].push(card);
+  var cards=[];
+  if(D.src==='waste'){
+    cards=[waste.pop()];
+  } else {
+    var fromIdx=(D.stackFrom!==undefined)?D.stackFrom:tab[D.ci].length-1;
+    cards=tab[D.ci].splice(fromIdx, tab[D.ci].length-fromIdx);
+  }
+  if(t.type==='f'){
+    // В фундамент — только одна карта (нижняя стопки)
+    found[t.fi].push(cards[0]);
+    for(var i=1;i<cards.length;i++) tab[D.ci].push(cards[i]);
+  } else {
+    for(var i=0;i<cards.length;i++) tab[t.ci].push(cards[i]);
+  }
+  D.stackFrom=undefined;
   autoFlip(); moves++; updateBar(); checkWin();
 }
 
@@ -667,6 +744,9 @@ document.addEventListener('mousemove',onDragMove);
 document.addEventListener('mouseup',onDragEnd);
 document.addEventListener('touchmove',onDragMove,{passive:false});
 document.addEventListener('touchend',onDragEnd);
+// Сброс drag если мышь ушла за окно или окно потеряло фокус
+window.addEventListener('blur', function(){ if(D.on){ resetDrag(); render(); } });
+document.addEventListener('mouseleave', function(e){ if(e.target===document.documentElement && D.on){ resetDrag(); render(); } });
 window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display!=='none'){calcLayout();render();}});
 </script>
 </body>
