@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Издательство — Тихая гавань</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;--terra:#a0614a;--ink:#2a2420;--brown:#6b3010;--brown-light:#8b4e2a;--gold-border:rgba(212,170,60,0.4)}
@@ -13,8 +13,8 @@ html{font-size:clamp(15px,1.1vw,18px)}
 body{font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
 
 header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;position:sticky;top:0;z-index:100}
-.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:88px;gap:2rem}
-.logo{text-decoration:none;display:flex;align-items:center;gap:.75rem;line-height:1.1}.logo-img{height:110px;width:auto;display:block;position:relative;z-index:101}.logo-text{display:flex;flex-direction:column}
+.hi{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:2rem}
+.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.1}
 .logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
 .logo-tag{font-size:.65rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
 nav ul{list-style:none;display:flex;gap:.25rem}
@@ -28,8 +28,8 @@ main{flex:1;padding:3rem 2rem 4rem}
 /* PAGE TITLE */
 .page-title{text-align:center;margin-bottom:2.5rem}
 .page-eyebrow{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);margin-bottom:.75rem}
-.page-title h1{font-family:'Jost',sans-serif;font-weight:600;font-size:1.5rem;color:var(--sea);line-height:1.2;letter-spacing:.03em}
-.page-title h1 em{font-style:normal;color:var(--sea)}
+.page-title h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.6rem);color:var(--ink);line-height:1.2}
+.page-title h1 em{font-style:italic;color:var(--terra)}
 
 /* PROGRESS STEPS */
 .steps{display:flex;align-items:center;margin-bottom:2.5rem;gap:0}
@@ -112,7 +112,7 @@ main{flex:1;padding:3rem 2rem 4rem}
 .success{display:none;flex-direction:column;align-items:center;text-align:center;padding:2rem 1rem;gap:.75rem}
 .success.show{display:flex}
 .success-icon{font-size:3.5rem}
-.success h2{font-family:'Jost',sans-serif;font-weight:600;font-size:1.6rem;color:var(--ink)}
+.success h2{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--ink)}
 .success p{font-size:.88rem;color:var(--text-light);line-height:1.7;max-width:420px}
 .success-link{background:var(--sand);border:1px solid var(--sand-dark);border-radius:8px;padding:.65rem 1rem;font-size:.82rem;color:var(--sea);word-break:break-all;margin-top:.5rem;cursor:pointer;transition:background .2s}
 .success-link:hover{background:var(--sea-pale)}
@@ -125,18 +125,17 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .card{animation:fadeUp .4s ease both}
-@media(max-width:768px){.logo-img{height:80px}.logo-name{font-size:1.2rem!important}.burger{display:flex}nav{display:none;position:absolute;top:88px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}nav.open{display:block}nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}nav a{font-size:1rem;padding:.6rem .5rem;width:100%}}.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}</style>
+</style>
 </head>
 <body>
 <header>
   <div class="hi">
-    <a href="/" class="logo"><img src="/logo_tg.png" alt="Тихая гавань" class="logo-img"/><div class="logo-text"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></div></a>
-    <button class="burger" onclick="document.getElementById('main-nav').classList.toggle('open')" aria-label="Меню"><span></span><span></span><span></span></button>
-    <nav id="main-nav"><ul>
+    <a href="/" class="logo"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></a>
+    <nav><ul>
       <li><a href="/crosswords">Кроссворды</a></li>
       <li><a href="/ask">Задай вопрос</a></li>
       <li><a href="/reading" class="active">Чтиво</a></li>
-      <li><a href="/news">Новости</a></li>
+      <li><a href="/videos">Видео</a></li>
       <li><a href="/games">Игры</a></li>
       <li><a href="/support">Поддержка</a></li>
     </ul></nav>
@@ -147,7 +146,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
   <div class="container">
     <div class="page-title">
       <div class="page-eyebrow">Тихая гавань · Издательство</div>
-      <h1>Издательство</h1>
+      <h1>Опубликуйте свою <em>книгу</em></h1>
     </div>
 
     <!-- PROGRESS -->
@@ -164,7 +163,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
       <!-- STEP 1: RULES -->
       <div id="step1">
-        <h2 style="font-family:'Jost',sans-serif;font-weight:600;font-size:1.2rem;margin-bottom:1rem;color:var(--ink)">Правила и условия</h2>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:1rem;color:var(--ink)">Правила и условия</h2>
         <div class="rules-scroll">
           <h3>1. О проекте</h3>
           <p>«Тихая гавань» — бесплатная платформа для публикации произведений новых авторов на русском языке. Мы не берём вознаграждения и не претендуем на ваши авторские права.</p>
@@ -206,7 +205,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
       <!-- STEP 2: AUTHOR -->
       <div id="step2" style="display:none">
-        <h2 style="font-family:'Jost',sans-serif;font-weight:600;font-size:1.2rem;margin-bottom:1.25rem;color:var(--ink)">Данные автора</h2>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:1.25rem;color:var(--ink)">Данные автора</h2>
         <div class="field">
           <label>Имя автора <span style="color:var(--terra)">*</span></label>
           <input type="text" id="author-name" placeholder="Как подписать книгу (псевдоним или настоящее имя)"/>
@@ -229,7 +228,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
       <!-- STEP 3: FILE -->
       <div id="step3" style="display:none">
-        <h2 style="font-family:'Jost',sans-serif;font-weight:600;font-size:1.2rem;margin-bottom:.5rem;color:var(--ink)">Загрузка произведения</h2>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.5rem;color:var(--ink)">Загрузка произведения</h2>
         <p style="font-size:.82rem;color:var(--text-light);margin-bottom:1.25rem;line-height:1.6">Принимается только формат <strong>PDF</strong>. Максимальный размер — 20 МБ. <a href="#help-pdf" onclick="toggleHelp()" style="color:var(--brown);text-decoration:none;font-weight:500">Как подготовить PDF? →</a></p><div id="help-pdf" style="display:none;background:var(--sand);border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.8rem;line-height:1.7;color:var(--text-light)"><strong>Как сохранить книгу в PDF:</strong><br>• <strong>Word / LibreOffice:</strong> Файл → Сохранить как → PDF<br>• <strong>Google Docs:</strong> Файл → Скачать → PDF<br>• <strong>Apple Pages:</strong> Файл → Экспорт → PDF<br><br>Рекомендуем использовать шрифт не мельче 12pt и поля не менее 2 см.</div>
 
         <div class="field">
@@ -285,7 +284,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
           <p>ИИ анализирует ваше произведение...<br><span style="font-size:.78rem">Это займёт около минуты</span></p>
         </div>
         <div id="ai-result" style="display:none">
-          <h2 style="font-family:'Jost',sans-serif;font-weight:600;font-size:1.2rem;margin-bottom:1rem;color:var(--ink)">Результат анализа</h2>
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:1rem;color:var(--ink)">Результат анализа</h2>
           <div class="ai-box">
             <div class="ai-label">Краткое резюме</div>
             <div class="ai-text" id="ai-summary">—</div>
@@ -308,7 +307,7 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
       <!-- STEP 5: GENRE -->
       <div id="step5" style="display:none">
-        <h2 style="font-family:'Jost',sans-serif;font-weight:600;font-size:1.2rem;margin-bottom:.4rem;color:var(--ink)">Жанр произведения</h2>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.4rem;color:var(--ink)">Жанр произведения</h2>
         <p style="font-size:.82rem;color:var(--text-light);margin-bottom:1.25rem">ИИ предложил жанр на основе анализа. Вы можете выбрать до 3 жанров.</p>
 
         <div class="field">
@@ -529,59 +528,82 @@ function toggleGenre(btn, genre) {
   }
 }
 
-function submitBook() {
-  if (selectedGenres.length === 0) { alert('Пожалуйста, выберите хотя бы один жанр.'); return; }
+var SUPA_URL = 'https://nclltofdkjiuneqzemhd.supabase.co';
+var SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbGx0b2Zka2ppdW5lcXplbWhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3OTg5OTksImV4cCI6MjA4NzM3NDk5OX0.FPwKW_8M33M32OWhzhcfF_yftinL7ZlfiEBiZQ4vIG4';
 
-  var payload = {
-    title: document.getElementById('book-title').value.trim(),
-    author_name: document.getElementById('author-name').value.trim(),
-    author_email: document.getElementById('author-email').value.trim(),
-    annotation: document.getElementById('book-annotation').value.trim(),
-    genre: selectedGenres.join(', '),
-    type: document.getElementById('book-type').value,
-    ai_summary: document.getElementById('ai-summary').textContent
-  };
-
-  // Convert PDF to base64
-  function readCover(cb) {
-    if (selectedCover) {
-      var r = new FileReader();
-      r.onload = function(e) { payload.cover_base64 = e.target.result; payload.cover_name = selectedCover.name; cb(); };
-      r.readAsDataURL(selectedCover);
-    } else { cb(); }
+async function uploadToStorage(file, folder, ext) {
+  var path = folder + '/' + Date.now() + '_' + Math.random().toString(36).substring(2,8) + '.' + ext;
+  var resp = await fetch(SUPA_URL + '/storage/v1/object/books/' + path, {
+    method: 'POST',
+    headers: {
+      'Content-Type': file.type || 'application/octet-stream',
+      'apikey': SUPA_ANON,
+      'Authorization': 'Bearer ' + SUPA_ANON
+    },
+    body: file
+  });
+  if (!resp.ok) {
+    var errText = await resp.text();
+    throw new Error('Upload failed (' + resp.status + '): ' + errText);
   }
-
-  function readPdf(cb) {
-    if (selectedFile) {
-      var r = new FileReader();
-      r.onload = function(e) { payload.file_base64 = e.target.result; payload.file_name = selectedFile.name; cb(); };
-      r.readAsDataURL(selectedFile);
-    } else { cb(); }
-  }
-
-  readCover(function() { readPdf(function() { doSubmit(payload); }); });
+  return path;
 }
 
-function doSubmit(payload) {
-  fetch('/api/publish', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(payload)
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    bookId = data.id || 'demo-' + Date.now();
-    var link = 'https://greenandsnowstudio.com/book/' + bookId;
+async function submitBook() {
+  if (selectedGenres.length === 0) { alert('Пожалуйста, выберите хотя бы один жанр.'); return; }
+
+  var publishBtn = document.querySelector('#step5 .btn-primary');
+  if (publishBtn) { publishBtn.disabled = true; publishBtn.textContent = 'Загрузка файлов...'; }
+
+  try {
+    var filePath = null;
+    var coverPath = null;
+
+    // Upload PDF directly to Supabase Storage
+    if (selectedFile) {
+      filePath = await uploadToStorage(selectedFile, 'books', 'pdf');
+    }
+
+    // Upload cover directly to Supabase Storage
+    if (selectedCover) {
+      var ext = selectedCover.name.split('.').pop() || 'jpg';
+      coverPath = await uploadToStorage(selectedCover, 'covers', ext);
+    }
+
+    if (publishBtn) { publishBtn.textContent = 'Сохранение...'; }
+
+    // Send only text data + file paths to API
+    var payload = {
+      title: document.getElementById('book-title').value.trim(),
+      author_name: document.getElementById('author-name').value.trim(),
+      author_email: document.getElementById('author-email').value.trim(),
+      annotation: document.getElementById('book-annotation').value.trim(),
+      genre: selectedGenres.join(', '),
+      type: document.getElementById('book-type').value,
+      ai_summary: document.getElementById('ai-summary').textContent,
+      file_path: filePath,
+      cover_path: coverPath
+    };
+
+    var r = await fetch('/api/publish', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    var data = await r.json();
+
+    if (!r.ok || !data.id) {
+      throw new Error(data.error || 'Ошибка сохранения');
+    }
+
+    bookId = data.id;
+    var link = 'https://www.greenandsnowstudio.com/book/' + bookId;
     document.getElementById('book-link').textContent = link;
     setStep(6);
-  })
-  .catch(function() {
-    // Even if API fails, show success for demo
-    bookId = 'demo-' + Date.now();
-    var link = 'https://greenandsnowstudio.com/book/' + bookId;
-    document.getElementById('book-link').textContent = link;
-    setStep(6);
-  });
+  } catch(err) {
+    if (publishBtn) { publishBtn.disabled = false; publishBtn.textContent = 'Опубликовать ✓'; }
+    alert('Ошибка публикации: ' + err.message + '\nПопробуйте ещё раз.');
+  }
 }
 
 function copyLink() {
