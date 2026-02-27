@@ -237,6 +237,8 @@ function makeDeck(){
 
 function startGame(){
   clearInterval(tmr); secs=0; moves=0; rounds=0; dealSz=3; over=false; hist=[];
+  D.on=false; D.card=null; D.src=null; D.ci=-1; D.stackFrom=undefined; D._moved=false; D._hlId=null;
+  document.getElementById('ghost').style.display='none';
   var deck=makeDeck();
   stock=[]; waste=[]; found=[[],[],[],[]]; tab=[[],[],[],[],[],[],[]];
   for(var c=0;c<7;c++){
@@ -372,8 +374,7 @@ function buildGhost(src, ci, card){
 
 function onDragStart(e, src, ci){
   if(over) return;
-  // Сбрасываем любой предыдущий drag
-  resetDrag();
+  if(D.on) return; // уже идёт drag — игнорируем
 
   var p = pointerXY(e);
   var card;
@@ -400,7 +401,11 @@ function onDragStart(e, src, ci){
     }
     card = col[clickedIdx];
     if(!card.up){
-      if(clickedIdx===col.length-1){ save(); card.up=true; moves++; updateBar(); render(); }
+      if(clickedIdx===col.length-1){
+        save(); card.up=true; moves++; updateBar();
+        // render() через setTimeout чтобы не мешать текущему событию
+        setTimeout(function(){ render(); }, 0);
+      }
       return;
     }
     if(!canDragStack(ci, clickedIdx)) return;
@@ -746,7 +751,6 @@ document.addEventListener('touchmove',onDragMove,{passive:false});
 document.addEventListener('touchend',onDragEnd);
 // Сброс drag если мышь ушла за окно или окно потеряло фокус
 window.addEventListener('blur', function(){ if(D.on){ resetDrag(); render(); } });
-document.addEventListener('mouseleave', function(e){ if(e.target===document.documentElement && D.on){ resetDrag(); render(); } });
 window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display!=='none'){calcLayout();render();}});
 </script>
 </body>
