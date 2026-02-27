@@ -39,13 +39,9 @@ nav a.active{color:var(--sea);font-weight:600}
   nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
 }
 
-/* ─── HERO ─── */
-.page-hero{background:linear-gradient(135deg,var(--sea-dark) 0%,var(--sea) 100%);color:white;padding:2.5rem 2rem 2.25rem;text-align:center}
-.page-hero h1{font-size:2rem;font-weight:700;margin-bottom:.45rem;letter-spacing:.02em}
-.page-hero p{font-size:.95rem;opacity:.82;max-width:480px;margin:0 auto;line-height:1.6}
-
 /* ─── CATALOGUE ─── */
-.catalogue{max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem 4rem;flex:1}
+.page-title{font-size:1.5rem;font-weight:600;color:var(--sea);letter-spacing:.03em;padding:1.5rem 2rem .5rem;max-width:1100px;margin:0 auto;width:100%}
+.catalogue{max-width:1100px;margin:0 auto;padding:.75rem 1.5rem 4rem;flex:1}
 .section-label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--stone);margin-bottom:1rem;padding-left:.2rem}
 .section-soon{margin-top:2.5rem}
 
@@ -58,25 +54,12 @@ nav a.active{color:var(--sea);font-weight:600}
 .game-card.available:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,0.12);border-color:var(--sea-light)}
 .game-card.coming-soon{opacity:.58;pointer-events:none}
 
-/* обложка */
-.game-cover{height:130px;display:flex;align-items:center;justify-content:center;font-size:3.2rem;position:relative;flex-shrink:0}
-.cover-spider{background:radial-gradient(ellipse at center,#266b3a 0%,#1e4d2b 55%,#163d22 100%)}
-.cover-mahjong{background:linear-gradient(135deg,#7b4a2d,#a0623a)}
-.cover-sudoku{background:linear-gradient(135deg,#2d5f8a,#4a7cb0)}
-.cover-checkers{background:linear-gradient(135deg,#3a3a3a,#5c5c5c)}
-.cover-solitaire{background:radial-gradient(ellipse,#4a2d7b,#2d1a5f)}
-.cover-2048{background:linear-gradient(135deg,#a05a2c,#c87941)}
-.cover-minesweeper{background:linear-gradient(135deg,#2d6b3a,#4a9c5f)}
-.cover-words{background:linear-gradient(135deg,#1a3a6b,#2d5a9c)}
-.cover-hangman{background:linear-gradient(135deg,#5a2d2d,#8a4a4a)}
-.cover-battleship{background:linear-gradient(135deg,#1a3a5a,#2d5a7a)}
-.cover-king{background:linear-gradient(135deg,#6b2d6b,#9a4a9a)}
-.cover-lotto{background:linear-gradient(135deg,#8a6b1a,#c49a2a)}
+/* обложка — квадратная через aspect-ratio */
+.game-cover{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;background:var(--white);padding:8%}
+.game-cover img{width:100%;height:100%;object-fit:contain;display:block}
 
-/* бейдж */
-.badge{position:absolute;top:8px;right:8px;font-size:.6rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:20px;line-height:1.4}
-.badge-new{background:rgba(255,255,255,.92);color:#2d7a3a}
-.badge-soon{background:rgba(0,0,0,.35);color:rgba(255,255,255,.8)}
+/* emoji-иконка для игр без картинки */
+.cover-icon{font-size:3.5rem;line-height:1}
 
 /* инфо */
 .game-info{padding:.85rem .9rem .8rem;display:flex;flex-direction:column;gap:.25rem;flex:1}
@@ -114,11 +97,7 @@ nav a.active{color:var(--sea);font-weight:600}
   </div>
 </header>
 
-<!-- HERO -->
-<div class="page-hero">
-  <h1>🎮 Игры</h1>
-  <p>Лёгкие игры для хорошего настроения и бодрости ума</p>
-</div>
+<div class="page-title">Игры</div>
 
 <!-- КАТАЛОГ -->
 <div class="catalogue">
@@ -127,9 +106,8 @@ nav a.active{color:var(--sea);font-weight:600}
   <div class="cat-grid">
 
     <a href="/spider" class="game-card available">
-      <div class="game-cover cover-spider">
-        🕷️
-        <span class="badge badge-new">Доступна</span>
+      <div class="game-cover">
+        <img src="/images/games/spider.png" alt="Паук"/>
       </div>
       <div class="game-info">
         <div class="game-name">Паук</div>
@@ -147,7 +125,7 @@ nav a.active{color:var(--sea);font-weight:600}
   <div class="cat-grid">
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-mahjong">🀄<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/mahjong.png" alt="Маджонг"/></div>
       <div class="game-info">
         <div class="game-name">Маджонг</div>
         <div class="game-desc">Убирайте пары одинаковых плиток, расчищая поле.</div>
@@ -156,7 +134,7 @@ nav a.active{color:var(--sea);font-weight:600}
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-sudoku">🔢<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/sudoku.png" alt="Судоку"/></div>
       <div class="game-info">
         <div class="game-name">Судоку</div>
         <div class="game-desc">Заполните сетку цифрами от 1 до 9 без повторений.</div>
@@ -165,7 +143,7 @@ nav a.active{color:var(--sea);font-weight:600}
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-checkers">♟️<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/checkers.png" alt="Шашки"/></div>
       <div class="game-info">
         <div class="game-name">Шашки</div>
         <div class="game-desc">Русские шашки против компьютера — выбирайте уровень.</div>
@@ -174,7 +152,7 @@ nav a.active{color:var(--sea);font-weight:600}
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-solitaire">🃏<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/solitaire.png" alt="Косынка"/></div>
       <div class="game-info">
         <div class="game-name">Косынка</div>
         <div class="game-desc">Любимый пасьянс — простой, расслабляющий, на каждый день.</div>
@@ -183,7 +161,7 @@ nav a.active{color:var(--sea);font-weight:600}
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-2048">🧩<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/2048.png" alt="2048"/></div>
       <div class="game-info">
         <div class="game-name">2048</div>
         <div class="game-desc">Складывайте числа, добираясь до заветной цифры 2048.</div>
@@ -192,7 +170,7 @@ nav a.active{color:var(--sea);font-weight:600}
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-minesweeper">💣<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/minesweeper.png" alt="Сапёр"/></div>
       <div class="game-info">
         <div class="game-name">Сапёр</div>
         <div class="game-desc">Открывайте клетки, избегая мин. Классика на все времена.</div>
@@ -201,7 +179,7 @@ nav a.active{color:var(--sea);font-weight:600}
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-words">🔤<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/word.png" alt="Словечко"/></div>
       <div class="game-info">
         <div class="game-name">Словечко</div>
         <div class="game-desc">Угадайте слово за 6 попыток — русская версия Wordle.</div>
@@ -210,16 +188,16 @@ nav a.active{color:var(--sea);font-weight:600}
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-hangman">🎯<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/tic_tac_toe.png" alt="Крестики-нолики"/></div>
       <div class="game-info">
-        <div class="game-name">Виселица</div>
-        <div class="game-desc">Угадывайте буквы, чтобы открыть спрятанное слово.</div>
-        <div class="game-footer"><span class="game-tag">Слова</span></div>
+        <div class="game-name">Крестики-нолики</div>
+        <div class="game-desc">Классическая игра на троих — первый, кто выстроит ряд, побеждает.</div>
+        <div class="game-footer"><span class="game-tag">Логика</span></div>
       </div>
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-battleship">⚓<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/sea_battle.png" alt="Морской бой"/></div>
       <div class="game-info">
         <div class="game-name">Морской бой</div>
         <div class="game-desc">Найдите и потопите флот противника на поле 10×10.</div>
@@ -228,19 +206,19 @@ nav a.active{color:var(--sea);font-weight:600}
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-king">👑<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/king.png" alt="Кинг"/></div>
       <div class="game-info">
         <div class="game-name">Кинг</div>
-        <div class="game-desc">Популярная карточная игра — избегайте штрафных карт и набирайте очки.</div>
+        <div class="game-desc">Известная под именем «Дамский преферанс» карточная игра — избегайте штрафных карт.</div>
         <div class="game-footer"><span class="game-tag">Карты</span></div>
       </div>
     </div>
 
     <div class="game-card coming-soon">
-      <div class="game-cover cover-lotto">🎱<span class="badge badge-soon">Скоро</span></div>
+      <div class="game-cover"><img src="/images/games/loto.png" alt="Лото"/></div>
       <div class="game-info">
         <div class="game-name">Лото</div>
-        <div class="game-desc">Томбола — зачёркивайте числа на карточке, пока не закроете весь ряд.</div>
+        <div class="game-desc">Закройте фишками пять чисел в ряд на карточке — кто первый, тот и выиграл.</div>
         <div class="game-footer"><span class="game-tag">Удача</span></div>
       </div>
     </div>
