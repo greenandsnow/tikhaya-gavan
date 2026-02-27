@@ -240,8 +240,8 @@ async function loadNews(date) {
     if (!Array.isArray(newsData)) newsData = [];
     // Обновим отображаемую дату из реальных данных
     if (newsData.length > 0 && newsData[0].date && date === today) {
-      currentDate = newsData[0].date;
-      document.getElementById('date-display').textContent = formatDateRu(currentDate);
+      // Не меняем отображаемую дату — показываем локальную
+      currentDate = today;
     }
   } catch(e) { newsData = []; }
 
