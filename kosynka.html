@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Косынка — Тихая гавань</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;
+  --sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--sea-dark:#2d5f70;
+  --text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;
+  --felt:#1a5c2e;--felt-dark:#143d1e;
+  --CW:150;--CH:210;
+}
+html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text);overflow:hidden}
+body{display:flex;flex-direction:column}
+header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;flex-shrink:0;position:relative;z-index:100}
+.hi{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:88px;gap:1.5rem}
+.logo{text-decoration:none;display:flex;align-items:center;gap:.75rem;line-height:1.1}
+.logo-img{height:110px;width:auto;display:block;position:relative;z-index:101}
+.logo-text{display:flex;flex-direction:column}
+.logo-name{font-weight:700;font-size:1.3rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
+.logo-tag{font-size:.6rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
+nav ul{list-style:none;display:flex;gap:.2rem}
+nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-light);font-size:.82rem;border-radius:6px;transition:color .2s,background .2s}
+nav a:hover{color:var(--sea);background:var(--sea-pale)}
+nav a.active{color:var(--sea);font-weight:600}
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
+@media(max-width:768px){
+  .logo-img{height:70px}.burger{display:flex}
+  nav{display:none;position:absolute;top:88px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,.06);z-index:90}
+  nav.open{display:block}
+  nav ul{flex-direction:column;gap:.25rem}
+  nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
+}
+/* WELCOME */
+.welcome{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem}
+.wbox{background:var(--white);border:1px solid var(--sand-dark);border-radius:18px;padding:2.5rem 2rem;max-width:460px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.wbox h1{font-size:1.7rem;font-weight:700;color:var(--sea);margin:.5rem 0 .4rem}
+.wbox p{font-size:.9rem;color:var(--text-light);margin-bottom:1.4rem;line-height:1.6}
+.minfo{background:var(--sand);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.4rem;text-align:left;font-size:.8rem;color:var(--text-light);line-height:1.8}
+.minfo h3{font-size:.72rem;font-weight:700;color:var(--sea-dark);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem}
+.minfo li::before{content:"• ";color:var(--sea)}
+.minfo ul{list-style:none}
+.start-btn{padding:.85rem 2.5rem;background:var(--sea);color:white;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
+.start-btn:hover{background:var(--sea-light)}
+.rtoggle{display:block;margin-top:1rem;font-size:.78rem;color:var(--sea);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'Jost',sans-serif;width:100%;text-align:center}
+.rbox{display:none;text-align:left;background:var(--sand);border-radius:10px;padding:.85rem;margin-top:.6rem;font-size:.78rem;color:var(--text-light);line-height:1.8}
+.rbox ul{padding-left:1rem}
+/* GAME */
+.game-screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.gbar{background:rgba(0,0,0,.5);padding:.4rem 1rem;display:flex;align-items:center;gap:.75rem;flex-shrink:0}
+.gst{display:flex;align-items:center;gap:.35rem;font-size:.76rem}
+.gst span:first-child{color:rgba(255,255,255,.45);text-transform:uppercase;font-size:.6rem;letter-spacing:.07em}
+.gst b{color:#ffd700;font-weight:600}
+.gdv{width:1px;height:18px;background:rgba(255,255,255,.15)}
+.gsp{flex:1}
+.gbtn{padding:.3rem .7rem;border-radius:6px;font-family:'Jost',sans-serif;font-size:.72rem;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);background:rgba(255,255,255,.08);transition:all .2s}
+.gbtn:hover{background:rgba(255,255,255,.22)}
+.gbtn:disabled{opacity:.35;cursor:not-allowed}
+/* FELT — canvas-like */
+.felt{flex:1;background:radial-gradient(ellipse at center,#1f7a3a 0%,var(--felt) 55%,var(--felt-dark) 100%);position:relative;overflow:hidden;user-select:none;-webkit-user-select:none}
+/* Карты рендерятся абсолютно внутри .felt */
+.card-el{position:absolute;border-radius:8px;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.45)}
+.card-el img{width:100%;height:100%;border-radius:8px;display:block;pointer-events:none;-webkit-user-drag:none}
+.card-el.back{cursor:pointer}
+.card-el.drag-src{opacity:.3}
+.card-el.highlight{box-shadow:0 0 0 3px #66ee66, 0 4px 16px rgba(0,0,0,.5)!important}
+/* Ghost */
+#ghost{position:fixed;pointer-events:none;z-index:9999;display:none;border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.6);overflow:hidden;transform:rotate(2deg)}
+#ghost img{width:100%;height:100%;display:block}
+/* Slot outlines */
+.slot-el{position:absolute;border:2px dashed rgba(255,255,255,.2);border-radius:8px}
+.slot-el.found-slot{border-color:rgba(212,160,23,.4)}
+/* Badge */
+.badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.45);border:1px solid rgba(212,160,23,.35);border-radius:8px;padding:.2rem .6rem;font-size:.65rem;color:rgba(255,255,255,.7);pointer-events:none;z-index:10}
+/* End overlay */
+.end-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center}
+.end-ov.show{display:flex}
+.end-box{background:var(--white);border-radius:20px;padding:2.5rem 3rem;text-align:center;max-width:400px;width:90%;border-top:5px solid #2d7a3a;animation:popIn .4s ease}
+@keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.end-box h2{font-size:1.7rem;font-weight:700;color:#2d7a3a;margin:.5rem 0 .3rem}
+.end-box p{font-size:.9rem;color:var(--text-light);margin-bottom:1.5rem;line-height:1.6}
+.ebtns{display:flex;gap:.75rem;justify-content:center}
+.ebtn{padding:.55rem 1.2rem;border-radius:8px;font-family:'Jost',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;border:1.5px solid var(--sea);color:var(--sea);background:transparent;transition:all .2s}
+.ebtn:hover,.ebtn.p{background:var(--sea);color:white}
+.confetti{position:fixed;pointer-events:none;z-index:300;font-size:1.2rem;animation:fall linear forwards}
+@keyframes fall{0%{opacity:1;transform:translateY(-10px) rotate(0)}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hi">
+    <a href="/" class="logo">
+      <img src="/logo_tg.png" alt="Тихая гавань" class="logo-img"/>
+      <div class="logo-text">
+        <span class="logo-name">Тихая гавань</span>
+        <span class="logo-tag">Место для вашего досуга</span>
+      </div>
+    </a>
+    <button class="burger" onclick="document.getElementById('mn').classList.toggle('open')" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="mn"><ul>
+      <li><a href="/crosswords">Кроссворды</a></li>
+      <li><a href="/ask">Задай вопрос</a></li>
+      <li><a href="/reading">Чтиво</a></li>
+      <li><a href="/news">Новости</a></li>
+      <li><a href="/games" class="active">Игры</a></li>
+      <li><a href="/support">Поддержка</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<div class="welcome" id="welcome">
+  <div class="wbox">
+    <div style="font-size:3rem">♠️</div>
+    <h1>Косынка</h1>
+    <p>Классический пасьянс. Раскладывайте карты по колоннам, собирайте все четыре масти от туза до короля.</p>
+    <div class="minfo">
+      <h3>Правила раздачи</h3>
+      <ul>
+        <li>Первые 3 круга — по 3 карты из стопки</li>
+        <li>Следующие 3 круга — по 2 карты из стопки</li>
+        <li>После 6 кругов стопка заканчивается</li>
+      </ul>
+    </div>
+    <button class="start-btn" onclick="startGame()">Начать игру</button>
+    <button class="rtoggle" onclick="var b=document.getElementById('rb');b.style.display=b.style.display==='block'?'none':'block'">📖 Правила</button>
+    <div class="rbox" id="rb">
+      <ul>
+        <li>7 колонн — в 1-й одна карта, в 7-й семь; верхняя открыта</li>
+        <li>Карты кладут по убыванию — масть не важна</li>
+        <li>Перетаскивайте карты мышью — одну за раз</li>
+        <li>Пустую колонну занимает только Король</li>
+        <li>Фундаменты (вверху справа) — туз→король одной масти</li>
+        <li>Двойной клик — карта автоматически летит в фундамент</li>
+        <li>↩ отменяет последний ход</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="game-screen" id="game-screen">
+  <div class="gbar">
+    <div class="gst"><span>Ходы</span><b id="vMoves">0</b></div>
+    <div class="gdv"></div>
+    <div class="gst"><span>Время</span><b id="vTime">0:00</b></div>
+    <div class="gdv"></div>
+    <div class="gst"><span>Раунды</span><b id="vRounds">0/6</b></div>
+    <div class="gsp"></div>
+    <button class="gbtn" id="undoBtn" onclick="undoMove()" disabled>↩ Отмена</button>
+    <button class="gbtn" onclick="startGame()">↺ Новая</button>
+    <button class="gbtn" onclick="showWelcome()">← Меню</button>
+  </div>
+  <div class="felt" id="felt">
+    <div class="badge" id="badge">по 3 · круг 1/3</div>
+  </div>
+</div>
+
+<div class="end-ov" id="endOv">
+  <div class="end-box">
+    <div style="font-size:3rem">🏆</div>
+    <h2>Победа!</h2>
+    <p id="endMsg"></p>
+    <div class="ebtns">
+      <button class="ebtn p" onclick="startGame()">Ещё раз</button>
+      <button class="ebtn" onclick="showWelcome()">В меню</button>
+    </div>
+  </div>
+</div>
+
+<div id="ghost"><img id="ghostImg" src=""/></div>
+
+<script>
+// ══ КОНСТАНТЫ ══
+var CW=150, CH=210;
+var SUITS=['S','H','D','C'], SUIT_SYM={S:'♠',H:'♥',D:'♦',C:'♣'};
+var RANKS=['A','2','3','4','5','6','7','8','9','0','J','Q','K'];
+var RV={A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'0':10,J:11,Q:12,K:13};
+function img(r,s){return 'https://deckofcardsapi.com/static/img/'+r+s+'.png';}
+function back(){return 'https://deckofcardsapi.com/static/img/back.png';}
+
+// ══ СОСТОЯНИЕ ══
+var stock=[], waste=[], found=[[],[],[],[]], tab=[[],[],[],[],[],[],[]];
+var hist=[], moves=0, rounds=0, dealSz=3, maxR=6, secs=0, tmr=null, over=false;
+
+// ══ LAYOUT ══ (вычисляется при старте и resize)
+var L={
+  pad:14, gap:8,
+  stockX:0, stockY:0,
+  wasteX:0, wasteY:0,
+  foundX:[0,0,0,0], foundY:0,
+  colX:[0,0,0,0,0,0,0], colY:0,
+  offsetDown:22, offsetUp:40
+};
+
+function calcLayout(){
+  var felt=document.getElementById('felt');
+  var W=felt.clientWidth, H=felt.clientHeight;
+  var p=L.pad, g=L.gap;
+  // Вычисляем CW так чтобы 7 колонн + стопка + отбой + 4 фундамента влезли
+  // Верхний ряд: stock + waste + spacer(~20px) + 4 found = 8 карт + зазоры
+  // Нижний ряд: 7 колонн
+  // Берём минимум из обоих ограничений
+  var cwByTop = Math.floor((W - 2*p - 20 - 7*g) / 8); // 2 left + 4 right + spacer
+  var cwByCol = Math.floor((W - 2*p - 6*g) / 7);
+  CW = Math.min(150, Math.min(cwByTop, cwByCol));
+  CH = Math.round(CW * 1.4);
+
+  L.stockX=p; L.stockY=p;
+  L.wasteX=p+CW+g; L.wasteY=p;
+  // 4 фундамента — правый край
+  for(var i=0;i<4;i++) L.foundX[3-i]=W-p-CW-i*(CW+g);
+  L.foundY=p;
+  // 7 колонн равномерно на всю ширину
+  var colStep = Math.floor((W - 2*p) / 7);
+  for(var i=0;i<7;i++) L.colX[i]=p+i*colStep;
+  L.colY=p+CH+g*2;
+  // Отступы карт в колоннах
+  var available=H-L.colY-CH-10;
+  L.offsetDown=22;
+  L.offsetUp=Math.max(28,Math.min(55,Math.floor(available/7)));
+}
+
+// ══ СТАРТ ══
+function makeDeck(){
+  var d=[];
+  SUITS.forEach(function(s){RANKS.forEach(function(r){d.push({r:r,s:s,up:false});});});
+  for(var i=d.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=d[i];d[i]=d[j];d[j]=t;}
+  return d;
+}
+
+function startGame(){
+  clearInterval(tmr); secs=0; moves=0; rounds=0; dealSz=3; over=false; hist=[];
+  var deck=makeDeck();
+  stock=[]; waste=[]; found=[[],[],[],[]]; tab=[[],[],[],[],[],[],[]];
+  for(var c=0;c<7;c++){
+    for(var row=0;row<=c;row++){var cd=deck.pop();cd.up=(row===c);tab[c].push(cd);}
+  }
+  while(deck.length) stock.push(deck.pop());
+  document.getElementById('welcome').style.display='none';
+  var gs=document.getElementById('game-screen');
+  gs.style.display='flex';
+  document.getElementById('endOv').classList.remove('show');
+  document.getElementById('undoBtn').disabled=true;
+  calcLayout();
+  render();
+  updateBar();
+  tmr=setInterval(function(){secs++;updateBar();},1000);
+}
+
+// ══ РАЗДАЧА ══
+function dealStock(){
+  if(over) return;
+  if(stock.length===0){
+    if(rounds>=maxR){toast('Стопка исчерпана');return;}
+    if(!waste.length) return;
+    save();
+    rounds++; if(rounds===3) dealSz=2;
+    stock=waste.slice().reverse();
+    stock.forEach(function(c){c.up=false;});
+    waste=[];
+  } else {
+    save();
+    var n=Math.min(dealSz,stock.length);
+    for(var i=0;i<n;i++){var c=stock.pop();c.up=true;waste.push(c);}
+  }
+  moves++; updateBar(); render();
+}
+
+// ══ ПРАВИЛА ══
+function canCol(card,col){
+  if(!col.length) return RV[card.r]===13;
+  var top=col[col.length-1];
+  return top.up && RV[card.r]===RV[top.r]-1;
+}
+function canFound(card,fi){
+  var f=found[fi];
+  if(card.s!==SUITS[fi]) return false;
+  return f.length===0?card.r==='A':RV[card.r]===RV[f[f.length-1].r]+1;
+}
+function autoFound(card){
+  for(var fi=0;fi<4;fi++) if(canFound(card,fi)) return fi;
+  return -1;
+}
+
+// ══ UNDO ══
+function save(){
+  hist.push({
+    stock:stock.map(function(c){return{r:c.r,s:c.s,up:c.up};}),
+    waste:waste.map(function(c){return{r:c.r,s:c.s,up:c.up};}),
+    found:found.map(function(f){return f.map(function(c){return{r:c.r,s:c.s,up:c.up};});}),
+    tab:tab.map(function(col){return col.map(function(c){return{r:c.r,s:c.s,up:c.up};});}),
+    moves:moves,rounds:rounds,dealSz:dealSz
+  });
+  if(hist.length>60) hist.shift();
+  document.getElementById('undoBtn').disabled=false;
+}
+function undoMove(){
+  if(!hist.length) return;
+  var s=hist.pop();
+  stock=s.stock;waste=s.waste;found=s.found;tab=s.tab;
+  moves=s.moves;rounds=s.rounds;dealSz=s.dealSz;
+  render(); updateBar();
+  if(!hist.length) document.getElementById('undoBtn').disabled=true;
+}
+
+function autoFlip(){
+  tab.forEach(function(col){if(col.length&&!col[col.length-1].up) col[col.length-1].up=true;});
+}
+function checkWin(){
+  if(found.reduce(function(s,f){return s+f.length;},0)===52){
+    over=true; clearInterval(tmr);
+    playWin(); confetti();
+    setTimeout(function(){
+      document.getElementById('endMsg').textContent='Все карты собраны за '+moves+' ходов и '+fmt(secs)+'!';
+      document.getElementById('endOv').classList.add('show');
+    },900);
+  }
+}
+
+// ══ DRAG STATE ══
+var D={on:false,card:null,src:null,ci:-1,ox:0,oy:0};
+
+function pointerXY(e){
+  if(e.touches&&e.touches.length) return{x:e.touches[0].clientX,y:e.touches[0].clientY};
+  if(e.changedTouches&&e.changedTouches.length) return{x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};
+  return{x:e.clientX,y:e.clientY};
+}
+
+function onDragStart(e,src,ci){
+  if(over) return;
+  var p=pointerXY(e);
+  var card, col;
+  if(src==='stock'){dealStock();return;}
+  if(src==='waste'){
+    if(!waste.length) return;
+    card=waste[waste.length-1];
+  } else {
+    col=tab[ci];
+    if(!col.length) return;
+    card=col[col.length-1];
+    if(!card.up){
+      // открываем рубашку
+      save(); card.up=true; moves++; updateBar(); render(); return;
+    }
+  }
+  D.on=true; D.card=card; D.src=src; D.ci=ci;
+  // Показываем призрак
+  var g=document.getElementById('ghost');
+  var gi=document.getElementById('ghostImg');
+  gi.src=img(card.r,card.s);
+  g.style.width=CW+'px'; g.style.height=CH+'px';
+  g.style.left=(p.x-CW/2)+'px'; g.style.top=(p.y-CH/2)+'px';
+  g.style.display='block';
+  render(); // перерисуем чтобы src карта стала прозрачной
+  e.preventDefault();
+}
+
+function onDragMove(e){
+  if(!D.on) return;
+  var p=pointerXY(e);
+  var g=document.getElementById('ghost');
+  g.style.left=(p.x-CW/2)+'px'; g.style.top=(p.y-CH/2)+'px';
+  // Подсветка цели
+  clearHL();
+  var t=findTarget(p.x,p.y);
+  if(t) hlTarget(t);
+  e.preventDefault();
+}
+
+function onDragEnd(e){
+  if(!D.on) return;
+  var p=pointerXY(e);
+  document.getElementById('ghost').style.display='none';
+  clearHL();
+  // Ищем цель по координатам напрямую — без elementFromPoint
+  var t=findTarget(p.x,p.y);
+  if(t) doMove(t);
+  D.on=false; D.card=null;
+  render();
+}
+
+function onDblClick(e,src,ci){
+  if(over) return;
+  var card;
+  if(src==='waste'){if(!waste.length)return;card=waste[waste.length-1];}
+  else{var col=tab[ci];if(!col.length)return;card=col[col.length-1];if(!card.up)return;}
+  var fi=autoFound(card);
+  if(fi<0){toast('Некуда');return;}
+  save();
+  if(src==='waste') waste.pop(); else tab[ci].pop();
+  found[fi].push(card);
+  autoFlip(); moves++; updateBar(); render(); checkWin();
+}
+
+// ══ ПОИСК ЦЕЛИ (по координатам felt) ══
+function feltRect(){return document.getElementById('felt').getBoundingClientRect();}
+
+function findTarget(px,py){
+  var fr=feltRect();
+  var x=px-fr.left, y=py-fr.top; // координаты внутри felt
+  // Фундаменты
+  for(var fi=0;fi<4;fi++){
+    var fx=L.foundX[fi], fy=L.foundY;
+    if(x>=fx&&x<=fx+CW&&y>=fy&&y<=fy+CH){
+      if(canFound(D.card,fi)) return{type:'f',fi:fi};
+      return null;
+    }
+  }
+  // Колонны — широкая зона захвата по всей высоте и ширине слота
+  for(var ci=0;ci<7;ci++){
+    if(D.src==='col'&&D.ci===ci) continue;
+    var cx=L.colX[ci], cy=L.colY;
+    var col=tab[ci];
+    var colH=col.length?(L.offsetDown*(col.length-1)+CH):CH;
+    colH=Math.max(colH,CH);
+    // Ширина зоны — до следующей колонны
+    var nextX=(ci<6)?L.colX[ci+1]:cx+CW+L.gap;
+    var zoneW=nextX-cx;
+    if(x>=cx&&x<=cx+zoneW&&y>=cy&&y<=cy+colH){
+      if(canCol(D.card,col)) return{type:'c',ci:ci};
+      return null;
+    }
+  }
+  return null;
+}
+
+function hlTarget(t){
+  if(t.type==='f') document.getElementById('fs'+t.fi).classList.add('highlight');
+  else document.getElementById('cs'+t.ci).classList.add('highlight');
+}
+function clearHL(){
+  document.querySelectorAll('.highlight').forEach(function(el){el.classList.remove('highlight');});
+}
+
+function doMove(t){
+  save();
+  var card=D.card;
+  if(D.src==='waste') waste.pop(); else tab[D.ci].pop();
+  if(t.type==='f') found[t.fi].push(card);
+  else tab[t.ci].push(card);
+  autoFlip(); moves++; updateBar(); checkWin();
+}
+
+// ══ РЕНДЕР (абсолютные позиции внутри felt) ══
+function render(){
+  var felt=document.getElementById('felt');
+  // Удаляем все карты и слоты
+  felt.querySelectorAll('.card-el,.slot-el').forEach(function(el){el.remove();});
+
+  var fr=felt.getBoundingClientRect(); // для ghost
+
+  // Слоты-заглушки
+  mkSlot(felt,'ss',L.stockX,L.stockY,false);
+  mkSlot(felt,'ws',L.wasteX,L.wasteY,false);
+  for(var fi=0;fi<4;fi++){
+    var sl=mkSlot(felt,'fs'+fi,L.foundX[fi],L.foundY,true);
+    sl.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;opacity:.3;pointer-events:none">'+SUIT_SYM[SUITS[fi]]+'</div>';
+  }
+  for(var ci=0;ci<7;ci++) mkSlot(felt,'cs'+ci,L.colX[ci],L.colY,false);
+
+  // Стопка
+  if(stock.length){
+    var c=mkCard(felt,back(),L.stockX,L.stockY,100,true);
+    c.addEventListener('click',function(){dealStock();});
+    var cnt=document.createElement('div');
+    cnt.style.cssText='position:absolute;bottom:4px;right:6px;font-size:.65rem;font-weight:700;color:rgba(255,255,255,.85);background:rgba(0,0,0,.4);border-radius:4px;padding:1px 5px;pointer-events:none';
+    cnt.textContent=stock.length; c.appendChild(cnt);
+  } else {
+    var empty=mkCard(felt,'',L.stockX,L.stockY,100,false);
+    empty.style.background='transparent';
+    empty.style.border='2px dashed rgba(255,255,255,.25)';
+    empty.style.boxShadow='none';
+    empty.style.cursor=rounds<maxR?'pointer':'default';
+    empty.innerHTML='<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.4">'+(rounds<maxR?'↺':'—')+'</span>';
+    if(rounds<maxR) empty.addEventListener('click',function(){dealStock();});
+  }
+
+  // Отбой — показываем до dealSz верхних
+  if(waste.length){
+    var show=Math.min(dealSz,waste.length);
+    var offsets=show===3?[-18,-9,0]:show===2?[-10,0]:[0];
+    for(var i=0;i<show;i++){
+      var wc=waste[waste.length-show+i];
+      var isTop=(i===show-1);
+      var wxOff=offsets[i]||0;
+      var el=mkCard(felt,img(wc.r,wc.s),L.wasteX+wxOff,L.wasteY,200+i,isTop);
+      if(isTop){
+        (function(el2){
+          el2.addEventListener('mousedown',function(e){onDragStart(e,'waste',-1);});
+          el2.addEventListener('touchstart',function(e){onDragStart(e,'waste',-1);},{passive:false});
+          el2.addEventListener('dblclick',function(e){e.stopPropagation();onDblClick(e,'waste',-1);});
+          // Одиночный клик — попытка положить в фундамент
+          el2.addEventListener('click',function(e){
+            if(D.on) return;
+            var card=waste[waste.length-1];
+            if(!card) return;
+            var fi=autoFound(card);
+            if(fi>=0){
+              save();waste.pop();found[fi].push(card);
+              autoFlip();moves++;updateBar();render();checkWin();
+            }
+          });
+        })(el);
+      }
+    }
+  }
+
+  // Фундаменты
+  for(var fi=0;fi<4;fi++){
+    var f=found[fi];
+    if(!f.length) continue;
+    var fc=f[f.length-1];
+    mkCard(felt,img(fc.r,fc.s),L.foundX[fi],L.foundY,200,false);
+  }
+
+  // Колонны
+  for(var ci=0;ci<7;ci++){
+    var col=tab[ci];
+    var y=L.colY;
+    for(var idx=0;idx<col.length;idx++){
+      var cd=col[idx];
+      var isLast=(idx===col.length-1);
+      var isDragSrc=D.on&&D.src==='col'&&D.ci===ci&&isLast;
+      var src=cd.up?img(cd.r,cd.s):back();
+      var el=mkCard(felt,src,L.colX[ci],y,300+idx,isLast&&cd.up);
+      if(isDragSrc) el.classList.add('drag-src');
+      if(!cd.up) el.classList.add('back');
+
+      if(isLast){
+        if(cd.up){
+          (function(ci2,el2){
+            el2.addEventListener('mousedown',function(e){onDragStart(e,'col',ci2);});
+            el2.addEventListener('touchstart',function(e){onDragStart(e,'col',ci2);},{passive:false});
+            el2.addEventListener('dblclick',function(e){e.stopPropagation();onDblClick(e,'col',ci2);});
+            // Одиночный клик — попытка положить в фундамент
+            el2.addEventListener('click',function(e){
+              if(D.on) return;
+              var col=tab[ci2]; if(!col.length) return;
+              var card=col[col.length-1]; if(!card.up) return;
+              var fi=autoFound(card);
+              if(fi>=0){
+                save();tab[ci2].pop();found[fi].push(card);
+                autoFlip();moves++;updateBar();render();checkWin();
+              }
+            });
+          })(ci,el);
+        } else {
+          (function(ci2,idx2,el2){
+            el2.addEventListener('click',function(){
+              save(); tab[ci2][idx2].up=true; moves++; updateBar(); render();
+            });
+          })(ci,idx,el);
+        }
+      }
+
+      if(idx<col.length-1) y+=cd.up?L.offsetUp:L.offsetDown;
+    }
+  }
+
+  // Badge
+  updateBadge();
+}
+
+function mkSlot(felt,id,x,y,isFound){
+  var el=document.createElement('div');
+  el.className='slot-el'+(isFound?' found-slot':'');
+  el.id=id;
+  el.style.cssText='left:'+x+'px;top:'+y+'px;width:'+CW+'px;height:'+CH+'px';
+  felt.appendChild(el);
+  return el;
+}
+
+function mkCard(felt,src,x,y,z,draggable){
+  var el=document.createElement('div');
+  el.className='card-el';
+  el.style.cssText='left:'+x+'px;top:'+y+'px;width:'+CW+'px;height:'+CH+'px;z-index:'+z+';cursor:'+(draggable?'grab':'default');
+  if(src){
+    var im=document.createElement('img');
+    im.src=src; el.appendChild(im);
+  }
+  felt.appendChild(el);
+  return el;
+}
+
+// ══ BAR ══
+function updateBar(){
+  document.getElementById('vMoves').textContent=moves;
+  document.getElementById('vTime').textContent=fmt(secs);
+  document.getElementById('vRounds').textContent=rounds+'/6';
+}
+function fmt(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
+function updateBadge(){
+  var b=document.getElementById('badge');
+  if(rounds<3) b.textContent='по 3 · круг '+(rounds+1)+'/3';
+  else b.textContent='по 2 · круг '+(rounds-2)+'/3';
+}
+
+// ══ ЗВУК ══
+var actx=null;
+function playWin(){
+  try{
+    if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+    [[523.2,0,.12],[659.3,.13,.12],[784,.26,.12],[1046.5,.39,.3],[523.2,.72,.5],[659.3,.72,.5],[784,.72,.5],[1046.5,.72,.5]].forEach(function(n){
+      var o=actx.createOscillator(),g=actx.createGain();
+      o.connect(g);g.connect(actx.destination);o.type='triangle';o.frequency.value=n[0];
+      g.gain.setValueAtTime(0,actx.currentTime+n[1]);
+      g.gain.linearRampToValueAtTime(.18,actx.currentTime+n[1]+.04);
+      g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+n[1]+n[2]);
+      o.start(actx.currentTime+n[1]);o.stop(actx.currentTime+n[1]+n[2]+.05);
+    });
+  }catch(e){}
+}
+
+// ══ КОНФЕТТИ ══
+function confetti(){
+  var em=['🎉','✨','🃏','♠','♥','♦','♣'];
+  for(var i=0;i<28;i++){(function(i){setTimeout(function(){
+    var el=document.createElement('div');
+    el.className='confetti';el.textContent=em[i%em.length];
+    el.style.left=Math.random()*100+'vw';
+    el.style.animationDuration=(1.5+Math.random()*2)+'s';
+    document.body.appendChild(el);
+    setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},4000);
+  },i*80);})(i);}
+}
+
+function toast(txt){
+  var m=document.createElement('div');
+  m.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:.4rem 1rem;border-radius:8px;font-size:.82rem;z-index:500;pointer-events:none';
+  m.textContent=txt;document.body.appendChild(m);
+  setTimeout(function(){if(m.parentNode)m.parentNode.removeChild(m);},2000);
+}
+
+function showWelcome(){
+  clearInterval(tmr);over=true;
+  document.getElementById('welcome').style.display='flex';
+  document.getElementById('game-screen').style.display='none';
+  document.getElementById('endOv').classList.remove('show');
+}
+
+// ══ ГЛОБАЛЬНЫЕ СОБЫТИЯ ══
+document.addEventListener('mousemove',onDragMove);
+document.addEventListener('mouseup',onDragEnd);
+document.addEventListener('touchmove',onDragMove,{passive:false});
+document.addEventListener('touchend',onDragEnd);
+window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display!=='none'){calcLayout();render();}});
+</script>
+</body>
+</html>
