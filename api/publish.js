@@ -6,32 +6,17 @@ module.exports = async function handler(req, res) {
     const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
     const resendKey = process.env.RESEND_API_KEY;
 
-    // Parse body
-    let fields = {};
-    const contentType = req.headers['content-type'] || '';
-
-    if (contentType.includes('application/json')) {
-      fields = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    } else {
-      fields = req.body || {};
-      Object.keys(fields).forEach(k => {
-        if (Array.isArray(fields[k])) fields[k] = fields[k][0];
-      });
-    }
-
-    const { title, author_name, author_email, annotation, genre, type, ai_summary, cover_base64, cover_name, file_base64, file_name } = fields;
+    let fields = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const { title, author_name, author_email, annotation, genre, type, ai_summary, file_path, cover_path } = fields;
 
     if (!title || !author_name || !author_email) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Try to find existing author first
+    // Find or create author
     let author;
     const findRes = await fetch(`${supabaseUrl}/rest/v1/authors?email=eq.${encodeURIComponent(author_email)}&select=id,name,email`, {
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`
-      }
+      headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
     });
     const existing = await findRes.json();
     if (existing && existing.length > 0) {
@@ -52,47 +37,7 @@ module.exports = async function handler(req, res) {
     }
     if (!author || !author.id) throw new Error('Failed to create author: ' + JSON.stringify(author));
 
-    // Upload PDF if provided
-    let filePath = null;
-    if (file_base64 && file_name) {
-      const matches = file_base64.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
-      if (matches) {
-        const buffer = Buffer.from(matches[2], 'base64');
-        filePath = `books/${author.id}/${Date.now()}.pdf`;
-        await fetch(`${supabaseUrl}/storage/v1/object/books/${filePath}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/pdf',
-            'apikey': supabaseKey,
-            'Authorization': `Bearer ${supabaseKey}`
-          },
-          body: buffer
-        });
-      }
-    }
-
-    // Upload cover if provided
-    let coverPath = null;
-    if (cover_base64 && cover_name) {
-      const matches = cover_base64.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
-      if (matches) {
-        const mimeType = matches[1];
-        const buffer = Buffer.from(matches[2], 'base64');
-        const ext = cover_name.split('.').pop();
-        coverPath = `covers/${author.id}/${Date.now()}.${ext}`;
-        await fetch(`${supabaseUrl}/storage/v1/object/books/${coverPath}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': mimeType,
-            'apikey': supabaseKey,
-            'Authorization': `Bearer ${supabaseKey}`
-          },
-          body: buffer
-        });
-      }
-    }
-
-    // Insert book
+    // Insert book (files already uploaded by frontend directly to Storage)
     const bookRes = await fetch(`${supabaseUrl}/rest/v1/books`, {
       method: 'POST',
       headers: {
@@ -110,8 +55,8 @@ module.exports = async function handler(req, res) {
         ai_summary,
         ai_approved: true,
         status: 'approved',
-        cover_path: coverPath,
-        file_path: filePath,
+        cover_path: cover_path || null,
+        file_path: file_path || null,
         published_at: new Date().toISOString()
       })
     });
@@ -119,10 +64,10 @@ module.exports = async function handler(req, res) {
     const book = Array.isArray(books) ? books[0] : books;
     if (!book || !book.id) throw new Error('Failed to create book: ' + JSON.stringify(books));
 
+    // Send confirmation email
     const bookUrl = `https://www.greenandsnowstudio.com/book/${book.id}`;
     const publishedAt = new Date().toLocaleString('ru-RU', { timeZone: 'UTC', dateStyle: 'long', timeStyle: 'short' });
 
-    // Send confirmation email
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${resendKey}` },
