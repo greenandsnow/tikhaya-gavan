@@ -195,6 +195,8 @@ function backImg(){ return 'https://deckofcardsapi.com/static/img/back.png'; }
 var stock=[], waste=[], found=[[],[],[],[]], tab=[[],[],[],[],[],[],[]];
 var hist=[], moves=0, rounds=0, secs=0, tmr=null, over=false;
 var DEAL_BY = 3; // по 3 карты
+var MAX_ROUNDS_3 = 5; // раундов по 3
+var MAX_ROUNDS_1 = 3; // раундов по 1
 
 // ══ LAYOUT ══
 var CW=100, CH=140;
@@ -264,6 +266,7 @@ function makeDeck(){
 function startGame(){
   clearInterval(tmr); secs=0; moves=0; rounds=0; over=false; hist=[];
   stock=[]; waste=[]; found=[[],[],[],[]]; tab=[[],[],[],[],[],[],[]];
+  DEAL_BY = 3;
   var deck = makeDeck();
   for(var c=0;c<7;c++)
     for(var row=0;row<=c;row++){ var cd=deck.pop(); cd.up=(row===c); tab[c].push(cd); }
@@ -281,9 +284,21 @@ function startGame(){
 function dealStock(){
   if(over) return;
   if(!stock.length){
-    if(!waste.length){ toast('Стопка исчерпана'); return; }
+    if(!waste.length){
+      // Все карты в колодах исчерпаны
+      endGame(false);
+      return;
+    }
+    // Перевернуть отбой обратно
+    var totalRounds = MAX_ROUNDS_3 + MAX_ROUNDS_1;
+    if(rounds >= totalRounds){
+      endGame(false);
+      return;
+    }
     save();
     rounds++;
+    // После MAX_ROUNDS_3 раундов переходим на по 1
+    DEAL_BY = rounds > MAX_ROUNDS_3 ? 1 : 3;
     stock = waste.slice().reverse();
     stock.forEach(function(c){ c.up=false; });
     waste = [];
@@ -327,7 +342,9 @@ function checkWin(){
     over=true; clearInterval(tmr);
     playWin(); launchConfetti();
     setTimeout(function(){
-      document.getElementById('endMsg').textContent='Все карты собраны за '+moves+' ходов и '+fmt(secs)+'!';
+      var title2=document.querySelector('#endOv h2'); if(title2) title2.textContent='Победа!';
+    var icon2=document.querySelector('#endOv div'); if(icon2) icon2.textContent='🏆';
+    document.getElementById('endMsg').textContent='Все карты собраны за '+moves+' ходов и '+fmt(secs)+'!';
       document.getElementById('endOv').classList.add('show');
     },800);
   }
@@ -625,7 +642,9 @@ function mkCard(felt,src,x,y,z,draggable){
 function updateBar(){
   document.getElementById('vMoves').textContent=moves;
   document.getElementById('vTime').textContent=fmt(secs);
-  document.getElementById('vRounds').textContent=rounds;
+  var totalRounds = MAX_ROUNDS_3 + MAX_ROUNDS_1;
+  var mode = rounds < MAX_ROUNDS_3 ? 'по 3' : 'по 1';
+  document.getElementById('vRounds').textContent=rounds+'/'+totalRounds+' ('+mode+')';
 }
 function fmt(s){ return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60; }
 
@@ -634,6 +653,21 @@ function toast(txt){
   m.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:.4rem 1rem;border-radius:8px;font-size:.82rem;z-index:500;pointer-events:none';
   m.textContent=txt; document.body.appendChild(m);
   setTimeout(function(){ if(m.parentNode) m.parentNode.removeChild(m); },2000);
+}
+
+function endGame(win){
+  if(over) return;
+  over=true; clearInterval(tmr);
+  if(win){ return; } // победа обрабатывается в checkWin
+  // Поражение
+  setTimeout(function(){
+    document.getElementById('endMsg').textContent='Не удалось разложить за '+fmt(secs)+'. Попробуйте ещё раз!';
+    var title = document.querySelector('#endOv h2');
+    var icon = document.querySelector('#endOv div');
+    if(title) title.textContent='Не получилось…';
+    if(icon) icon.textContent='😔';
+    document.getElementById('endOv').classList.add('show');
+  }, 400);
 }
 
 function showWelcome(){
