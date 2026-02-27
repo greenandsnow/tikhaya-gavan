@@ -487,7 +487,7 @@ async function hideSource(newsId, perspective) {
 
   var res = await adminAction('hide_source', newsId, { perspective: perspective });
   if (res && res.ok) {
-    toast('Статья скрыта ✓');
+    showAlert('Статья скрыта ✓', '✅');
     setTimeout(loadCurrentTab, 500);
   } else {
     if (srcDiv) srcDiv.classList.remove('src-hidden');
@@ -498,7 +498,7 @@ async function hideSource(newsId, perspective) {
 async function restoreSource(newsId, perspective) {
   var res = await adminAction('restore_source', newsId, { perspective: perspective });
   if (res && res.ok) {
-    toast('Статья восстановлена ✓');
+    showAlert('Статья восстановлена ✓', '✅');
     setTimeout(loadCurrentTab, 500);
   } else { showAlert((res && res.error) || 'Ошибка восстановления', '⚠️'); }
 }
@@ -511,7 +511,7 @@ async function replaceSource(newsId, perspective) {
 
   var res = await adminAction('replace_source', newsId, { perspective: perspective, date: currentDate });
   if (res && res.ok) {
-    toast('Статья заменена ✓');
+    showAlert('Статья заменена ✓', '✅');
     setTimeout(loadCurrentTab, 500);
   } else {
     showAlert((res && res.error) || 'Ошибка замены статьи', '⚠️');
