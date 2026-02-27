@@ -158,7 +158,7 @@ nav a.active{color:var(--sea);font-weight:600}
     <button class="gbtn" onclick="showWelcome()">← Меню</button>
   </div>
   <div class="felt" id="felt">
-    <div class="badge" id="badge">по 3 · круг 1/3</div>
+    
   </div>
 </div>
 
@@ -472,7 +472,7 @@ function findTarget(px, py, card, src, fromCi){
     var cx=L.colX[ci], cy=L.colY;
     var colH=CH;
     if(col.length>1){ colH=0; for(var k=0;k<col.length-1;k++) colH+=col[k].up?L.offsetUp:L.offsetDown; colH+=CH; }
-    colH=Math.max(colH,CH);
+    colH=Math.max(colH,CH)+40; // запас снизу для удобства сброса
     var zoneW = (ci<6) ? L.colX[ci+1]-cx : CW+L.gap;
     if(x>=cx && x<=cx+zoneW && y>=cy && y<=cy+colH)
       return canPlaceOnCol(card,col) ? {type:'c',ci:ci} : null;
@@ -579,10 +579,11 @@ function render(){
     for(var idx=0;idx<col.length;idx++){
       var cd=col[idx], isLast=(idx===col.length-1);
       var src2=cd.up?cardImg(cd.r,cd.s):backImg();
-      var el=mkCard(felt,src2,L.colX[ci],y,300+idx,isLast&&cd.up);
+      var el=mkCard(felt,src2,L.colX[ci],y,300+idx,false);
       if(D.on && D.src==='col' && D.ci===ci && D.stackFrom!==undefined && idx>=D.stackFrom)
         el.style.opacity='0.3';
-      if(cd.up && isLast){
+      if(cd.up){
+        el.style.cursor='grab';
         (function(ci2,el2){ attachDrag(el2,'col',ci2); })(ci,el);
       } else if(!cd.up && isLast){
         (function(ci2,idx2,el2){
