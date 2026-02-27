@@ -4,6 +4,7 @@
     { "source": "/ask", "destination": "/ask.html" },
     { "source": "/games", "destination": "/games.html" },
     { "source": "/spider", "destination": "/spider.html" },
+    {"source": "/devyatka", "destination": "/devyatka.html"},
     { "source": "/reading", "destination": "/reading.html" },
     { "source": "/publisher", "destination": "/publisher.html" },
     { "source": "/library", "destination": "/library.html" },
