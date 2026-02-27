@@ -397,7 +397,7 @@ async function deleteOne(id) {
 }
 
 async function runFetch() {
-  if (!confirm('Собрать свежие новости?\nЗаймёт 60-90 секунд. Результат появится в «Черновиках».')) return;
+  if (!confirm('Собрать свежие новости?\nВсе текущие темы за сегодня будут УДАЛЕНЫ и заменены новыми.\nЗаймёт 60-90 секунд.')) return;
   var btn = document.getElementById('fetch-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner-inline"></span> Собираем...';
