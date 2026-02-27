@@ -360,7 +360,16 @@ function onDragStart(e,src,ci){
   g.style.display='block';
   // НЕ вызываем render() — иначе DOM пересоздаётся и теряется mouseup
   // Просто визуально помечаем исходную карту прозрачной
-  var srcEl = findCardEl();
+  var felt2=document.getElementById('felt');
+  var cards2=felt2.querySelectorAll('.card-el');
+  var targetX=(src==='waste')?L.wasteX:L.colX[ci];
+  var targetY=(src==='waste')?L.wasteY:L.colY;
+  // Ищем последнюю карту в нужной позиции X
+  var srcEl=null;
+  for(var i=cards2.length-1;i>=0;i--){
+    var ex=parseInt(cards2[i].style.left);
+    if(Math.abs(ex-targetX)<5){ srcEl=cards2[i]; break; }
+  }
   if(srcEl) srcEl.style.opacity='0.3';
   e.preventDefault();
 }
