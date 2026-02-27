@@ -164,8 +164,11 @@
   <!-- LOGIN -->
   <div id="login-screen" class="login-box">
     <h2>🔐 Модерация новостей</h2>
-    <input type="password" id="pwd-input" placeholder="Пароль" onkeydown="if(event.key==='Enter')doLogin()" />
-    <button onclick="doLogin()">Войти</button>
+    <form id="login-form" onsubmit="event.preventDefault();doLogin();" autocomplete="on">
+      <input type="text" name="username" autocomplete="username" value="admin" style="display:none" />
+      <input type="password" id="pwd-input" name="password" autocomplete="current-password" placeholder="Пароль" />
+      <button type="submit">Войти</button>
+    </form>
   </div>
 
   <!-- ADMIN -->
