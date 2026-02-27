@@ -201,7 +201,11 @@
 
 <script>
 var newsData = [];
-var currentDate = new Date().toISOString().split('T')[0];
+function getLocalDate(d) {
+  var dd = d || new Date();
+  return dd.getFullYear() + '-' + String(dd.getMonth()+1).padStart(2,'0') + '-' + String(dd.getDate()).padStart(2,'0');
+}
+var currentDate = getLocalDate();
 var today = currentDate;
 
 var CAMP = {
@@ -230,9 +234,15 @@ async function loadNews(date) {
   document.getElementById('btn-next').disabled = (date >= today);
 
   try {
-    var r = await fetch('/api/news?date=' + date);
+    var url = '/api/news' + (date === today ? '' : '?date=' + date);
+    var r = await fetch(url);
     newsData = await r.json();
     if (!Array.isArray(newsData)) newsData = [];
+    // Обновим отображаемую дату из реальных данных
+    if (newsData.length > 0 && newsData[0].date && date === today) {
+      currentDate = newsData[0].date;
+      document.getElementById('date-display').textContent = formatDateRu(currentDate);
+    }
   } catch(e) { newsData = []; }
 
   document.getElementById('loading').style.display = 'none';
@@ -308,7 +318,7 @@ function openModal(idx) {
   document.body.style.overflow='hidden';
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('show');document.body.style.overflow='';}
-function changeDate(d){var dt=new Date(currentDate+'T12:00:00');dt.setDate(dt.getDate()+d);var nd=dt.toISOString().split('T')[0];if(nd>today)return;loadNews(nd);}
+function changeDate(d){var dt=new Date(currentDate+'T12:00:00');dt.setDate(dt.getDate()+d);var nd=getLocalDate(dt);if(nd>today)return;loadNews(nd);}
 function goToday(){loadNews(today);}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();if(e.key==='ArrowLeft')changeDate(-1);if(e.key==='ArrowRight'&&currentDate<today)changeDate(1);});
 loadNews(today);
