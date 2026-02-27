@@ -3,7 +3,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SECRET_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
     const resendKey = process.env.RESEND_API_KEY;
 
     // Parse body - handle both JSON and FormData (without file)

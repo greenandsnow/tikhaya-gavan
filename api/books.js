@@ -3,7 +3,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SECRET_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
     // Get books with author names via join
     const r = await fetch(`${supabaseUrl}/rest/v1/books?select=id,title,genre,type,description,ai_summary,rating_plot,rating_style,votes_count,published_at,status,cover_path,authors(name)&status=eq.approved&deleted_at=is.null`, {
