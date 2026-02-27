@@ -478,9 +478,26 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: ok3, action: 'source_replaced', perspective: camp, new_source: newSource });
     }
 
+    // ── Clean up all news for a date ──
+    if (action === 'cleanup') {
+      var cleanDate = body.date || new Date().toISOString().split('T')[0];
+      var delResp = await fetch(supabaseUrl + '/rest/v1/news?date=eq.' + cleanDate, {
+        method: 'DELETE',
+        headers: { 'apikey': serviceKey, 'Authorization': 'Bearer ' + serviceKey, 'Prefer': 'return=minimal' }
+      });
+      return res.status(200).json({ ok: delResp.ok, action: 'cleaned', date: cleanDate });
+    }
+
     // ── Run news fetch manually from admin ──
     if (action === 'run_fetch') {
       try {
+        // Сначала удалим все записи за сегодня чтобы не плодить дубли
+        var fetchDate = new Date().toISOString().split('T')[0];
+        await fetch(supabaseUrl + '/rest/v1/news?date=eq.' + fetchDate, {
+          method: 'DELETE',
+          headers: { 'apikey': serviceKey, 'Authorization': 'Bearer ' + serviceKey, 'Prefer': 'return=minimal' }
+        });
+
         var cronSecret = process.env.CRON_SECRET || '';
         var fetchResp = await fetch('https://www.greenandsnowstudio.com/api/news-fetch', {
           method: 'GET',
@@ -488,7 +505,6 @@ module.exports = async function handler(req, res) {
           signal: AbortSignal.timeout(120000)
         });
         var fetchData = await fetchResp.json();
-        // Pass through full response
         return res.status(200).json(fetchData);
       } catch (e) {
         return res.status(200).json({ ok: false, error: 'Fetch timeout or error: ' + e.message });
