@@ -463,7 +463,7 @@ async function replaceOne(id) {
 
   var res = await adminAction('replace', id, { date: currentDate });
   if (res && res.ok) {
-    toast(isWar ? 'Статьи обновлены ✓' : 'Тема заменена ✓');
+    showAlert(isWar ? 'Статьи обновлены ✓' : 'Тема заменена ✓', '✅');
     setTimeout(loadCurrentTab, 500);
   } else {
     showAlert((res && res.error) || 'Ошибка замены', '⚠️');
