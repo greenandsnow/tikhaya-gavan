@@ -177,177 +177,165 @@ nav a.active{color:var(--sea);font-weight:600}
 <div id="ghost"><img id="ghostImg" src=""/></div>
 
 <script>
-// ══ КОНСТАНТЫ ══
-var CW=150, CH=210;
-var SUITS=['S','H','D','C'], SUIT_SYM={S:'♠',H:'♥',D:'♦',C:'♣'};
-var RANKS=['A','2','3','4','5','6','7','8','9','0','J','Q','K'];
-var RV={A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'0':10,J:11,Q:12,K:13};
-function img(r,s){return 'https://deckofcardsapi.com/static/img/'+r+s+'.png';}
-function back(){return 'https://deckofcardsapi.com/static/img/back.png';}
+// ══════════════════════════════════════════════
+// КОСЫНКА — классические правила (Klondike)
+// Чередование цветов, стопки одного цвета/масти
+// ══════════════════════════════════════════════
+
+var SUITS = ['S','H','D','C']; // ♠♥♦♣
+var SUIT_SYM = {S:'♠',H:'♥',D:'♦',C:'♣'};
+var RANKS = ['A','2','3','4','5','6','7','8','9','0','J','Q','K'];
+var RV = {A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'0':10,J:11,Q:12,K:13};
+var RED = {H:true, D:true};
+function isRed(s){ return !!RED[s]; }
+function cardImg(r,s){ return 'https://deckofcardsapi.com/static/img/'+r+s+'.png'; }
+function backImg(){ return 'https://deckofcardsapi.com/static/img/back.png'; }
 
 // ══ СОСТОЯНИЕ ══
 var stock=[], waste=[], found=[[],[],[],[]], tab=[[],[],[],[],[],[],[]];
-var hist=[], moves=0, rounds=0, dealSz=3, maxR=6, secs=0, tmr=null, over=false;
+var hist=[], moves=0, rounds=0, secs=0, tmr=null, over=false;
+var DEAL_BY = 3; // по 3 карты
 
-// ══ LAYOUT ══ (вычисляется при старте и resize)
-var L={
-  pad:14, gap:8,
-  stockX:0, stockY:0,
-  wasteX:0, wasteY:0,
-  foundX:[0,0,0,0], foundY:0,
-  colX:[0,0,0,0,0,0,0], colY:0,
-  offsetDown:22, offsetUp:40
-};
+// ══ LAYOUT ══
+var CW=100, CH=140;
+var L = { pad:12, gap:6, stockX:0,stockY:0, wasteX:0,wasteY:0,
+          foundX:[0,0,0,0], foundY:0, colX:[0,0,0,0,0,0,0], colY:0,
+          offsetDown:20, offsetUp:35 };
 
 function calcLayout(){
-  var felt=document.getElementById('felt');
-  var W=felt.offsetWidth, H=felt.offsetHeight;
-  var p=L.pad, g=L.gap;
-  // Вычисляем CW так чтобы 7 колонн + стопка + отбой + 4 фундамента влезли
-  // Верхний ряд: stock + waste + spacer(~20px) + 4 found = 8 карт + зазоры
-  // Нижний ряд: 7 колонн
-  // Берём минимум из обоих ограничений
-  var cwByTop = Math.floor((W - 2*p - 20 - 7*g) / 8); // 2 left + 4 right + spacer
-  var cwByCol = Math.floor((W - 2*p - 6*g) / 7);
-  CW = Math.min(150, Math.min(cwByTop, cwByCol));
+  var felt = document.getElementById('felt');
+  var W = felt.offsetWidth, H = felt.offsetHeight;
+  var p = L.pad, g = L.gap;
+  // CW чтобы 7 колонн влезли
+  CW = Math.min(120, Math.floor((W - 2*p - 6*g) / 7));
   CH = Math.round(CW * 1.4);
+  var step = Math.floor((W - 2*p) / 7);
+  for(var i=0;i<7;i++) L.colX[i] = p + i*step;
+  L.colY = p + CH + g*2;
+  L.stockX = p; L.stockY = p;
+  L.wasteX = p + CW + g; L.wasteY = p;
+  for(var i=0;i<4;i++) L.foundX[3-i] = W - p - CW - i*(CW+g);
+  L.foundY = p;
+  var avail = H - L.colY - CH - 10;
+  L.offsetDown = 20;
+  L.offsetUp = Math.max(24, Math.min(50, Math.floor(avail/8)));
+}
 
-  L.stockX=p; L.stockY=p;
-  L.wasteX=p+CW+g; L.wasteY=p;
-  // 4 фундамента — правый край
-  for(var i=0;i<4;i++) L.foundX[3-i]=W-p-CW-i*(CW+g);
-  L.foundY=p;
-  // 7 колонн равномерно на всю ширину
-  var colStep = Math.floor((W - 2*p) / 7);
-  for(var i=0;i<7;i++) L.colX[i]=p+i*colStep;
-  L.colY=p+CH+g*2;
-  // Отступы карт в колоннах
-  var available=H-L.colY-CH-10;
-  L.offsetDown=22;
-  L.offsetUp=Math.max(28,Math.min(55,Math.floor(available/7)));
+// ══ ПРАВИЛА ══
+// Колонна: убывание ранга + чередование цвета
+function canPlaceOnCol(card, col){
+  if(!col.length) return RV[card.r] === 13; // пустая — только Король
+  var top = col[col.length-1];
+  if(!top.up) return false;
+  return RV[card.r] === RV[top.r]-1 && isRed(card.s) !== isRed(top.s);
+}
+// Фундамент: одна масть, возрастание от туза
+function canPlaceOnFound(card, fi){
+  var f = found[fi];
+  if(card.s !== SUITS[fi]) return false;
+  return f.length===0 ? card.r==='A' : RV[card.r]===RV[f[f.length-1].r]+1;
+}
+// Автофундамент
+function autoFoundIdx(card){
+  for(var i=0;i<4;i++) if(canPlaceOnFound(card,i)) return i;
+  return -1;
+}
+// Можно ли тащить стопку начиная с fromIdx — чередование цветов
+function canDragStack(ci, fromIdx){
+  var col = tab[ci];
+  if(!col[fromIdx].up) return false;
+  for(var i=fromIdx; i<col.length-1; i++){
+    var a=col[i], b=col[i+1];
+    if(!b.up) return false;
+    if(RV[b.r] !== RV[a.r]-1) return false;
+    if(isRed(b.s) === isRed(a.s)) return false;
+  }
+  return true;
 }
 
 // ══ СТАРТ ══
 function makeDeck(){
   var d=[];
-  SUITS.forEach(function(s){RANKS.forEach(function(r){d.push({r:r,s:s,up:false});});});
-  for(var i=d.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=d[i];d[i]=d[j];d[j]=t;}
+  SUITS.forEach(function(s){ RANKS.forEach(function(r){ d.push({r:r,s:s,up:false}); }); });
+  for(var i=d.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=d[i]; d[i]=d[j]; d[j]=t; }
   return d;
 }
 
 function startGame(){
-  clearInterval(tmr); secs=0; moves=0; rounds=0; dealSz=3; over=false; hist=[];
-  D.on=false; D.card=null; D.src=null; D.ci=-1; D.stackFrom=undefined; D._moved=false; D._hlId=null;
-  document.getElementById('ghost').style.display='none';
-  var deck=makeDeck();
+  clearInterval(tmr); secs=0; moves=0; rounds=0; over=false; hist=[];
   stock=[]; waste=[]; found=[[],[],[],[]]; tab=[[],[],[],[],[],[],[]];
-  for(var c=0;c<7;c++){
-    for(var row=0;row<=c;row++){var cd=deck.pop();cd.up=(row===c);tab[c].push(cd);}
-  }
+  var deck = makeDeck();
+  for(var c=0;c<7;c++)
+    for(var row=0;row<=c;row++){ var cd=deck.pop(); cd.up=(row===c); tab[c].push(cd); }
   while(deck.length) stock.push(deck.pop());
   document.getElementById('welcome').style.display='none';
   var gs=document.getElementById('game-screen');
   gs.style.display='flex';
   document.getElementById('endOv').classList.remove('show');
   document.getElementById('undoBtn').disabled=true;
-  calcLayout();
-  render();
-  updateBar();
-  tmr=setInterval(function(){secs++;updateBar();},1000);
+  calcLayout(); render(); updateBar();
+  tmr = setInterval(function(){ secs++; updateBar(); }, 1000);
 }
 
 // ══ РАЗДАЧА ══
 function dealStock(){
   if(over) return;
-  if(stock.length===0){
-    if(rounds>=maxR){toast('Стопка исчерпана');return;}
-    if(!waste.length) return;
+  if(!stock.length){
+    if(!waste.length){ toast('Стопка исчерпана'); return; }
     save();
-    rounds++; if(rounds===3) dealSz=2;
-    stock=waste.slice().reverse();
-    stock.forEach(function(c){c.up=false;});
-    waste=[];
+    rounds++;
+    stock = waste.slice().reverse();
+    stock.forEach(function(c){ c.up=false; });
+    waste = [];
   } else {
     save();
-    var n=Math.min(dealSz,stock.length);
-    for(var i=0;i<n;i++){var c=stock.pop();c.up=true;waste.push(c);}
+    var n = Math.min(DEAL_BY, stock.length);
+    for(var i=0;i<n;i++){ var c=stock.pop(); c.up=true; waste.push(c); }
   }
   moves++; updateBar(); render();
 }
 
-// ══ ПРАВИЛА ══
-function canCol(card,col){
-  if(!col.length) return RV[card.r]===13;
-  var top=col[col.length-1];
-  return top.up && RV[card.r]===RV[top.r]-1;
-}
-function canFound(card,fi){
-  var f=found[fi];
-  if(card.s!==SUITS[fi]) return false;
-  return f.length===0?card.r==='A':RV[card.r]===RV[f[f.length-1].r]+1;
-}
-function autoFound(card){
-  for(var fi=0;fi<4;fi++) if(canFound(card,fi)) return fi;
-  return -1;
-}
-
 // ══ UNDO ══
+function cloneState(){
+  return {
+    stock: stock.map(function(c){ return{r:c.r,s:c.s,up:c.up}; }),
+    waste: waste.map(function(c){ return{r:c.r,s:c.s,up:c.up}; }),
+    found: found.map(function(f){ return f.map(function(c){ return{r:c.r,s:c.s,up:c.up}; }); }),
+    tab:   tab.map(function(col){ return col.map(function(c){ return{r:c.r,s:c.s,up:c.up}; }); }),
+    moves:moves, rounds:rounds
+  };
+}
 function save(){
-  hist.push({
-    stock:stock.map(function(c){return{r:c.r,s:c.s,up:c.up};}),
-    waste:waste.map(function(c){return{r:c.r,s:c.s,up:c.up};}),
-    found:found.map(function(f){return f.map(function(c){return{r:c.r,s:c.s,up:c.up};});}),
-    tab:tab.map(function(col){return col.map(function(c){return{r:c.r,s:c.s,up:c.up};});}),
-    moves:moves,rounds:rounds,dealSz:dealSz
-  });
-  if(hist.length>60) hist.shift();
+  hist.push(cloneState());
+  if(hist.length>80) hist.shift();
   document.getElementById('undoBtn').disabled=false;
 }
 function undoMove(){
   if(!hist.length) return;
   var s=hist.pop();
-  stock=s.stock;waste=s.waste;found=s.found;tab=s.tab;
-  moves=s.moves;rounds=s.rounds;dealSz=s.dealSz;
+  stock=s.stock; waste=s.waste; found=s.found; tab=s.tab;
+  moves=s.moves; rounds=s.rounds;
   render(); updateBar();
   if(!hist.length) document.getElementById('undoBtn').disabled=true;
 }
 
 function autoFlip(){
-  tab.forEach(function(col){if(col.length&&!col[col.length-1].up) col[col.length-1].up=true;});
+  tab.forEach(function(col){ if(col.length && !col[col.length-1].up) col[col.length-1].up=true; });
 }
 function checkWin(){
-  if(found.reduce(function(s,f){return s+f.length;},0)===52){
+  if(found.reduce(function(s,f){ return s+f.length; },0)===52){
     over=true; clearInterval(tmr);
-    playWin(); confetti();
+    playWin(); launchConfetti();
     setTimeout(function(){
       document.getElementById('endMsg').textContent='Все карты собраны за '+moves+' ходов и '+fmt(secs)+'!';
       document.getElementById('endOv').classList.add('show');
-    },900);
+    },800);
   }
 }
 
-// ══ ВСПОМОГАТЕЛЬНЫЕ ══
-// Проверяем можно ли тащить стопку начиная с cardIdx — все карты одной масти по убыванию
-function canDragStack(ci, fromIdx){
-  var col=tab[ci];
-  if(fromIdx>=col.length-1) return true; // одна карта — всегда можно
-  var suit=col[fromIdx].s;
-  for(var i=fromIdx;i<col.length-1;i++){
-    if(!col[i].up) return false;
-    if(col[i+1].s!==suit) return false; // разные масти
-    if(RV[col[i+1].r]!==RV[col[i].r]-1) return false; // не по убыванию
-  }
-  return true;
-}
-
-// ══ DRAG STATE ══
-var D={on:false,card:null,src:null,ci:-1,ox:0,oy:0};
-
-function pointerXY(e){
-  if(e.touches&&e.touches.length) return{x:e.touches[0].clientX,y:e.touches[0].clientY};
-  if(e.changedTouches&&e.changedTouches.length) return{x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};
-  return{x:e.clientX,y:e.clientY};
-}
+// ══ DRAG ══
+var D = { on:false, card:null, src:null, ci:-1, stackFrom:undefined,
+          _startX:0, _startY:0, _moved:false, _hlId:null };
 
 function resetDrag(){
   D.on=false; D.card=null; D.src=null; D.ci=-1;
@@ -356,101 +344,96 @@ function resetDrag(){
   clearHL();
 }
 
-function buildGhost(src, ci, card){
-  var stackCards = (src==='col') ? tab[ci].slice(D.stackFrom) : [card];
-  var stackH = CH + (stackCards.length-1) * L.offsetUp;
+function buildGhost(stackCards){
+  var stackH = CH + (stackCards.length-1)*L.offsetUp;
   var g = document.getElementById('ghost');
-  g.innerHTML = '';
-  g.style.cssText = 'display:none;position:fixed;pointer-events:none;z-index:9999;width:'+CW+'px;height:'+stackH+'px;';
-  for(var i=0; i<stackCards.length; i++){
+  g.innerHTML='';
+  g.style.cssText='display:none;position:fixed;pointer-events:none;z-index:9999;width:'+CW+'px;height:'+stackH+'px;transform:rotate(2deg)';
+  for(var i=0;i<stackCards.length;i++){
     var d=document.createElement('div');
-    d.style.cssText='position:absolute;width:'+CW+'px;height:'+CH+'px;top:'+(i*L.offsetUp)+'px;left:0;border-radius:8px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.55)';
+    d.style.cssText='position:absolute;width:'+CW+'px;height:'+CH+'px;top:'+(i*L.offsetUp)+'px;left:0;border-radius:7px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.55)';
     var im=document.createElement('img');
-    im.src=img(stackCards[i].r, stackCards[i].s);
-    im.style.cssText='width:100%;height:100%;display:block';
+    im.src=cardImg(stackCards[i].r,stackCards[i].s);
+    im.style.cssText='width:100%;height:100%;display:block;-webkit-user-drag:none';
     d.appendChild(im); g.appendChild(d);
   }
 }
 
-function onDragStart(e, src, ci){
-  if(over) return;
-  if(D.on) return; // уже идёт drag — игнорируем
+function pxy(e){
+  if(e.touches&&e.touches.length) return{x:e.touches[0].clientX,y:e.touches[0].clientY};
+  if(e.changedTouches&&e.changedTouches.length) return{x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};
+  return{x:e.clientX,y:e.clientY};
+}
 
-  var p = pointerXY(e);
-  var card;
+function onDragStart(e, src, ci){
+  if(over || D.on) return;
+  var p = pxy(e);
+  var card, stackCards;
 
   if(src==='stock'){ dealStock(); return; }
 
   if(src==='waste'){
     if(!waste.length) return;
     card = waste[waste.length-1];
-    if(!card.up) return;
     D.stackFrom = undefined;
+    stackCards = [card];
   } else {
     var col = tab[ci];
     if(!col.length) return;
-    // Определяем по Y за какую карту взялись
+    // Определяем по Y какую карту зажали
     var fr = document.getElementById('felt').getBoundingClientRect();
     var clickY = p.y - fr.top;
-    var yPos = L.colY;
-    var clickedIdx = col.length-1;
-    for(var i=0; i<col.length-1; i++){
-      var nextY = yPos + (col[i].up ? L.offsetUp : L.offsetDown);
-      if(clickY < nextY){ clickedIdx = i; break; }
-      yPos = nextY;
+    var yPos = L.colY, clickedIdx = col.length-1;
+    for(var i=0;i<col.length-1;i++){
+      var nY = yPos + (col[i].up ? L.offsetUp : L.offsetDown);
+      if(clickY < nY){ clickedIdx=i; break; }
+      yPos = nY;
     }
     card = col[clickedIdx];
     if(!card.up){
-      if(clickedIdx===col.length-1){
-        save(); card.up=true; moves++; updateBar();
-        // render() через setTimeout чтобы не мешать текущему событию
-        setTimeout(function(){ render(); }, 0);
-      }
+      // Перевернуть рубашку
+      if(clickedIdx===col.length-1){ save(); card.up=true; moves++; updateBar(); render(); }
       return;
     }
     if(!canDragStack(ci, clickedIdx)) return;
     D.stackFrom = clickedIdx;
+    stackCards = col.slice(clickedIdx);
   }
 
   D.on=true; D.card=card; D.src=src; D.ci=ci;
   D._startX=p.x; D._startY=p.y; D._moved=false; D._hlId=null;
-  buildGhost(src, ci, card);
+  buildGhost(stackCards);
   e.preventDefault();
 }
 
 function onDragMove(e){
   if(!D.on) return;
-  var p = pointerXY(e);
+  var p = pxy(e);
   if(!D._moved){
-    if(Math.abs(p.x-D._startX)<6 && Math.abs(p.y-D._startY)<6) return;
-    D._moved = true;
-    document.getElementById('ghost').style.display = 'block';
+    if(Math.abs(p.x-D._startX)<5 && Math.abs(p.y-D._startY)<5) return;
+    D._moved=true;
+    document.getElementById('ghost').style.display='block';
   }
   var g = document.getElementById('ghost');
-  g.style.left = (p.x - CW/2) + 'px';
-  g.style.top  = (p.y - CH/2) + 'px';
-  var t = findTarget(p.x, p.y);
-  var newId = t ? (t.type==='f' ? 'fs'+t.fi : 'cs'+t.ci) : null;
-  if(D._hlId !== newId){
-    clearHL(); D._hlId = newId;
-    if(t) hlTarget(t);
-  }
+  g.style.left=(p.x-CW/2)+'px'; g.style.top=(p.y-CH/3)+'px';
+  // Подсветка цели
+  var t = findTarget(p.x, p.y, D.card, D.src, D.ci);
+  var nid = t?(t.type==='f'?'fs'+t.fi:'cs'+t.ci):null;
+  if(nid !== D._hlId){ clearHL(); D._hlId=nid; if(t) hlTarget(t); }
   e.preventDefault();
 }
 
 function onDragEnd(e){
   if(!D.on) return;
-  var p = pointerXY(e);
-  var moved = D._moved;
-  var card = D.card;
-  var src = D.src;
-  var ci = D.ci;
+  var p = pxy(e);
+  // Сохраняем всё до resetDrag
+  var moved=D._moved, card=D.card, src=D.src, ci=D.ci, sf=D.stackFrom;
   resetDrag();
 
   if(!moved){
-    // Клик — отправляем в фундамент если можно
+    // Клик: отправляем в фундамент
     if(card){
-      var fi = autoFound(card);
+      var fi=autoFoundIdx(card);
       if(fi>=0){
         save();
         if(src==='waste') waste.pop(); else tab[ci].pop();
@@ -459,212 +442,167 @@ function onDragEnd(e){
         return;
       }
     }
-    render();
-    return;
+    render(); return;
   }
 
-  // Drag — ищем цель
-  var t = findTarget(p.x, p.y);
-  if(t) doMove(t);
+  var t = findTarget(p.x, p.y, card, src, ci);
+  if(t) execMove(t, src, ci, sf);
   else render();
 }
 
-function onDblClick(e,src,ci){
+// ══ ПОИСК ЦЕЛИ ══
+function feltRect(){ return document.getElementById('felt').getBoundingClientRect(); }
+
+function findTarget(px, py, card, src, fromCi){
+  if(!card) return null;
+  var fr = feltRect();
+  var felt = document.getElementById('felt');
+  var scale = felt.offsetWidth / fr.width;
+  var x=(px-fr.left)*scale, y=(py-fr.top)*scale;
+
+  // Фундаменты
+  for(var fi=0;fi<4;fi++){
+    if(x>=L.foundX[fi] && x<=L.foundX[fi]+CW && y>=L.foundY && y<=L.foundY+CH)
+      return canPlaceOnFound(card,fi) ? {type:'f',fi:fi} : null;
+  }
+  // Колонны — вся зона колонны (тащим вниз на любую карту)
+  for(var ci=0;ci<7;ci++){
+    if(src==='col' && fromCi===ci) continue;
+    var col=tab[ci];
+    var cx=L.colX[ci], cy=L.colY;
+    var colH=CH;
+    if(col.length>1){ colH=0; for(var k=0;k<col.length-1;k++) colH+=col[k].up?L.offsetUp:L.offsetDown; colH+=CH; }
+    colH=Math.max(colH,CH);
+    var zoneW = (ci<6) ? L.colX[ci+1]-cx : CW+L.gap;
+    if(x>=cx && x<=cx+zoneW && y>=cy && y<=cy+colH)
+      return canPlaceOnCol(card,col) ? {type:'c',ci:ci} : null;
+  }
+  return null;
+}
+
+function hlTarget(t){
+  var id=(t.type==='f')?'fs'+t.fi:'cs'+t.ci;
+  var el=document.getElementById(id); if(el) el.classList.add('highlight');
+}
+function clearHL(){
+  document.querySelectorAll('.highlight').forEach(function(el){ el.classList.remove('highlight'); });
+}
+
+// ══ ВЫПОЛНЕНИЕ ХОДА ══
+function execMove(t, src, ci, stackFrom){
+  save();
+  var cards=[];
+  if(src==='waste'){
+    cards=[waste.pop()];
+  } else {
+    var from=(stackFrom!==undefined)?stackFrom:tab[ci].length-1;
+    cards=tab[ci].splice(from, tab[ci].length-from);
+  }
+  if(t.type==='f'){
+    found[t.fi].push(cards[0]);
+    // если тащили стопку — кладём остаток обратно (не должно случиться)
+    for(var i=1;i<cards.length;i++) tab[ci].push(cards[i]);
+  } else {
+    for(var i=0;i<cards.length;i++) tab[t.ci].push(cards[i]);
+  }
+  autoFlip(); moves++; updateBar(); render(); checkWin();
+}
+
+// Двойной клик — в фундамент
+function onDblClick(e, src, ci){
   if(over) return;
   var card;
-  if(src==='waste'){if(!waste.length)return;card=waste[waste.length-1];}
-  else{var col=tab[ci];if(!col.length)return;card=col[col.length-1];if(!card.up)return;}
-  var fi=autoFound(card);
-  if(fi<0){toast('Некуда');return;}
+  if(src==='waste'){ if(!waste.length)return; card=waste[waste.length-1]; }
+  else { var col=tab[ci]; if(!col.length)return; card=col[col.length-1]; if(!card.up)return; }
+  var fi=autoFoundIdx(card);
+  if(fi<0){ toast('Некуда'); return; }
   save();
   if(src==='waste') waste.pop(); else tab[ci].pop();
   found[fi].push(card);
   autoFlip(); moves++; updateBar(); render(); checkWin();
 }
 
-// ══ ПОИСК ЦЕЛИ (по координатам felt) ══
-function feltRect(){return document.getElementById('felt').getBoundingClientRect();}
-
-function findTarget(px,py){
-  var fr=feltRect();
-  var felt=document.getElementById('felt');
-  // Масштаб: offsetWidth (логические пиксели layout) / clientRect.width (CSS-пиксели экрана)
-  var scale=felt.offsetWidth/fr.width;
-  var x=(px-fr.left)*scale, y=(py-fr.top)*scale; // координаты в логических пикселях layout
-  // Фундаменты
-  for(var fi=0;fi<4;fi++){
-    var fx=L.foundX[fi], fy=L.foundY;
-    if(x>=fx&&x<=fx+CW&&y>=fy&&y<=fy+CH){
-      if(canFound(D.card,fi)) return{type:'f',fi:fi};
-      return null;
-    }
-  }
-  // Колонны — широкая зона захвата по всей высоте и ширине слота
-  for(var ci=0;ci<7;ci++){
-    if(D.src==='col'&&D.ci===ci) continue;
-    var cx=L.colX[ci], cy=L.colY;
-    var col=tab[ci];
-    var colH=col.length?(L.offsetDown*(col.length-1)+CH):CH;
-    colH=Math.max(colH,CH);
-    // Ширина зоны — до следующей колонны
-    var nextX=(ci<6)?L.colX[ci+1]:cx+CW+L.gap;
-    var zoneW=nextX-cx;
-    if(x>=cx&&x<=cx+zoneW&&y>=cy&&y<=cy+colH){
-      if(canCol(D.card,col)) return{type:'c',ci:ci};
-      return null;
-    }
-  }
-  return null;
-}
-
-function hlTarget(t){
-  // Подсвечиваем слот
-  var id=(t.type==='f')?'fs'+t.fi:'cs'+t.ci;
-  var el=document.getElementById(id);
-  if(el) el.classList.add('highlight');
-}
-function clearHL(){
-  document.querySelectorAll('.highlight').forEach(function(el){el.classList.remove('highlight');});
-}
-
-function doMove(t){
-  save();
-  var cards=[];
-  if(D.src==='waste'){
-    cards=[waste.pop()];
-  } else {
-    var fromIdx=(D.stackFrom!==undefined)?D.stackFrom:tab[D.ci].length-1;
-    cards=tab[D.ci].splice(fromIdx, tab[D.ci].length-fromIdx);
-  }
-  if(t.type==='f'){
-    // В фундамент — только одна карта (нижняя стопки)
-    found[t.fi].push(cards[0]);
-    for(var i=1;i<cards.length;i++) tab[D.ci].push(cards[i]);
-  } else {
-    for(var i=0;i<cards.length;i++) tab[t.ci].push(cards[i]);
-  }
-  D.stackFrom=undefined;
-  autoFlip(); moves++; updateBar(); checkWin();
-}
-
-// ══ РЕНДЕР (абсолютные позиции внутри felt) ══
+// ══ РЕНДЕР ══
 function render(){
   var felt=document.getElementById('felt');
-  // Удаляем все карты и слоты
-  felt.querySelectorAll('.card-el,.slot-el').forEach(function(el){el.remove();});
+  felt.querySelectorAll('.card-el,.slot-el').forEach(function(el){ el.remove(); });
 
-  var fr=felt.getBoundingClientRect(); // для ghost
-
-  // Слоты-заглушки
+  // Слоты
   mkSlot(felt,'ss',L.stockX,L.stockY,false);
   mkSlot(felt,'ws',L.wasteX,L.wasteY,false);
   for(var fi=0;fi<4;fi++){
     var sl=mkSlot(felt,'fs'+fi,L.foundX[fi],L.foundY,true);
-    sl.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;opacity:.3;pointer-events:none">'+SUIT_SYM[SUITS[fi]]+'</div>';
+    sl.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:'+(CW*0.3)+'px;opacity:.3;pointer-events:none">'+SUIT_SYM[SUITS[fi]]+'</div>';
   }
   for(var ci=0;ci<7;ci++) mkSlot(felt,'cs'+ci,L.colX[ci],L.colY,false);
 
   // Стопка
   if(stock.length){
-    var c=mkCard(felt,back(),L.stockX,L.stockY,100,true);
-    c.addEventListener('click',function(){dealStock();});
+    var sc=mkCard(felt,backImg(),L.stockX,L.stockY,100,false);
+    sc.style.cursor='pointer';
+    sc.addEventListener('click',function(){ dealStock(); });
     var cnt=document.createElement('div');
-    cnt.style.cssText='position:absolute;bottom:4px;right:6px;font-size:.65rem;font-weight:700;color:rgba(255,255,255,.85);background:rgba(0,0,0,.4);border-radius:4px;padding:1px 5px;pointer-events:none';
-    cnt.textContent=stock.length; c.appendChild(cnt);
+    cnt.style.cssText='position:absolute;bottom:3px;right:5px;font-size:.6rem;font-weight:700;color:rgba(255,255,255,.9);background:rgba(0,0,0,.4);border-radius:3px;padding:1px 4px;pointer-events:none';
+    cnt.textContent=stock.length; sc.appendChild(cnt);
   } else {
-    var empty=mkCard(felt,'',L.stockX,L.stockY,100,false);
-    empty.style.background='transparent';
-    empty.style.border='2px dashed rgba(255,255,255,.25)';
-    empty.style.boxShadow='none';
-    empty.style.cursor=rounds<maxR?'pointer':'default';
-    empty.innerHTML='<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.4">'+(rounds<maxR?'↺':'—')+'</span>';
-    if(rounds<maxR) empty.addEventListener('click',function(){dealStock();});
+    var em=mkCard(felt,'',L.stockX,L.stockY,100,false);
+    em.style.cssText+='background:transparent;border:2px dashed rgba(255,255,255,.25);box-shadow:none;cursor:pointer';
+    em.innerHTML='<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.35">↺</span>';
+    em.addEventListener('click',function(){ dealStock(); });
   }
 
-  // Отбой — показываем до dealSz верхних
+  // Отбой — показываем до DEAL_BY верхних карт
   if(waste.length){
-    var show=Math.min(dealSz,waste.length);
-    var offsets=show===3?[-18,-9,0]:show===2?[-10,0]:[0];
+    var show=Math.min(DEAL_BY, waste.length);
+    var xOff=show===3?[-16,-8,0]:show===2?[-9,0]:[0];
     for(var i=0;i<show;i++){
       var wc=waste[waste.length-show+i];
       var isTop=(i===show-1);
-      var wxOff=offsets[i]||0;
-      var el=mkCard(felt,img(wc.r,wc.s),L.wasteX+wxOff,L.wasteY,200+i,isTop);
+      var el=mkCard(felt,cardImg(wc.r,wc.s),L.wasteX+xOff[i],L.wasteY,200+i,isTop);
       if(isTop){
-        (function(el2){
-          el2.addEventListener('mousedown',function(e){onDragStart(e,'waste',-1);});
-          el2.addEventListener('touchstart',function(e){onDragStart(e,'waste',-1);},{passive:false});
-          el2.addEventListener('dblclick',function(e){e.stopPropagation();onDblClick(e,'waste',-1);});
-          // Одиночный клик — попытка положить в фундамент
-          el2.addEventListener('click',function(e){
-            if(D.on) return;
-            var card=waste[waste.length-1];
-            if(!card) return;
-            var fi=autoFound(card);
-            if(fi>=0){
-              save();waste.pop();found[fi].push(card);
-              autoFlip();moves++;updateBar();render();checkWin();
-            }
-          });
-        })(el);
+        (function(el2){ attachDrag(el2,'waste',-1); })(el);
       }
     }
   }
 
   // Фундаменты
   for(var fi=0;fi<4;fi++){
-    var f=found[fi];
-    if(!f.length) continue;
-    var fc=f[f.length-1];
-    mkCard(felt,img(fc.r,fc.s),L.foundX[fi],L.foundY,200,false);
+    if(found[fi].length){
+      var fc=found[fi][found[fi].length-1];
+      mkCard(felt,cardImg(fc.r,fc.s),L.foundX[fi],L.foundY,200,false);
+    }
   }
 
   // Колонны
   for(var ci=0;ci<7;ci++){
-    var col=tab[ci];
-    var y=L.colY;
+    var col=tab[ci], y=L.colY;
     for(var idx=0;idx<col.length;idx++){
-      var cd=col[idx];
-      var isLast=(idx===col.length-1);
-      var isDragSrc=D.on&&D.src==='col'&&D.ci===ci&&isLast;
-      var src=cd.up?img(cd.r,cd.s):back();
-      var el=mkCard(felt,src,L.colX[ci],y,300+idx,isLast&&cd.up);
-      if(isDragSrc) el.classList.add('drag-src');
-      if(!cd.up) el.classList.add('back');
-
-      if(isLast){
-        if(cd.up){
-          (function(ci2,el2){
-            el2.addEventListener('mousedown',function(e){onDragStart(e,'col',ci2);});
-            el2.addEventListener('touchstart',function(e){onDragStart(e,'col',ci2);},{passive:false});
-            el2.addEventListener('dblclick',function(e){e.stopPropagation();onDblClick(e,'col',ci2);});
-            // Одиночный клик — попытка положить в фундамент
-            el2.addEventListener('click',function(e){
-              if(D.on) return;
-              var col=tab[ci2]; if(!col.length) return;
-              var card=col[col.length-1]; if(!card.up) return;
-              var fi=autoFound(card);
-              if(fi>=0){
-                save();tab[ci2].pop();found[fi].push(card);
-                autoFlip();moves++;updateBar();render();checkWin();
-              }
-            });
-          })(ci,el);
-        } else {
-          (function(ci2,idx2,el2){
-            el2.addEventListener('click',function(){
-              save(); tab[ci2][idx2].up=true; moves++; updateBar(); render();
-            });
-          })(ci,idx,el);
-        }
+      var cd=col[idx], isLast=(idx===col.length-1);
+      var src2=cd.up?cardImg(cd.r,cd.s):backImg();
+      var el=mkCard(felt,src2,L.colX[ci],y,300+idx,isLast&&cd.up);
+      if(D.on && D.src==='col' && D.ci===ci && D.stackFrom!==undefined && idx>=D.stackFrom)
+        el.style.opacity='0.3';
+      if(cd.up && isLast){
+        (function(ci2,el2){ attachDrag(el2,'col',ci2); })(ci,el);
+      } else if(!cd.up && isLast){
+        (function(ci2,idx2,el2){
+          el2.style.cursor='pointer';
+          el2.addEventListener('click',function(){
+            save(); tab[ci2][idx2].up=true; moves++; updateBar(); render();
+          });
+        })(ci,idx,el);
       }
-
       if(idx<col.length-1) y+=cd.up?L.offsetUp:L.offsetDown;
     }
   }
 
-  // Badge
-  updateBadge();
+
+}
+
+function attachDrag(el, src, ci){
+  el.addEventListener('mousedown',function(e){ onDragStart(e,src,ci); });
+  el.addEventListener('touchstart',function(e){ onDragStart(e,src,ci); },{passive:false});
+  el.addEventListener('dblclick',function(e){ e.stopPropagation(); onDblClick(e,src,ci); });
 }
 
 function mkSlot(felt,id,x,y,isFound){
@@ -672,33 +610,36 @@ function mkSlot(felt,id,x,y,isFound){
   el.className='slot-el'+(isFound?' found-slot':'');
   el.id=id;
   el.style.cssText='left:'+x+'px;top:'+y+'px;width:'+CW+'px;height:'+CH+'px';
-  felt.appendChild(el);
-  return el;
+  felt.appendChild(el); return el;
 }
-
 function mkCard(felt,src,x,y,z,draggable){
   var el=document.createElement('div');
   el.className='card-el';
   el.style.cssText='left:'+x+'px;top:'+y+'px;width:'+CW+'px;height:'+CH+'px;z-index:'+z+';cursor:'+(draggable?'grab':'default');
-  if(src){
-    var im=document.createElement('img');
-    im.src=src; el.appendChild(im);
-  }
-  felt.appendChild(el);
-  return el;
+  if(src){ var im=document.createElement('img'); im.src=src; im.style.cssText='width:100%;height:100%;border-radius:7px;display:block;-webkit-user-drag:none'; el.appendChild(im); }
+  felt.appendChild(el); return el;
 }
 
-// ══ BAR ══
+// ══ UI ══
 function updateBar(){
   document.getElementById('vMoves').textContent=moves;
   document.getElementById('vTime').textContent=fmt(secs);
-  document.getElementById('vRounds').textContent=rounds+'/6';
+  document.getElementById('vRounds').textContent=rounds;
 }
-function fmt(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
-function updateBadge(){
-  var b=document.getElementById('badge');
-  if(rounds<3) b.textContent='по 3 · круг '+(rounds+1)+'/3';
-  else b.textContent='по 2 · круг '+(rounds-2)+'/3';
+function fmt(s){ return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60; }
+
+function toast(txt){
+  var m=document.createElement('div');
+  m.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:.4rem 1rem;border-radius:8px;font-size:.82rem;z-index:500;pointer-events:none';
+  m.textContent=txt; document.body.appendChild(m);
+  setTimeout(function(){ if(m.parentNode) m.parentNode.removeChild(m); },2000);
+}
+
+function showWelcome(){
+  clearInterval(tmr); over=true; resetDrag();
+  document.getElementById('welcome').style.display='flex';
+  document.getElementById('game-screen').style.display='none';
+  document.getElementById('endOv').classList.remove('show');
 }
 
 // ══ ЗВУК ══
@@ -706,11 +647,11 @@ var actx=null;
 function playWin(){
   try{
     if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
-    [[523.2,0,.12],[659.3,.13,.12],[784,.26,.12],[1046.5,.39,.3],[523.2,.72,.5],[659.3,.72,.5],[784,.72,.5],[1046.5,.72,.5]].forEach(function(n){
+    [[523,0,.1],[659,.12,.1],[784,.24,.1],[1047,.36,.4],[523,.8,.6],[659,.8,.6],[784,.8,.6],[1047,.8,.6]].forEach(function(n){
       var o=actx.createOscillator(),g=actx.createGain();
       o.connect(g);g.connect(actx.destination);o.type='triangle';o.frequency.value=n[0];
       g.gain.setValueAtTime(0,actx.currentTime+n[1]);
-      g.gain.linearRampToValueAtTime(.18,actx.currentTime+n[1]+.04);
+      g.gain.linearRampToValueAtTime(.18,actx.currentTime+n[1]+.03);
       g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+n[1]+n[2]);
       o.start(actx.currentTime+n[1]);o.stop(actx.currentTime+n[1]+n[2]+.05);
     });
@@ -718,40 +659,27 @@ function playWin(){
 }
 
 // ══ КОНФЕТТИ ══
-function confetti(){
+function launchConfetti(){
   var em=['🎉','✨','🃏','♠','♥','♦','♣'];
-  for(var i=0;i<28;i++){(function(i){setTimeout(function(){
-    var el=document.createElement('div');
-    el.className='confetti';el.textContent=em[i%em.length];
-    el.style.left=Math.random()*100+'vw';
-    el.style.animationDuration=(1.5+Math.random()*2)+'s';
-    document.body.appendChild(el);
-    setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},4000);
-  },i*80);})(i);}
+  for(var i=0;i<30;i++)(function(i){
+    setTimeout(function(){
+      var el=document.createElement('div');
+      el.style.cssText='position:fixed;font-size:1.2rem;pointer-events:none;z-index:300;left:'+Math.random()*100+'vw;animation:fall '+(1.5+Math.random()*2)+'s linear forwards';
+      el.textContent=em[i%em.length]; document.body.appendChild(el);
+      setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },4000);
+    },i*70);
+  })(i);
 }
 
-function toast(txt){
-  var m=document.createElement('div');
-  m.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:.4rem 1rem;border-radius:8px;font-size:.82rem;z-index:500;pointer-events:none';
-  m.textContent=txt;document.body.appendChild(m);
-  setTimeout(function(){if(m.parentNode)m.parentNode.removeChild(m);},2000);
-}
-
-function showWelcome(){
-  clearInterval(tmr);over=true;
-  document.getElementById('welcome').style.display='flex';
-  document.getElementById('game-screen').style.display='none';
-  document.getElementById('endOv').classList.remove('show');
-}
-
-// ══ ГЛОБАЛЬНЫЕ СОБЫТИЯ ══
-document.addEventListener('mousemove',onDragMove);
-document.addEventListener('mouseup',onDragEnd);
-document.addEventListener('touchmove',onDragMove,{passive:false});
-document.addEventListener('touchend',onDragEnd);
-// Сброс drag если мышь ушла за окно или окно потеряло фокус
+// ══ СОБЫТИЯ ══
+window.addEventListener('mousemove', onDragMove);
+window.addEventListener('mouseup', onDragEnd);
+document.addEventListener('touchmove', onDragMove, {passive:false});
+document.addEventListener('touchend', onDragEnd);
 window.addEventListener('blur', function(){ if(D.on){ resetDrag(); render(); } });
-window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display!=='none'){calcLayout();render();}});
+window.addEventListener('resize', function(){
+  if(document.getElementById('game-screen').style.display!=='none'){ calcLayout(); render(); }
+});
 </script>
 </body>
 </html>
