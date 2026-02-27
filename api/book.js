@@ -3,7 +3,7 @@ module.exports = async function handler(req, res) {
   if (!id) return res.status(400).json({ error: 'Missing id' });
 
   const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SECRET_KEY;
+  const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
   try {
     const r = await fetch(`${supabaseUrl}/rest/v1/books?id=eq.${id}&select=*,authors(name)&status=eq.approved&deleted_at=is.null`, {

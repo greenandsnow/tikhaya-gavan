@@ -6,16 +6,14 @@ module.exports = async function handler(req, res) {
     const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
     const resendKey = process.env.RESEND_API_KEY;
 
-    // Parse body - handle both JSON and FormData (without file)
+    // Parse body
     let fields = {};
     const contentType = req.headers['content-type'] || '';
 
     if (contentType.includes('application/json')) {
       fields = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     } else {
-      // FormData - Vercel parses fields automatically into req.body for non-file fields
       fields = req.body || {};
-      // Flatten arrays from FormData parsing
       Object.keys(fields).forEach(k => {
         if (Array.isArray(fields[k])) fields[k] = fields[k][0];
       });

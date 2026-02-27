@@ -2,8 +2,7 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SECRET_KEY;
-  const serviceKey = process.env.SUPABASE_SERVICE_KEY || supabaseKey;
+  const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
   try {
     let body = req.body;
@@ -30,18 +29,16 @@ module.exports = async function handler(req, res) {
     if (ratings && ratings.length > 0) {
       const avgPlot = ratings.reduce((s,r) => s + r.rating_plot, 0) / ratings.length;
       const avgStyle = ratings.reduce((s,r) => s + r.rating_style, 0) / ratings.length;
-      const patchRes = await fetch(`${supabaseUrl}/rest/v1/books?id=eq.${book_id}`, {
+      await fetch(`${supabaseUrl}/rest/v1/books?id=eq.${book_id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': serviceKey,
-          'Authorization': `Bearer ${serviceKey}`,
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
           'Prefer': 'return=minimal'
         },
         body: JSON.stringify({ rating_plot: parseFloat(avgPlot.toFixed(2)), rating_style: parseFloat(avgStyle.toFixed(2)), votes_count: ratings.length })
       });
-      const patchText = await patchRes.text();
-      console.log('PATCH status:', patchRes.status, 'body:', patchText);
     }
 
     return res.status(200).json({ ok: true });
