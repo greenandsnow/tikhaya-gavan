@@ -113,7 +113,13 @@
     .empty p { font-size: .88rem; color: var(--stone); line-height: 1.7; }
 
     /* FOOTER NOTE */
-    .collect-note { text-align: center; font-size: .72rem; color: var(--stone); padding: .5rem 2rem 1.5rem; letter-spacing: .03em; }
+    .collect-note { text-align: center; font-size: .72rem; color: var(--stone); padding: .5rem 2rem 0; letter-spacing: .03em; }
+
+    /* AI PROMO */
+    .ai-promo { max-width: 680px; margin: 1.2rem auto 1.5rem; padding: 1rem 1.5rem; background: var(--sea-pale); border-radius: 12px; display: flex; align-items: flex-start; gap: .75rem; font-size: .88rem; color: var(--ink); line-height: 1.6; }
+    .ai-promo a { color: var(--sea); font-weight: 600; text-decoration: none; border-bottom: 1.5px solid transparent; transition: border-color .2s; }
+    .ai-promo a:hover { border-bottom-color: var(--sea); }
+    .ai-promo > span:first-child { font-size: 1.5rem; flex-shrink: 0; }
 
     /* FOOTER */
     footer { background: var(--white); border-top: 1px solid var(--sand-dark); padding: 1.5rem 2rem; margin-top: auto; }
@@ -182,6 +188,11 @@
 </div>
 
 <div class="collect-note">Новости собраны в 00:00 UTC</div>
+
+<div class="ai-promo">
+  <span>🤖</span>
+  <span>Хотите узнать больше о какой-то новости? <a href="/ask">Спросите у ИИ-помощника</a> — он объяснит контекст, историю вопроса и ответит на любые вопросы.</span>
+</div>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
