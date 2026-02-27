@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Девятка — Тихая гавань</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;
+  --sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--sea-dark:#2d5f70;
+  --text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;
+  --felt:#1a5c2e;--felt-dark:#143d1e;
+  --gold:#d4a017;--red:#c0392b;
+  --cw:90px;  --ch:126px;   /* карты на столе */
+  --hw:108px; --hh:151px;   /* карты игрока */
+  --bw:44px;  --bh:62px;    /* рубашки соперников */
+}
+html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text);overflow:hidden}
+body{display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;flex-shrink:0;position:relative;z-index:100}
+.hi{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:88px;gap:1.5rem}
+.logo{text-decoration:none;display:flex;align-items:center;gap:.75rem;line-height:1.1}
+.logo-img{height:110px;width:auto;display:block;position:relative;z-index:101}
+.logo-text{display:flex;flex-direction:column}
+.logo-name{font-weight:700;font-size:1.3rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
+.logo-tag{font-size:.6rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
+nav ul{list-style:none;display:flex;gap:.2rem}
+nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-light);font-size:.82rem;border-radius:6px;transition:color .2s,background .2s}
+nav a:hover{color:var(--sea);background:var(--sea-pale)}
+nav a.active{color:var(--sea);font-weight:600}
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
+@media(max-width:768px){
+  .logo-img{height:70px}.logo-name{font-size:1.1rem!important}
+  .burger{display:flex}
+  nav{display:none;position:absolute;top:88px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,.06);z-index:90}
+  nav.open{display:block}
+  nav ul{flex-direction:column;gap:.25rem}
+  nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
+}
+
+/* ── WELCOME ── */
+.welcome{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem}
+.welcome-box{background:var(--white);border:1px solid var(--sand-dark);border-radius:18px;padding:2.5rem 2rem;max-width:480px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.welcome-icon{font-size:3rem;margin-bottom:.75rem}
+.welcome-box h1{font-size:1.7rem;font-weight:700;color:var(--sea);margin-bottom:.4rem}
+.welcome-box p{font-size:.9rem;color:var(--text-light);margin-bottom:1.75rem;line-height:1.6}
+.start-btn{display:inline-block;padding:.85rem 2.5rem;background:var(--sea);color:white;border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
+.start-btn:hover{background:var(--sea-light)}
+.rules-toggle{display:block;margin-top:1rem;font-size:.78rem;color:var(--sea);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'Jost',sans-serif;width:100%;text-align:center}
+.rules-box{display:none;text-align:left;background:var(--sand);border-radius:10px;padding:.85rem;margin-top:.6rem;font-size:.78rem;color:var(--text-light);line-height:1.7}
+.rules-box ul{padding-left:1.1rem}
+.rules-box li{margin-bottom:.25rem}
+
+/* ── GAME SCREEN ── */
+.game-screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+
+/* ── GAME BAR ── */
+.game-bar{background:rgba(0,0,0,.5);padding:.4rem 1rem;display:flex;align-items:center;gap:.75rem;flex-shrink:0;z-index:10}
+.gstat{display:flex;align-items:center;gap:.3rem;font-size:.76rem;color:rgba(255,255,255,.9)}
+.gstat-label{color:rgba(255,255,255,.45);text-transform:uppercase;font-size:.6rem;letter-spacing:.07em}
+.gstat-val{font-weight:600}
+.gdiv{width:1px;height:18px;background:rgba(255,255,255,.15)}
+.gbar-spacer{flex:1}
+.gbtn{padding:.3rem .7rem;border-radius:6px;font-family:'Jost',sans-serif;font-size:.72rem;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.85);background:rgba(255,255,255,.08);transition:all .2s}
+.gbtn:hover{background:rgba(255,255,255,.22)}
+
+/* ── FELT ── */
+.felt{flex:1;background:radial-gradient(ellipse at center,#1f7a3a 0%,var(--felt) 55%,var(--felt-dark) 100%);position:relative;overflow:hidden}
+.felt::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3L3 1' stroke='rgba(0,0,0,0.06)' stroke-width='1'/%3E%3C/svg%3E");pointer-events:none}
+
+/* ── БАНК — правый верхний угол ── */
+.bank-corner{position:absolute;top:12px;right:16px;z-index:10;background:rgba(0,0,0,.5);border:1.5px solid rgba(212,160,23,.55);border-radius:10px;padding:.35rem .85rem;text-align:center;min-width:80px}
+.bank-label{font-size:.52rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.38)}
+.bank-amount{font-size:1.3rem;font-weight:700;color:var(--gold);line-height:1.1}
+
+/* ── КОШЕЛЁК (общий стиль) ── */
+.wallet{background:rgba(0,0,0,.4);border:1.5px solid rgba(212,160,23,.4);border-radius:8px;padding:.2rem .55rem;text-align:center;white-space:nowrap}
+.wallet-name{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em}
+.wallet-coins{font-size:.95rem;font-weight:700;color:var(--gold);line-height:1.2}
+
+/* ── РУБАШКА ── */
+.back-card{border-radius:5px;flex-shrink:0;
+  background:repeating-linear-gradient(45deg,#7a1515,#7a1515 4px,#a02020 4px,#a02020 8px);
+  border:1.5px solid rgba(255,255,255,.25);
+  box-shadow:0 2px 6px rgba(0,0,0,.5)}
+
+/* ── ИВАН — сверху: кошелёк слева от карт ── */
+.p-top{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:5;
+  display:flex;flex-direction:row;align-items:center;gap:10px}
+.fan-top{position:relative;display:flex;align-items:flex-end;justify-content:center}
+
+/* ── АРИНА — слева ── */
+.p-left{position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:5;
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+.fan-left{position:relative;display:flex;align-items:center;justify-content:center}
+
+/* ── МИХАИЛ — справа ── */
+.p-right{position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:5;
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+.fan-right{position:relative;display:flex;align-items:center;justify-content:center}
+
+/* Подсветка активного игрока */
+.opp-panel{background:rgba(0,0,0,.45);border:2px solid rgba(255,255,255,.12);border-radius:10px;padding:.4rem .7rem;text-align:center;transition:border-color .3s,background .3s}
+.opp-panel.active{border-color:var(--gold)!important;background:rgba(212,160,23,.18)!important}
+.wallet.active-w{border-color:rgba(102,187,106,.7)!important}
+.opp-name{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.92);letter-spacing:.05em;text-transform:uppercase}
+.opp-info{font-size:.62rem;color:rgba(255,255,255,.48);margin-top:.1rem}
+
+/* ── ЦЕНТР — стол ── */
+.center-area{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3}
+.table-suits{display:flex;flex-direction:column;gap:5px}
+.suit-row{display:flex;align-items:center;gap:4px}
+.suit-sym{width:24px;text-align:center;font-size:1.1rem;flex-shrink:0;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
+.suit-slots{display:flex;gap:3px;align-items:center}
+
+/* Слоты — всегда видны, пунктир */
+.t-slot{width:var(--cw);height:var(--ch);border:2px dashed rgba(255,255,255,.18);border-radius:7px;flex-shrink:0}
+/* Слот под девятку — жёлтая обводка */
+.t-slot.pivot{border:2px solid rgba(212,160,23,.65);background:rgba(212,160,23,.06)}
+/* Карта на столе */
+.t-card{width:var(--cw);height:var(--ch);border-radius:7px;flex-shrink:0;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.55)}
+.t-card img{width:100%;height:100%;display:block}
+
+/* ── "ВАШ ХОД" всплывашка ── */
+.your-turn-badge{
+  display:none;position:absolute;bottom:calc(var(--hh) + 80px);left:50%;transform:translateX(-50%);
+  background:var(--sand);border:2px solid var(--gold);border-radius:10px;
+  padding:.4rem 1.1rem;font-size:.85rem;font-weight:700;color:var(--text);
+  box-shadow:0 4px 16px rgba(0,0,0,.4);white-space:nowrap;z-index:20;
+  animation:pulse-badge 1.5s ease-in-out infinite}
+.your-turn-badge.show{display:block}
+@keyframes pulse-badge{
+  0%,100%{box-shadow:0 4px 16px rgba(0,0,0,.4),0 0 0 0 rgba(212,160,23,.5)}
+  50%{box-shadow:0 4px 16px rgba(0,0,0,.4),0 0 0 6px rgba(212,160,23,0)}
+}
+
+/* ── РУКА ИГРОКА ── */
+.player-area{position:absolute;bottom:0;left:0;right:0;z-index:5;
+  padding:6px 12px 10px;
+  background:linear-gradient(to top,rgba(0,0,0,.65) 0%,rgba(0,0,0,.2) 75%,transparent 100%)}
+.player-top{display:flex;align-items:center;gap:.75rem;margin-bottom:6px}
+.pmsg{font-size:.8rem;color:rgba(255,255,255,.65);flex:1;text-align:center}
+.pmsg.hl{color:#ffd700;font-weight:600}
+
+/* Кошелёк игрока — справа от карт, внизу */
+.player-wallet-wrap{position:absolute;bottom:12px;right:16px;z-index:6}
+
+/* Веер карт игрока */
+.hand-fan{position:relative;height:calc(var(--hh) + 48px);display:flex;justify-content:center;align-items:flex-end}
+.h-card{width:var(--hw);height:var(--hh);border-radius:8px;overflow:hidden;cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.55);border:2.5px solid transparent;
+  transition:transform .15s,border-color .15s,box-shadow .15s;
+  position:absolute;transform-origin:bottom center}
+.h-card img{width:100%;height:100%;display:block;pointer-events:none}
+.h-card:hover{z-index:20!important}
+.h-card.playable{border-color:#66bb6a;box-shadow:0 0 0 2px #66bb6a,0 6px 18px rgba(0,0,0,.55)}
+
+/* ── МОНЕТА-АНИМАЦИЯ ── */
+.coin-anim{position:absolute;font-size:1.4rem;pointer-events:none;z-index:50;
+  animation:flyToBank .85s ease-in forwards}
+@keyframes flyToBank{
+  0%  {opacity:1;transform:scale(1) translate(0,0)}
+  70% {opacity:1;transform:scale(1.4) translate(var(--tx),var(--ty))}
+  100%{opacity:0;transform:scale(.3) translate(var(--tx),var(--ty))}
+}
+
+/* ── ОВЕРЛЕЙ КОНЦА КРУГА ── */
+.round-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,.52);z-index:100;align-items:center;justify-content:center}
+.round-overlay.show{display:flex}
+.ro-box{background:var(--sand);border:3px solid var(--gold);border-radius:20px;padding:2rem 3.5rem;text-align:center;animation:popIn .35s ease;min-width:320px}
+.ro-icon{font-size:2.8rem;margin-bottom:.4rem}
+.ro-title{font-size:.85rem;font-weight:600;color:var(--stone);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem}
+.ro-winner{font-size:1.8rem;font-weight:700;color:var(--text);margin-bottom:.3rem}
+.ro-amount{font-size:1.3rem;font-weight:700;color:var(--gold)}
+/* ── ОВЕРЛЕЙ КОНЦА ИГРЫ ── */
+.end-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.end-overlay.show{display:flex}
+.eo-box{background:var(--white);border-radius:20px;padding:2rem 2.5rem;text-align:center;max-width:440px;width:100%;animation:popIn .4s ease}
+.eo-win{border-top:5px solid #2d7a3a}
+.eo-lose{border-top:5px solid var(--stone)}
+.eo-icon{font-size:3.2rem;margin-bottom:.4rem}
+.eo-title{font-size:.85rem;font-weight:600;color:var(--stone);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.4rem}
+.eo-winner{font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:.2rem}
+.eo-win .eo-winner{color:#2d7a3a}
+.eo-coins{font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:.75rem}
+@keyframes popIn{from{transform:scale(.82);opacity:0}to{transform:scale(1);opacity:1}}
+.scores-table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.5rem 0}
+.scores-table th{color:var(--stone);font-weight:600;padding:.3rem .5rem;border-bottom:1px solid var(--sand-dark);text-align:left}
+.scores-table td{padding:.3rem .5rem;border-bottom:1px solid var(--sand-dark)}
+.scores-table tr.winner td{font-weight:700;color:var(--sea-dark)}
+.win-buttons{display:flex;gap:.6rem;justify-content:center;margin-top:1rem}
+.wbtn{padding:.5rem 1.1rem;border-radius:8px;font-family:'Jost',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border:1.5px solid var(--sea);color:var(--sea);background:transparent;transition:all .2s}
+.wbtn:hover{background:var(--sea);color:white}
+.wbtn.primary{background:var(--sea);color:white}
+.wbtn.primary:hover{background:var(--sea-light)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hi">
+    <a href="/" class="logo">
+      <img src="/logo_tg.png" alt="Тихая гавань" class="logo-img"/>
+      <div class="logo-text">
+        <span class="logo-name">Тихая гавань</span>
+        <span class="logo-tag">Место для вашего досуга</span>
+      </div>
+    </a>
+    <button class="burger" onclick="document.getElementById('main-nav').classList.toggle('open')" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="main-nav"><ul>
+      <li><a href="/crosswords">Кроссворды</a></li>
+      <li><a href="/ask">Задай вопрос</a></li>
+      <li><a href="/reading">Чтиво</a></li>
+      <li><a href="/news">Новости</a></li>
+      <li><a href="/games" class="active">Игры</a></li>
+      <li><a href="/support">Поддержка</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<!-- WELCOME -->
+<div class="welcome" id="welcome">
+  <div class="welcome-box">
+    <div class="welcome-icon">🃏</div>
+    <h1>Девятка</h1>
+    <p>Карточная игра на 4 участников. Выкладывайте карты по масти от девятки вверх и вниз. Кто первым избавится от всех карт — забирает банк!</p>
+    <button class="start-btn" onclick="startGame()">Начать игру</button>
+    <button class="rules-toggle" onclick="toggleRules()">📖 Правила игры</button>
+    <div class="rules-box" id="rules-box">
+      <ul>
+        <li>Колода 36 карт (от шестёрки), раздаётся по 9 карт каждому</li>
+        <li>Первый ход: бубновая девятка (у кого она — ходит первым)</li>
+        <li>Карты выкладываются по масти: от девятки вверх (10, В, Д, К, Т) и вниз (8, 7, 6)</li>
+        <li>Нельзя пропустить ход, если есть подходящая карта</li>
+        <li>Нет хода — автоматически пропускаешь, 1 очко летит в банк</li>
+        <li>В начале каждого раунда все платят по 5 очков в банк</li>
+        <li>Кто первым выложил все карты — забирает весь банк</li>
+        <li>Игра заканчивается, когда у кого-то кончились очки</li>
+        <li>Побеждает тот, у кого больше всего очков</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="game-screen" id="game-screen">
+  <div class="game-bar">
+    <div class="gstat"><span class="gstat-label">Раунд</span><span class="gstat-val" id="round-val">1</span></div>
+    <div class="gdiv"></div>
+    <div class="gstat"><span class="gstat-label">Ход</span><span class="gstat-val" id="turn-val">—</span></div>
+    <div class="gbar-spacer"></div>
+    <button class="gbtn" onclick="showWelcome()">← Игры</button>
+    <button class="gbtn" onclick="startGame()">↺ Новая игра</button>
+  </div>
+
+  <div class="felt" id="felt">
+
+    <!-- БАНК — правый верхний угол -->
+    <div class="bank-corner">
+      <div class="bank-label">🪙 Банк</div>
+      <div class="bank-amount" id="bank-val">0</div>
+    </div>
+
+    <!-- ИВАН — сверху: кошелёк слева, веер справа -->
+    <div class="p-top">
+      <div class="wallet" id="wallet-1">
+        <div class="wallet-name">Иван</div>
+        <div class="wallet-coins" id="wcoins-1">50</div>
+      </div>
+      <div class="fan-top" id="fan-1"></div>
+      <div class="opp-panel" id="opp-1">
+        <div class="opp-info" id="opp-info-1">9 карт</div>
+      </div>
+    </div>
+
+    <!-- АРИНА — слева -->
+    <div class="p-left">
+      <div class="wallet" id="wallet-2">
+        <div class="wallet-name">Арина</div>
+        <div class="wallet-coins" id="wcoins-2">50</div>
+      </div>
+      <div class="fan-left" id="fan-2"></div>
+      <div class="opp-panel" id="opp-2">
+        <div class="opp-info" id="opp-info-2">9 карт</div>
+      </div>
+    </div>
+
+    <!-- МИХАИЛ — справа -->
+    <div class="p-right">
+      <div class="wallet" id="wallet-3">
+        <div class="wallet-name">Михаил</div>
+        <div class="wallet-coins" id="wcoins-3">50</div>
+      </div>
+      <div class="fan-right" id="fan-3"></div>
+      <div class="opp-panel" id="opp-3">
+        <div class="opp-info" id="opp-info-3">9 карт</div>
+      </div>
+    </div>
+
+    <!-- СТОЛ — центр -->
+    <div class="center-area">
+      <div class="table-suits" id="table-suits"></div>
+    </div>
+
+    <!-- "ВАШ ХОД" всплывашка -->
+    <div class="your-turn-badge" id="your-turn-badge">🃏 Ваш ход!</div>
+
+    <!-- ИГРОК — снизу -->
+    <div class="player-area">
+      <div class="player-top">
+        <div class="pmsg" id="msg-bar">—</div>
+      </div>
+      <div class="hand-fan" id="hand-fan"></div>
+    </div>
+
+    <!-- Кошелёк игрока — справа внизу -->
+    <div class="player-wallet-wrap">
+      <div class="wallet" id="wallet-0">
+        <div class="wallet-name">Игрок</div>
+        <div class="wallet-coins" id="wcoins-0">50</div>
+      </div>
+    </div>
+
+    <!-- КОНЕЦ КРУГА (внутри поля) -->
+    <div class="round-overlay" id="round-overlay"></div>
+  </div><!-- /felt -->
+</div>
+<!-- КОНЕЦ ИГРЫ -->
+<div class="end-overlay" id="end-overlay"></div>
+
+<script>
+var SUITS_DISPLAY=['♠','♣','♦','♥'];
+var SUIT_CODES={'♦':'D','♣':'C','♥':'H','♠':'S'};
+var RANKS=['6','7','8','9','10','J','Q','K','A'];
+var RANK_CODES={'6':'6','7':'7','8':'8','9':'9','10':'0','J':'J','Q':'Q','K':'K','A':'A'};
+var RANK_VAL={'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14};
+var PLAYER_NAMES=['Игрок','Иван','Арина','Михаил'];
+var START_COINS=50,ROUND_FEE=5,PASS_FEE=1;
+var players=[],table={},bank=0,currentPlayer=0,round=0,gameOver=false,aiTimer=null;
+var TURN_ORDER=[0,2,1,3]; // по часовой: Игрок→Арина→Иван→Михаил
+
+function cardImg(r,s){return 'https://deckofcardsapi.com/static/img/'+RANK_CODES[r]+SUIT_CODES[s]+'.png';}
+
+function makeDeck(){
+  var d=[];
+  SUITS_DISPLAY.forEach(function(s){RANKS.forEach(function(r){d.push({rank:r,suit:s});});});
+  for(var i=d.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=d[i];d[i]=d[j];d[j]=t;}
+  return d;
+}
+function initTable(){table={};SUITS_DISPLAY.forEach(function(s){table[s]={low:[],high:[],open:false};});}
+
+function startGame(){
+  clearTimeout(aiTimer);gameOver=false;round=0;
+  players=PLAYER_NAMES.map(function(n,i){return{name:n,coins:START_COINS,hand:[],isHuman:i===0};});
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('game-screen').style.display='flex';
+  document.getElementById('round-overlay').classList.remove('show');
+  document.getElementById('end-overlay').classList.remove('show');
+  startRound();
+}
+
+function startRound(){
+  round++;
+  if(players.some(function(p){return p.coins<=0;})){endGame();return;}
+  bank=0;
+  players.forEach(function(p){var f=Math.min(ROUND_FEE,p.coins);p.coins-=f;bank+=f;});
+  initTable();
+  var deck=makeDeck();
+  players.forEach(function(p){p.hand=[];});
+  for(var i=0;i<36;i++) players[i%4].hand.push(deck[i]);
+  currentPlayer=0;
+  players.forEach(function(p,i){p.hand.forEach(function(c){if(c.suit==='♦'&&c.rank==='9')currentPlayer=i;});});
+  updateUI();
+  setMsg('Раунд '+round+'. Первый ход: '+players[currentPlayer].name,true);
+  scheduleNext();
+}
+
+function canPlay(c){
+  var s=c.suit,rv=RANK_VAL[c.rank];
+  var anyOpen=SUITS_DISPLAY.some(function(su){return table[su].open;});
+  if(!anyOpen) return c.suit==='♦'&&c.rank==='9';
+  if(!table[s].open) return c.rank==='9';
+  var hi=table[s].high.length>0?RANK_VAL[table[s].high[table[s].high.length-1].rank]:9;
+  var lo=table[s].low.length>0?RANK_VAL[table[s].low[table[s].low.length-1].rank]:9;
+  return rv===hi+1||rv===lo-1;
+}
+function getPlayable(pi){var r=[];players[pi].hand.forEach(function(c,i){if(canPlay(c))r.push(i);});return r;}
+
+function playCard(pi,ci){
+  var c=players[pi].hand[ci],s=c.suit;
+  if(c.rank==='9') table[s].open=true;
+  else if(RANK_VAL[c.rank]>9) table[s].high.push(c);
+  else table[s].low.push(c);
+  players[pi].hand.splice(ci,1);
+  if(players[pi].hand.length===0){roundWin(pi);return;}
+  nextTurn();
+}
+
+function passMove(pi){
+  var f=Math.min(PASS_FEE,players[pi].coins);
+  players[pi].coins-=f;bank+=f;
+  setMsg(players[pi].name+' нет хода — пропускает (−'+f+' очко)',false);
+  animateCoin(pi);
+  updateUI();
+  if(players[pi].coins<=0){setTimeout(endGame,1300);return;}
+  nextTurn();
+}
+
+function nextTurn(){
+  var idx=TURN_ORDER.indexOf(currentPlayer);
+  currentPlayer=TURN_ORDER[(idx+1)%4];
+  updateUI();
+  scheduleNext();
+}
+
+function scheduleNext(){
+  if(gameOver)return;
+  setYourTurn(false);
+  if(players[currentPlayer].isHuman){
+    var pl=getPlayable(0);
+    if(pl.length===0){
+      setMsg('Нет хода — пропускаем...',true);
+      aiTimer=setTimeout(function(){passMove(0);},1100);
+    } else {
+      setMsg('',false);
+      setYourTurn(true);
+      renderHand();
+    }
+  } else {
+    aiTimer=setTimeout(aiTurn,700+Math.random()*600);
+  }
+}
+
+function roundWin(pi){
+  setYourTurn(false);
+  var won=bank;
+  players[pi].coins+=bank;
+  bank=0;
+  updateUI();
+  // Звук победы в круге для игрока
+  if(players[pi].isHuman) playSound('round');
+  showRoundOverlay(players[pi].name, won, players[pi].isHuman);
+}
+
+function aiTurn(){
+  if(gameOver)return;
+  var p=currentPlayer,pl=getPlayable(p);
+  if(pl.length===0){passMove(p);return;}
+  var best=pl[0],bs=-1;
+  pl.forEach(function(idx){
+    var c=players[p].hand[idx],sc=0;
+    if(c.rank==='9'&&!table[c.suit].open)sc+=5;
+    if(c.rank==='6'||c.rank==='A')sc+=3;
+    sc+=Math.random();
+    if(sc>bs){bs=sc;best=idx;}
+  });
+  var c=players[p].hand[best];
+  setMsg(players[p].name+' играет '+c.rank+c.suit,false);
+  setTimeout(function(){playCard(p,best);},300);
+}
+
+function humanPlay(ci){
+  if(gameOver||currentPlayer!==0)return;
+  if(!canPlay(players[0].hand[ci]))return;
+  clearTimeout(aiTimer);
+  setYourTurn(false);
+  playCard(0,ci);
+}
+
+function setYourTurn(show){
+  document.getElementById('your-turn-badge').className='your-turn-badge'+(show?' show':'');
+}
+
+// ── ОВЕРЛЕЙ КОНЦА КРУГА ──
+function showRoundOverlay(winnerName, amount, isHuman){
+  var el=document.getElementById('round-overlay');
+  var icon=isHuman?'🎉':'🃏';
+  var who=isHuman?'Победили вы':('Победил '+winnerName);
+  el.innerHTML='<div class="ro-box">'
+    +'<div class="ro-icon">'+icon+'</div>'
+    +'<div class="ro-title">Конец круга</div>'
+    +'<div class="ro-winner">'+who+'</div>'
+    +'<div class="ro-amount">+'+amount+' очков</div>'
+    +'</div>';
+  el.classList.add('show');
+  var broke=players.some(function(p){return p.coins<=0;});
+  setTimeout(function(){
+    el.classList.remove('show');
+    setTimeout(broke?endGame:startRound, 300);
+  }, 2600);
+}
+
+function endGame(){
+  gameOver=true;clearTimeout(aiTimer);setYourTurn(false);
+  var sorted=players.slice().sort(function(a,b){return b.coins-a.coins;});
+  var w=sorted[0],isWin=w.isHuman;
+  // Звук победы в игре
+  if(isWin) playSound('game');
+  // Таблица результатов
+  var h='<tr><th>Игрок</th><th>Очки</th></tr>';
+  sorted.forEach(function(p){
+    h+='<tr'+(p===w?' class="winner"':'')+'><td>'+p.name+(p.isHuman?' (вы)':'')+'</td><td>'+p.coins+'</td></tr>';
+  });
+  document.getElementById('scores-table').innerHTML=h;
+  // Показываем финальный оверлей
+  var el=document.getElementById('end-overlay');
+  el.innerHTML='<div class="eo-box '+(isWin?'eo-win':'eo-lose')+'">'
+    +'<div class="eo-icon">'+(isWin?'🏆':'😔')+'</div>'
+    +'<div class="eo-title">Конец игры</div>'
+    +'<div class="eo-winner">'+(isWin?'Победитель — Вы':'Победитель — '+w.name)+'</div>'
+    +'<div class="eo-coins">'+w.coins+' очков</div>'
+    +'<table class="scores-table" style="margin:1rem 0">'+h+'</table>'
+    +'<div class="win-buttons">'
+    +'<button class="wbtn primary" onclick="startGame()">Ещё раз</button>'
+    +'<button class="wbtn" onclick="showWelcome()">В меню</button>'
+    +'</div></div>';
+  el.classList.add('show');
+}
+
+// ── ЗВУК (Web Audio API) ──
+var audioCtx=null;
+function getAudio(){
+  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playSound(type){
+  try{
+    var ctx=getAudio();
+    if(type==='round'){
+      // Короткий мажорный аккорд — До-Ми-Соль
+      [[261.6,0],[329.6,0.05],[392,0.1]].forEach(function(pair){
+        var osc=ctx.createOscillator();
+        var gain=ctx.createGain();
+        osc.connect(gain);gain.connect(ctx.destination);
+        osc.type='triangle';
+        osc.frequency.value=pair[0];
+        gain.gain.setValueAtTime(0,ctx.currentTime+pair[1]);
+        gain.gain.linearRampToValueAtTime(0.22,ctx.currentTime+pair[1]+0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+pair[1]+0.7);
+        osc.start(ctx.currentTime+pair[1]);
+        osc.stop(ctx.currentTime+pair[1]+0.7);
+      });
+    } else if(type==='game'){
+      // Торжественные фанфары — восходящая мелодия + аккорд
+      var fanfare=[
+        [523.2,0,0.12],    // До
+        [659.3,0.13,0.12], // Ми
+        [784,0.26,0.12],   // Соль
+        [1046.5,0.39,0.3], // До (высокое)
+        // финальный аккорд
+        [523.2,0.72,0.6],
+        [659.3,0.72,0.6],
+        [784,0.72,0.6],
+        [1046.5,0.72,0.6]
+      ];
+      fanfare.forEach(function(n){
+        var osc=ctx.createOscillator();
+        var gain=ctx.createGain();
+        osc.connect(gain);gain.connect(ctx.destination);
+        osc.type='triangle';
+        osc.frequency.value=n[0];
+        gain.gain.setValueAtTime(0,ctx.currentTime+n[1]);
+        gain.gain.linearRampToValueAtTime(0.2,ctx.currentTime+n[1]+0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+n[1]+n[2]);
+        osc.start(ctx.currentTime+n[1]);
+        osc.stop(ctx.currentTime+n[1]+n[2]+0.05);
+      });
+    }
+  }catch(e){}
+}
+
+/* ── ОТРИСОВКА ── */
+function updateUI(){
+  document.getElementById('round-val').textContent=round;
+  document.getElementById('turn-val').textContent=players[currentPlayer].name;
+  document.getElementById('bank-val').textContent=bank;
+
+  // Кошельки всех игроков
+  players.forEach(function(p,i){
+    var wEl=document.getElementById('wallet-'+i);
+    document.getElementById('wcoins-'+i).textContent=p.coins;
+    if(wEl) wEl.className='wallet'+(i===currentPlayer?' active-w':'');
+  });
+
+  // Соперники — панель + веер
+  [1,2,3].forEach(function(i){
+    var p=players[i];
+    document.getElementById('opp-'+i).className='opp-panel'+(i===currentPlayer?' active':'');
+    document.getElementById('opp-info-'+i).textContent=p.hand.length+' карт';
+    renderFan(i,p.hand.length);
+  });
+
+  renderTable();
+  renderHand();
+}
+
+function renderFan(idx,n){
+  var el=document.getElementById('fan-'+idx);
+  if(!el||n===0){if(el)el.innerHTML='';return;}
+  var cards=Math.min(n,9);
+  var bw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bw'))||44;
+  var bh=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bh'))||62;
+  var html='';
+
+  if(idx===1){
+    // Иван — горизонтальный веер
+    var spread=Math.min(cards*18,160);
+    var step=cards>1?spread/(cards-1):0;
+    var aRange=Math.min(cards*3,22);
+    var aStep=cards>1?(aRange*2)/(cards-1):0;
+    el.style.cssText='position:relative;height:'+(bh+20)+'px;width:'+(spread+bw+10)+'px';
+    for(var k=0;k<cards;k++){
+      var x=k*step;
+      var a=-aRange+k*aStep;
+      html+='<div class="back-card" style="position:absolute;width:'+bw+'px;height:'+bh+'px;left:'+x+'px;bottom:0;transform:rotate('+a+'deg);z-index:'+k+'"></div>';
+    }
+  } else if(idx===2){
+    // Арина — вертикальный веер
+    var spread2=Math.min(cards*18,160);
+    var step2=cards>1?spread2/(cards-1):0;
+    var aRange2=Math.min(cards*3,22);
+    var aStep2=cards>1?(aRange2*2)/(cards-1):0;
+    el.style.cssText='position:relative;width:'+(bw+20)+'px;height:'+(spread2+bh+10)+'px';
+    for(var k=0;k<cards;k++){
+      var y=k*step2;
+      var a=-aRange2+k*aStep2;
+      html+='<div class="back-card" style="position:absolute;width:'+bw+'px;height:'+bh+'px;top:'+y+'px;right:0;transform:rotate('+a+'deg);z-index:'+k+'"></div>';
+    }
+  } else if(idx===3){
+    // Михаил — вертикальный веер (зеркальный)
+    var spread3=Math.min(cards*18,160);
+    var step3=cards>1?spread3/(cards-1):0;
+    var aRange3=Math.min(cards*3,22);
+    var aStep3=cards>1?(aRange3*2)/(cards-1):0;
+    el.style.cssText='position:relative;width:'+(bw+20)+'px;height:'+(spread3+bh+10)+'px';
+    for(var k=0;k<cards;k++){
+      var y=k*step3;
+      var a=aRange3-k*aStep3;
+      html+='<div class="back-card" style="position:absolute;width:'+bw+'px;height:'+bh+'px;top:'+y+'px;left:0;transform:rotate('+a+'deg);z-index:'+k+'"></div>';
+    }
+  }
+  el.innerHTML=html;
+}
+
+function renderTable(){
+  // Порядок на экране сверху вниз: ♥ ♦ ♣ ♠
+  var displayOrder=['♥','♦','♣','♠'];
+
+  // Фиксированная карта для каждого ранга и масти
+  // Позиции: 0=6, 1=7, 2=8, 3=9(pivot), 4=10, 5=J, 6=Q, 7=K, 8=A
+  // Низ выкладывается справа налево от 9: 8 в позицию 2, 7 в позицию 1, 6 в позицию 0
+  var LOW_RANKS  = ['6','7','8'];       // индексы 0,1,2
+  var HIGH_RANKS = ['10','J','Q','K','A']; // индексы 4,5,6,7,8
+  var SLOT_HINTS = ['6','7','8','9','10','J','Q','K','A'];
+
+  // Строим карту rank→карта для каждой масти
+  var html='';
+  displayOrder.forEach(function(suit){
+    // Собираем что лежит на столе для этой масти
+    var placed={};
+    if(table[suit].open) placed['9']={rank:'9',suit:suit};
+    table[suit].low.forEach(function(c){ placed[c.rank]=c; });
+    table[suit].high.forEach(function(c){ placed[c.rank]=c; });
+
+    html+='<div class="suit-row"><div class="suit-sym">'+suit+'</div><div class="suit-slots">';
+
+    SLOT_HINTS.forEach(function(rank,i){
+      var card=placed[rank];
+      var isPivot=(rank==='9');
+      if(card){
+        html+='<div class="t-card"><img src="'+cardImg(card.rank,card.suit)+'" loading="lazy"/></div>';
+      } else {
+        var hint='<span style="font-size:.55rem;color:rgba(255,255,255,.15)">'+(isPivot?'<span style="font-size:.75rem;color:rgba(212,160,23,.6);font-weight:700">9</span>':rank)+'</span>';
+        html+='<div class="t-slot'+(isPivot?' pivot':'')+'" style="display:flex;align-items:center;justify-content:center">'+hint+'</div>';
+      }
+    });
+
+    html+='</div></div>';
+  });
+  document.getElementById('table-suits').innerHTML=html;
+}
+
+function renderHand(){
+  // Сортируем руку: ♠→♣→♦→♥, внутри масти 6→...→A
+  var SUIT_ORDER={'♠':0,'♣':1,'♦':2,'♥':3};
+  players[0].hand.sort(function(a,b){
+    var sd=SUIT_ORDER[a.suit]-SUIT_ORDER[b.suit];
+    if(sd!==0) return sd;
+    return RANK_VAL[a.rank]-RANK_VAL[b.rank];
+  });
+  var pl=currentPlayer===0?getPlayable(0):[];
+  var hand=players[0].hand;
+  var n=hand.length;
+  var fanEl=document.getElementById('hand-fan');
+  if(n===0){fanEl.innerHTML='';return;}
+
+  var hw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hw'))||108;
+  var maxSpread=Math.min(n*50,Math.max(600, window.innerWidth-300));
+  var step=n>1?maxSpread/(n-1):0;
+  var maxAngle=Math.min(n*2,18);
+  var angleStep=n>1?(maxAngle*2)/(n-1):0;
+
+  fanEl.style.width=(maxSpread+hw+20)+'px';
+  fanEl.style.margin='0 auto';
+
+  var html='';
+  hand.forEach(function(c,i){
+    var ok=pl.indexOf(i)>=0;
+    var x=-maxSpread/2+i*step;
+    var angle=-maxAngle+i*angleStep;
+    html+='<div class="h-card'+(ok?' playable':'')+'"'
+      +' style="left:calc(50% + '+x+'px - '+hw/2+'px);transform:rotate('+angle+'deg);z-index:'+(i+1)+'"'
+      +' onclick="humanPlay('+i+')">'
+      +'<img src="'+cardImg(c.rank,c.suit)+'" loading="lazy"/>'
+      +'</div>';
+  });
+  fanEl.innerHTML=html;
+}
+
+function animateCoin(fromPlayerIdx){
+  var felt=document.getElementById('felt');
+  var bankEl=document.getElementById('bank-val');
+  var bankRect=bankEl.getBoundingClientRect();
+  var feltRect=felt.getBoundingClientRect();
+  var startX,startY;
+  if(fromPlayerIdx===0){startX=feltRect.width/2;startY=feltRect.height-100;}
+  else if(fromPlayerIdx===1){startX=feltRect.width/2;startY=70;}
+  else if(fromPlayerIdx===2){startX=90;startY=feltRect.height/2;}
+  else{startX=feltRect.width-90;startY=feltRect.height/2;}
+  var endX=bankRect.left-feltRect.left+bankRect.width/2;
+  var endY=bankRect.top-feltRect.top+bankRect.height/2;
+  var coin=document.createElement('div');
+  coin.className='coin-anim';
+  coin.textContent='🪙';
+  coin.style.cssText='left:'+startX+'px;top:'+startY+'px';
+  coin.style.setProperty('--tx',(endX-startX)+'px');
+  coin.style.setProperty('--ty',(endY-startY)+'px');
+  felt.appendChild(coin);
+  setTimeout(function(){if(coin.parentNode)coin.parentNode.removeChild(coin);},950);
+}
+
+function setMsg(t,hl){
+  var el=document.getElementById('msg-bar');
+  el.textContent=t;el.className='pmsg'+(hl?' hl':'');
+}
+function showWelcome(){
+  clearTimeout(aiTimer);gameOver=true;setYourTurn(false);
+  document.getElementById('welcome').style.display='flex';
+  document.getElementById('game-screen').style.display='none';
+  document.getElementById('round-overlay').classList.remove('show');
+  document.getElementById('end-overlay').classList.remove('show');
+}
+function toggleRules(){
+  var b=document.getElementById('rules-box');
+  b.style.display=b.style.display==='block'?'none':'block';
+}
+</script>
+</body>
+</html>
