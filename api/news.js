@@ -42,7 +42,11 @@ module.exports = async function handler(req, res) {
       news = await r2.json();
     }
 
-    res.setHeader('Cache-Control', 'public, max-age=300');
+    if (req.query.status) {
+      res.setHeader('Cache-Control', 'no-store');
+    } else {
+      res.setHeader('Cache-Control', 'public, max-age=60');
+    }
     return res.status(200).json(news || []);
   } catch (err) {
     return res.status(500).json({ error: err.message });
