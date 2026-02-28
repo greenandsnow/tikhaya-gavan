@@ -224,6 +224,17 @@
       color: var(--sea); cursor: pointer; transition: all .2s; white-space: nowrap;
     }
     .btn-add-source:hover { background: var(--sea); color: white; }
+    .order-btns { display: flex; flex-direction: column; gap: .2rem; flex-shrink: 0; margin-left: .25rem; }
+    .btn-order {
+      width: 28px; height: 28px; border: 1.5px solid var(--sand-dark); border-radius: 6px;
+      background: var(--white); font-size: .75rem; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; transition: all .15s; color: var(--stone);
+      padding: 0;
+    }
+    .btn-order:hover { background: var(--sea); border-color: var(--sea); color: white; }
+    .btn-order:disabled { opacity: .25; cursor: not-allowed; }
+    .draft-card-wrap { display: flex; align-items: flex-start; gap: .5rem; margin-bottom: 1rem; }
+    .draft-card-wrap .draft-card { flex: 1; margin-bottom: 0; }
   </style>
 </head>
 <body>
@@ -420,6 +431,29 @@ function renderCard(n, mode) {
     }
   }
 
+  var orderBtns = '';
+  if (mode === 'published') {
+    orderBtns =
+      '<div class="order-btns">' +
+        '<button class="btn-order" title="Поднять" onclick="moveCard(\'' + n.id + '\', -1)">▲</button>' +
+        '<button class="btn-order" title="Опустить" onclick="moveCard(\'' + n.id + '\', 1)">▼</button>' +
+      '</div>';
+    return (
+      '<div class="draft-card-wrap" id="wrap-' + n.id + '">' +
+        orderBtns +
+        '<div class="draft-card" id="card-' + n.id + '">' +
+          '<div class="draft-header">' +
+            '<div class="draft-headline">' + esc(n.headline) + '</div>' +
+            '<span class="draft-tag">' + esc(n.topic_tag) + '</span>' +
+          '</div>' +
+          '<div class="draft-summary">' + esc(n.summary) + '</div>' +
+          '<div class="draft-sources">' + srcHtml + '</div>' +
+          '<div class="draft-actions" id="actions-' + n.id + '">' + topActions + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
   return (
     '<div class="draft-card" id="card-' + n.id + '">' +
       '<div class="draft-header">' +
@@ -595,6 +629,50 @@ async function replaceSource(newsId, perspective) {
   }
 }
 // ══════════════════════════════════════════
+
+// ── Изменение порядка тем ──
+
+async function moveCard(id, direction) {
+  var idx = -1;
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].id === id) { idx = i; break; }
+  }
+  if (idx === -1) return;
+
+  var newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= items.length) return;
+
+  // Меняем местами в массиве
+  var tmp = items[idx];
+  items[idx] = items[newIdx];
+  items[newIdx] = tmp;
+
+  // Назначаем sort_order по позиции
+  var updates = [];
+  for (var j = 0; j < items.length; j++) {
+    updates.push({ id: items[j].id, sort_order: j + 1 });
+  }
+
+  // Визуально перемещаем враппер
+  var list = document.getElementById('items-list');
+  var wrapA = document.getElementById('wrap-' + id);
+  var wrapB = document.getElementById('wrap-' + items[idx].id);
+  if (wrapA && wrapB) {
+    if (direction < 0) {
+      list.insertBefore(wrapA, wrapB);
+    } else {
+      list.insertBefore(wrapB, wrapA);
+    }
+  }
+
+  // Сохраняем в базу
+  var res = await adminAction('reorder', null, { updates: updates });
+  if (!res || !res.ok) {
+    showAlert('Ошибка сохранения порядка', '⚠️');
+    setTimeout(loadCurrentTab, 300);
+  }
+}
+
 // ДОБАВЛЕНИЕ ТЕМЫ И ССЫЛКИ
 // ══════════════════════════════════════════
 

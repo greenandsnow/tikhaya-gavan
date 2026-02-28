@@ -249,6 +249,12 @@ async function loadNews(date) {
     var r = await fetch(url);
     newsData = await r.json();
     if (!Array.isArray(newsData)) newsData = [];
+    // Сортируем по sort_order (0 = не задан, идёт в конец)
+    newsData.sort(function(a, b) {
+      var ao = (a.sort_order && a.sort_order > 0) ? a.sort_order : 9999;
+      var bo = (b.sort_order && b.sort_order > 0) ? b.sort_order : 9999;
+      return ao - bo;
+    });
     // Обновим отображаемую дату из реальных данных
     if (newsData.length > 0 && newsData[0].date && date === today) {
       // Не меняем отображаемую дату — показываем локальную
