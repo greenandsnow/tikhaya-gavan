@@ -639,11 +639,9 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'updates array required' });
       }
 
-      var allOk = true;
-      for (var ui = 0; ui < updates.length; ui++) {
-        var upd = updates[ui];
-        if (!upd.id) continue;
-        var ur = await fetch(supabaseUrl + '/rest/v1/news?id=eq.' + upd.id, {
+      // Обновляем параллельно — быстрее и надёжнее
+      var promises = updates.filter(function(u) { return u.id; }).map(function(upd) {
+        return fetch(supabaseUrl + '/rest/v1/news?id=eq.' + upd.id, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -653,7 +651,13 @@ module.exports = async function handler(req, res) {
           },
           body: JSON.stringify({ sort_order: upd.sort_order })
         });
-        if (!ur.ok) allOk = false;
+      });
+
+      var results = await Promise.all(promises);
+      var allOk = results.every(function(r) { return r.ok; });
+
+      if (!allOk) {
+        console.error('reorder: some updates failed', results.map(function(r){ return r.status; }));
       }
 
       return res.status(200).json({ ok: allOk, action: 'reordered', count: updates.length });
