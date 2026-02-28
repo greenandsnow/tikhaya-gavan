@@ -668,8 +668,10 @@ async function moveCard(id, direction) {
   // Сохраняем в базу
   var res = await adminAction('reorder', null, { updates: updates });
   if (!res || !res.ok) {
-    showAlert('Ошибка сохранения порядка', '⚠️');
+    showAlert('Ошибка сохранения порядка. Ответ: ' + JSON.stringify(res), '⚠️');
     setTimeout(loadCurrentTab, 300);
+  } else {
+    toast('Порядок сохранён ✓');
   }
 }
 
