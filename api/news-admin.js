@@ -542,6 +542,96 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: true, feeds: results });
     }
 
+    // ── Добавить новую тему вручную ──
+    if (action === 'add_topic') {
+      var atHeadline = (body.headline || '').trim();
+      var atSummary = (body.summary || '').trim();
+      var atTag = (body.topic_tag || 'мир').trim();
+      var atDate = body.date || new Date().toISOString().split('T')[0];
+
+      if (!atHeadline || !atSummary) {
+        return res.status(400).json({ error: 'headline и summary обязательны' });
+      }
+
+      var atPerspectives = ['west', 'ukraine', 'russia', 'china'];
+      var atSources = [];
+      for (var pi = 0; pi < atPerspectives.length; pi++) {
+        var p = atPerspectives[pi];
+        var srcTitle = (body['src_title_' + p] || '').trim();
+        var srcUrl = (body['src_url_' + p] || '').trim();
+        if (srcTitle && srcUrl) {
+          atSources.push({
+            perspective: p,
+            name: (body['src_name_' + p] || p).trim(),
+            title: srcTitle,
+            excerpt: (body['src_comment_' + p] || '').trim(),
+            url: srcUrl,
+            hidden: false
+          });
+        }
+      }
+
+      var atInsertResp = await fetch(supabaseUrl + '/rest/v1/news', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': serviceKey,
+          'Authorization': 'Bearer ' + serviceKey,
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          headline: atHeadline,
+          summary: atSummary,
+          topic_tag: atTag,
+          date: atDate,
+          sources: atSources,
+          status: 'published'
+        })
+      });
+
+      var atData = await atInsertResp.json();
+      return res.status(200).json({ ok: atInsertResp.ok, action: 'topic_added', data: atData });
+    }
+
+    // ── Добавить ссылку к существующей теме ──
+    if (action === 'add_source') {
+      if (!id) return res.status(400).json({ error: 'id required' });
+
+      var asPerspective = (body.perspective || 'west').trim();
+      var asTitle = (body.src_title || '').trim();
+      var asUrl = (body.src_url || '').trim();
+
+      if (!asTitle || !asUrl) {
+        return res.status(400).json({ error: 'src_title и src_url обязательны' });
+      }
+
+      var asItem = await getNewsItem(id);
+      if (!asItem) return res.status(404).json({ error: 'News item not found' });
+
+      var asSources = asItem.sources || [];
+
+      // Если такой perspective уже есть — добавляем с суффиксом _extra
+      var finalPerspective = asPerspective;
+      var counter = 1;
+      while (asSources.some(function(s) { return s.perspective === finalPerspective; })) {
+        finalPerspective = asPerspective + '_extra' + (counter > 1 ? counter : '');
+        counter++;
+      }
+
+      asSources.push({
+        perspective: finalPerspective,
+        name: (body.src_name || asPerspective).trim(),
+        title: asTitle,
+        excerpt: (body.src_comment || '').trim(),
+        url: asUrl,
+        hidden: false,
+        manual: true
+      });
+
+      var asOk = await updateSources(id, asSources);
+      return res.status(200).json({ ok: asOk, action: 'source_added', perspective: finalPerspective });
+    }
+
     return res.status(400).json({ error: 'Unknown action' });
   } catch (err) {
     return res.status(500).json({ error: err.message });
