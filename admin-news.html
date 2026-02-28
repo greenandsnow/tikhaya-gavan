@@ -156,6 +156,74 @@
       transition: opacity .2s;
     }
     .alert-ok:hover { opacity: .85; }
+
+    /* ── Модальные окна добавления темы / источника ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(42,37,32,0.55);
+      backdrop-filter: blur(3px); z-index: 1100;
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: var(--white); border-radius: 14px; padding: 2rem;
+      max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25); animation: alertIn .25s ease;
+    }
+    .modal-box h3 { margin: 0 0 1.2rem; font-size: 1.1rem; color: var(--ink); }
+    .modal-field { margin-bottom: 1rem; }
+    .modal-field label {
+      display: block; font-size: .8rem; font-weight: 600;
+      color: var(--stone); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .35rem;
+    }
+    .modal-field input, .modal-field textarea, .modal-field select {
+      width: 100%; box-sizing: border-box;
+      padding: .55rem .75rem; border: 1.5px solid var(--sand-dark); border-radius: 8px;
+      font-family: 'Jost', sans-serif; font-size: .9rem; color: var(--ink);
+      background: var(--sand); transition: border-color .2s;
+    }
+    .modal-field input:focus, .modal-field textarea:focus, .modal-field select:focus {
+      outline: none; border-color: var(--sea);
+    }
+    .modal-field textarea { resize: vertical; min-height: 80px; }
+    .modal-source-block {
+      border: 1.5px solid var(--sand-dark); border-radius: 10px;
+      padding: 1rem; margin-bottom: .75rem; background: var(--sand);
+    }
+    .modal-source-block summary {
+      cursor: pointer; font-weight: 600; font-size: .9rem; color: var(--ink);
+      list-style: none; display: flex; align-items: center; gap: .5rem; user-select: none;
+    }
+    .modal-source-block summary::-webkit-details-marker { display: none; }
+    .modal-source-block summary::before { content: '▸'; color: var(--stone); font-size: .8rem; }
+    .modal-source-block[open] summary::before { content: '▾'; }
+    .modal-source-inner { margin-top: .75rem; }
+    .modal-hint { font-size: .82rem; color: var(--stone); margin: .5rem 0 1rem; line-height: 1.5; }
+    .modal-btns { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; flex-wrap: wrap; }
+    .btn-cancel {
+      padding: .55rem 1.4rem; background: transparent; border: 1.5px solid var(--sand-dark);
+      border-radius: 8px; font-family: 'Jost', sans-serif; font-size: .9rem;
+      cursor: pointer; color: var(--stone); transition: border-color .2s;
+    }
+    .btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
+    .btn-save {
+      padding: .55rem 1.8rem; background: var(--sea); color: white; border: none;
+      border-radius: 8px; font-family: 'Jost', sans-serif; font-size: .9rem;
+      font-weight: 600; cursor: pointer; transition: opacity .2s;
+    }
+    .btn-save:hover { opacity: .85; }
+    .btn-save:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-add-topic {
+      padding: .45rem 1rem; background: var(--sea); color: white; border: none;
+      border-radius: 6px; font-family: 'Jost', sans-serif; font-size: .8rem;
+      font-weight: 500; cursor: pointer; transition: opacity .2s;
+    }
+    .btn-add-topic:hover { opacity: .85; }
+    .btn-add-source {
+      padding: .25rem .6rem; background: transparent; border: 1.5px solid var(--sea);
+      border-radius: 6px; font-family: 'Jost', sans-serif; font-size: .7rem;
+      color: var(--sea); cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .btn-add-source:hover { background: var(--sea); color: white; }
   </style>
 </head>
 <body>
@@ -186,6 +254,7 @@
         <input type="date" id="date-picker" onchange="loadCurrentTab()" />
         <button class="btn btn-sea" onclick="loadCurrentTab()">Загрузить</button>
         <button class="btn btn-orange" id="fetch-btn" onclick="runFetch()">📡 Собрать новости</button>
+        <button class="btn-add-topic" onclick="showAddTopicModal()">✏️ Добавить тему</button>
       </div>
       <div style="display:flex;gap:.5rem;align-items:center">
         <span class="stats" id="stats-text"></span>
@@ -330,6 +399,8 @@ function renderCard(n, mode) {
     }
   }
 
+  var addSourceBtn = '<button class="btn-add-source" onclick="showAddSourceModal(\'' + n.id + '\')">🔗 Добавить ссылку</button>';
+
   var topActions = '';
   if (mode === 'draft') {
     topActions =
@@ -339,11 +410,13 @@ function renderCard(n, mode) {
     var isWar = (n.headline || '').indexOf('Война в Украине') !== -1;
     if (isWar) {
       topActions =
-        '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Обновить статьи</button>';
+        '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Обновить статьи</button>' +
+        addSourceBtn;
     } else {
       topActions =
         '<button class="btn btn-outline" onclick="hideOne(\'' + n.id + '\')">👁 Скрыть тему</button>' +
-        '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Заменить тему</button>';
+        '<button class="btn btn-orange" id="replace-btn-' + n.id + '" onclick="replaceOne(\'' + n.id + '\')">🔄 Заменить тему</button>' +
+        addSourceBtn;
     }
   }
 
@@ -522,5 +595,112 @@ async function replaceSource(newsId, perspective) {
   }
 }
 </script>
+
+<!-- МОДАЛЬНОЕ ОКНО: Добавить тему -->
+<div class="modal-overlay" id="modal-add-topic">
+  <div class="modal-box">
+    <h3>✏️ Добавить тему вручную</h3>
+    <div class="modal-field">
+      <label>Заголовок темы *</label>
+      <input type="text" id="at-headline" placeholder="Например: Операция Epic Fury" />
+    </div>
+    <div class="modal-field">
+      <label>Краткое описание (summary) *</label>
+      <textarea id="at-summary" placeholder="2–3 предложения о теме..."></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Тег темы</label>
+      <select id="at-tag">
+        <option value="война">⚔️ война</option>
+        <option value="конфликт">⚡ конфликт</option>
+        <option value="политика">🏛️ политика</option>
+        <option value="дипломатия">🤝 дипломатия</option>
+        <option value="экономика">📉 экономика</option>
+        <option value="общество">👥 общество</option>
+        <option value="мир" selected>🌍 мир</option>
+        <option value="спорт">⚽ спорт</option>
+      </select>
+    </div>
+    <p class="modal-hint">Источники необязательны — раскройте нужные лагери и заполните ссылки. Пустые не сохраняются.</p>
+    <details class="modal-source-block">
+      <summary>🌐 Запад</summary>
+      <div class="modal-source-inner">
+        <div class="modal-field"><label>Название СМИ</label><input type="text" id="at-west-name" placeholder="BBC Russian, DW и т.д." /></div>
+        <div class="modal-field"><label>Заголовок статьи</label><input type="text" id="at-west-title" /></div>
+        <div class="modal-field"><label>Ссылка</label><input type="url" id="at-west-url" placeholder="https://..." /></div>
+        <div class="modal-field"><label>Краткий комментарий</label><input type="text" id="at-west-comment" placeholder="Необязательно" /></div>
+      </div>
+    </details>
+    <details class="modal-source-block">
+      <summary>🇺🇦 Украина</summary>
+      <div class="modal-source-inner">
+        <div class="modal-field"><label>Название СМИ</label><input type="text" id="at-ukraine-name" placeholder="УНІАН, НВ и т.д." /></div>
+        <div class="modal-field"><label>Заголовок статьи</label><input type="text" id="at-ukraine-title" /></div>
+        <div class="modal-field"><label>Ссылка</label><input type="url" id="at-ukraine-url" placeholder="https://..." /></div>
+        <div class="modal-field"><label>Краткий комментарий</label><input type="text" id="at-ukraine-comment" placeholder="Необязательно" /></div>
+      </div>
+    </details>
+    <details class="modal-source-block">
+      <summary>🇷🇺 Россия</summary>
+      <div class="modal-source-inner">
+        <div class="modal-field"><label>Название СМИ</label><input type="text" id="at-russia-name" placeholder="ТАСС, РИА и т.д." /></div>
+        <div class="modal-field"><label>Заголовок статьи</label><input type="text" id="at-russia-title" /></div>
+        <div class="modal-field"><label>Ссылка</label><input type="url" id="at-russia-url" placeholder="https://..." /></div>
+        <div class="modal-field"><label>Краткий комментарий</label><input type="text" id="at-russia-comment" placeholder="Необязательно" /></div>
+      </div>
+    </details>
+    <details class="modal-source-block">
+      <summary>🌏 Глобальный юг</summary>
+      <div class="modal-source-inner">
+        <div class="modal-field"><label>Название СМИ</label><input type="text" id="at-china-name" placeholder="Синьхуа, Al Jazeera и т.д." /></div>
+        <div class="modal-field"><label>Заголовок статьи</label><input type="text" id="at-china-title" /></div>
+        <div class="modal-field"><label>Ссылка</label><input type="url" id="at-china-url" placeholder="https://..." /></div>
+        <div class="modal-field"><label>Краткий комментарий</label><input type="text" id="at-china-comment" placeholder="Необязательно" /></div>
+      </div>
+    </details>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('modal-add-topic')">Отмена</button>
+      <button class="btn-save" id="at-save-btn" onclick="submitAddTopic()">Опубликовать тему</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО: Добавить ссылку к теме -->
+<div class="modal-overlay" id="modal-add-source">
+  <div class="modal-box" style="max-width:440px">
+    <h3>🔗 Добавить ссылку к теме</h3>
+    <input type="hidden" id="as-news-id" />
+    <div class="modal-field">
+      <label>Лагерь</label>
+      <select id="as-perspective">
+        <option value="west">🌐 Запад</option>
+        <option value="ukraine">🇺🇦 Украина</option>
+        <option value="russia">🇷🇺 Россия</option>
+        <option value="china">🌏 Глобальный юг</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Название СМИ</label>
+      <input type="text" id="as-name" placeholder="Например: Reuters" />
+    </div>
+    <div class="modal-field">
+      <label>Заголовок статьи *</label>
+      <input type="text" id="as-title" placeholder="Заголовок статьи" />
+    </div>
+    <div class="modal-field">
+      <label>Ссылка *</label>
+      <input type="url" id="as-url" placeholder="https://..." />
+    </div>
+    <div class="modal-field">
+      <label>Краткий комментарий</label>
+      <input type="text" id="as-comment" placeholder="Необязательно — ваш краткий комментарий" />
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('modal-add-source')">Отмена</button>
+      <button class="btn-save" id="as-save-btn" onclick="submitAddSource()">Добавить</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
