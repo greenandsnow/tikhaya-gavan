@@ -17,7 +17,7 @@ module.exports = async function handler(req, res) {
     // Используем service key для всех запросов (обходит RLS)
     var key = serviceKey;
 
-    var url = supabaseUrl + '/rest/v1/news?date=eq.' + date + '&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,created_at';
+    var url = supabaseUrl + '/rest/v1/news?date=eq.' + date + '&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,sort_order,created_at';
     if (status === 'draft' || status === 'hidden' || status === 'published') {
       url += '&status=eq.' + status;
     } else {
@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
       var yDate = yesterday.toISOString().split('T')[0];
 
       var r2 = await fetch(
-        supabaseUrl + '/rest/v1/news?date=eq.' + yDate + '&status=eq.published&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,created_at',
+        supabaseUrl + '/rest/v1/news?date=eq.' + yDate + '&status=eq.published&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,sort_order,created_at',
         { headers: { 'apikey': key, 'Authorization': 'Bearer ' + key } }
       );
       news = await r2.json();
