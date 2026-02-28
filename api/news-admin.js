@@ -632,6 +632,33 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ ok: asOk, action: 'source_added', perspective: finalPerspective });
     }
 
+    // ── Изменить порядок тем ──
+    if (action === 'reorder') {
+      var updates = body.updates || [];
+      if (!Array.isArray(updates) || updates.length === 0) {
+        return res.status(400).json({ error: 'updates array required' });
+      }
+
+      var allOk = true;
+      for (var ui = 0; ui < updates.length; ui++) {
+        var upd = updates[ui];
+        if (!upd.id) continue;
+        var ur = await fetch(supabaseUrl + '/rest/v1/news?id=eq.' + upd.id, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': serviceKey,
+            'Authorization': 'Bearer ' + serviceKey,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ sort_order: upd.sort_order })
+        });
+        if (!ur.ok) allOk = false;
+      }
+
+      return res.status(200).json({ ok: allOk, action: 'reordered', count: updates.length });
+    }
+
     return res.status(400).json({ error: 'Unknown action' });
   } catch (err) {
     return res.status(500).json({ error: err.message });
