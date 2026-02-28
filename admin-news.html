@@ -594,10 +594,144 @@ async function replaceSource(newsId, perspective) {
     if (btn) btn.innerHTML = '🔄 Заменить';
   }
 }
+// ══════════════════════════════════════════
+// ДОБАВЛЕНИЕ ТЕМЫ И ССЫЛКИ
+// ══════════════════════════════════════════
+
+function openModal(id) {
+  document.getElementById(id).classList.add('show');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+// Закрывать по клику на фон — через onclick на самом overlay (надёжнее)
+
+// ── Добавить тему ──
+
+function showAddTopicModal() {
+  document.getElementById('at-headline').value = '';
+  document.getElementById('at-summary').value = '';
+  document.getElementById('at-tag').value = 'мир';
+  ['west','ukraine','russia','china'].forEach(function(p) {
+    ['name','title','url','comment'].forEach(function(f) {
+      var el = document.getElementById('at-' + p + '-' + f);
+      if (el) el.value = '';
+    });
+  });
+  document.querySelectorAll('#modal-add-topic details').forEach(function(d) { d.removeAttribute('open'); });
+  openModal('modal-add-topic');
+}
+
+async function submitAddTopic() {
+  var headline = document.getElementById('at-headline').value.trim();
+  var summary = document.getElementById('at-summary').value.trim();
+  if (!headline || !summary) {
+    showAlert('Заполните заголовок и описание темы.', '⚠️');
+    return;
+  }
+
+  var btn = document.getElementById('at-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Сохраняем...';
+
+  var payload = {
+    action: 'add_topic',
+    password: adminPassword,
+    headline: headline,
+    summary: summary,
+    topic_tag: document.getElementById('at-tag').value,
+    date: currentDate
+  };
+
+  ['west','ukraine','russia','china'].forEach(function(p) {
+    payload['src_name_' + p] = document.getElementById('at-' + p + '-name').value.trim();
+    payload['src_title_' + p] = document.getElementById('at-' + p + '-title').value.trim();
+    payload['src_url_' + p] = document.getElementById('at-' + p + '-url').value.trim();
+    payload['src_comment_' + p] = document.getElementById('at-' + p + '-comment').value.trim();
+  });
+
+  try {
+    var r = await fetch('/api/news-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var result = await r.json();
+    if (result && result.ok) {
+      closeModal('modal-add-topic');
+      showAlert('Тема опубликована ✓', '✅');
+      setTimeout(loadCurrentTab, 500);
+    } else {
+      showAlert((result && result.error) || 'Ошибка сохранения', '⚠️');
+    }
+  } catch (e) {
+    showAlert('Ошибка: ' + e.message, '⚠️');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Опубликовать тему';
+}
+
+// ── Добавить ссылку к теме ──
+
+function showAddSourceModal(newsId) {
+  document.getElementById('as-news-id').value = newsId;
+  ['name','title','url','comment'].forEach(function(f) {
+    document.getElementById('as-' + f).value = '';
+  });
+  document.getElementById('as-perspective').value = 'west';
+  openModal('modal-add-source');
+}
+
+async function submitAddSource() {
+  var newsId = document.getElementById('as-news-id').value;
+  var title = document.getElementById('as-title').value.trim();
+  var url = document.getElementById('as-url').value.trim();
+  if (!title || !url) {
+    showAlert('Заполните заголовок и ссылку.', '⚠️');
+    return;
+  }
+
+  var btn = document.getElementById('as-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Добавляем...';
+
+  try {
+    var r = await fetch('/api/news-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'add_source',
+        password: adminPassword,
+        id: newsId,
+        perspective: document.getElementById('as-perspective').value,
+        src_name: document.getElementById('as-name').value.trim(),
+        src_title: title,
+        src_url: url,
+        src_comment: document.getElementById('as-comment').value.trim()
+      })
+    });
+    var result = await r.json();
+    if (result && result.ok) {
+      closeModal('modal-add-source');
+      showAlert('Ссылка добавлена ✓', '✅');
+      setTimeout(loadCurrentTab, 500);
+    } else {
+      showAlert((result && result.error) || 'Ошибка добавления', '⚠️');
+    }
+  } catch (e) {
+    showAlert('Ошибка: ' + e.message, '⚠️');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Добавить';
+}
+
 </script>
 
 <!-- МОДАЛЬНОЕ ОКНО: Добавить тему -->
-<div class="modal-overlay" id="modal-add-topic">
+<div class="modal-overlay" id="modal-add-topic" onclick="if(event.target===this)closeModal('modal-add-topic')">
   <div class="modal-box">
     <h3>✏️ Добавить тему вручную</h3>
     <div class="modal-field">
@@ -666,7 +800,7 @@ async function replaceSource(newsId, perspective) {
 </div>
 
 <!-- МОДАЛЬНОЕ ОКНО: Добавить ссылку к теме -->
-<div class="modal-overlay" id="modal-add-source">
+<div class="modal-overlay" id="modal-add-source" onclick="if(event.target===this)closeModal('modal-add-source')">
   <div class="modal-box" style="max-width:440px">
     <h3>🔗 Добавить ссылку к теме</h3>
     <input type="hidden" id="as-news-id" />
