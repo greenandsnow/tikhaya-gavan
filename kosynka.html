@@ -79,9 +79,9 @@ nav a.active{color:var(--sea);font-weight:600}
 /* Badge */
 .badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.45);border:1px solid rgba(212,160,23,.35);border-radius:8px;padding:.2rem .6rem;font-size:.65rem;color:rgba(255,255,255,.7);pointer-events:none;z-index:10}
 /* End overlay */
-.end-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center}
+.end-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .end-ov.show{display:flex}
-.end-box{background:var(--white);border-radius:20px;padding:2.5rem 3rem;text-align:center;max-width:400px;width:90%;border-top:5px solid #2d7a3a;animation:popIn .4s ease}
+.end-box{background:var(--white);border-radius:24px;padding:3rem 3.5rem;text-align:center;max-width:440px;width:92%;box-shadow:0 24px 80px rgba(0,0,0,.45);animation:popIn .4s cubic-bezier(.175,.885,.32,1.275)}
 @keyframes popIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
 .end-box h2{font-size:1.7rem;font-weight:700;color:#2d7a3a;margin:.5rem 0 .3rem}
 .end-box p{font-size:.9rem;color:var(--text-light);margin-bottom:1.5rem;line-height:1.6}
@@ -163,13 +163,24 @@ nav a.active{color:var(--sea);font-weight:600}
 </div>
 
 <div class="end-ov" id="endOv">
-  <div class="end-box">
-    <div style="font-size:3rem">🏆</div>
-    <h2>Победа!</h2>
-    <p id="endMsg"></p>
+  <!-- Победа -->
+  <div class="end-box" id="endWin" style="display:none">
+    <div style="font-size:3.5rem;margin-bottom:.5rem">🏆</div>
+    <h2 style="color:#2d7a3a;font-size:1.8rem;margin-bottom:.75rem">Поздравляем!</h2>
+    <p style="font-size:1.05rem;color:var(--text);line-height:1.6;margin-bottom:2rem">Пасьянс разложился!</p>
     <div class="ebtns">
       <button class="ebtn p" onclick="startGame()">Ещё раз</button>
-      <button class="ebtn" onclick="showWelcome()">В меню</button>
+      <button class="ebtn" onclick="showWelcome()">Выход</button>
+    </div>
+  </div>
+  <!-- Поражение -->
+  <div class="end-box" id="endLose" style="display:none">
+    <div style="font-size:3.5rem;margin-bottom:.5rem">🃏</div>
+    <h2 style="color:var(--sea);font-size:1.8rem;margin-bottom:.75rem">Не получилось…</h2>
+    <p style="font-size:1.05rem;color:var(--text);line-height:1.6;margin-bottom:2rem">К сожалению, пасьянс раскладывается не всегда. Попробуете ещё?</p>
+    <div class="ebtns">
+      <button class="ebtn p" onclick="startGame()">Ок</button>
+      <button class="ebtn" onclick="showWelcome()">Выход</button>
     </div>
   </div>
 </div>
@@ -275,6 +286,8 @@ function startGame(){
   var gs=document.getElementById('game-screen');
   gs.style.display='flex';
   document.getElementById('endOv').classList.remove('show');
+  document.getElementById('endWin').style.display='none';
+  document.getElementById('endLose').style.display='none';
   document.getElementById('undoBtn').disabled=true;
   calcLayout(); render(); updateBar();
   tmr = setInterval(function(){ secs++; updateBar(); }, 1000);
@@ -342,10 +355,9 @@ function checkWin(){
     over=true; clearInterval(tmr);
     playWin(); launchConfetti();
     setTimeout(function(){
-      var title2=document.querySelector('#endOv h2'); if(title2) title2.textContent='Победа!';
-    var icon2=document.querySelector('#endOv div'); if(icon2) icon2.textContent='🏆';
-    document.getElementById('endMsg').textContent='Все карты собраны за '+moves+' ходов и '+fmt(secs)+'!';
-      document.getElementById('endOv').classList.add('show');
+      document.getElementById('endWin').style.display='block';
+    document.getElementById('endLose').style.display='none';
+    document.getElementById('endOv').classList.add('show');
     },800);
   }
 }
@@ -661,12 +673,10 @@ function endGame(win){
   if(win){ return; } // победа обрабатывается в checkWin
   // Поражение
   setTimeout(function(){
-    document.getElementById('endMsg').textContent='Не удалось разложить за '+fmt(secs)+'. Попробуйте ещё раз!';
-    var title = document.querySelector('#endOv h2');
-    var icon = document.querySelector('#endOv div');
-    if(title) title.textContent='Не получилось…';
-    if(icon) icon.textContent='😔';
+    document.getElementById('endWin').style.display='none';
+    document.getElementById('endLose').style.display='block';
     document.getElementById('endOv').classList.add('show');
+    playLose();
   }, 400);
 }
 
@@ -675,9 +685,25 @@ function showWelcome(){
   document.getElementById('welcome').style.display='flex';
   document.getElementById('game-screen').style.display='none';
   document.getElementById('endOv').classList.remove('show');
+  document.getElementById('endWin').style.display='none';
+  document.getElementById('endLose').style.display='none';
 }
 
 // ══ ЗВУК ══
+function playLose(){
+  try{
+    if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+    [[330,0,.15],[294,.18,.15],[262,.36,.15],[220,.54,.5]].forEach(function(n){
+      var o=actx.createOscillator(),g=actx.createGain();
+      o.connect(g);g.connect(actx.destination);o.type='sine';o.frequency.value=n[0];
+      g.gain.setValueAtTime(0,actx.currentTime+n[1]);
+      g.gain.linearRampToValueAtTime(.15,actx.currentTime+n[1]+.04);
+      g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+n[1]+n[2]);
+      o.start(actx.currentTime+n[1]);o.stop(actx.currentTime+n[1]+n[2]+.05);
+    });
+  }catch(e){}
+}
+
 var actx=null;
 function playWin(){
   try{
