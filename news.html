@@ -266,6 +266,7 @@ async function loadNews(date) {
   for (var i = 0; i < newsData.length; i++) {
     var n = newsData[i];
     var pills = '';
+    // Стандартные 4 лагеря
     for (var k = 0; k < ORDER.length; k++) {
       for (var j = 0; j < (n.sources||[]).length; j++) {
         if (n.sources[j].perspective === ORDER[k] && !n.sources[j].hidden) {
@@ -273,6 +274,15 @@ async function loadNews(date) {
           pills += '<span class="source-pill '+c.pillCss+'"><span class="dot"></span>'+esc(n.sources[j].name)+'</span>';
           break;
         }
+      }
+    }
+    // Дополнительные источники (_extra)
+    for (var j = 0; j < (n.sources||[]).length; j++) {
+      var sp = n.sources[j].perspective || '';
+      if (sp.indexOf('_extra') !== -1 && !n.sources[j].hidden) {
+        var baseP = sp.replace(/_extra.*$/, '');
+        var ce = CAMP[baseP] || CAMP['west'];
+        pills += '<span class="source-pill '+ce.pillCss+'"><span class="dot"></span>'+esc(n.sources[j].name)+'</span>';
       }
     }
     var card = document.createElement('div');
@@ -292,6 +302,7 @@ async function loadNews(date) {
 function openModal(idx) {
   var n = newsData[idx]; if(!n)return;
   var blocks = '';
+  // Стандартные 4 лагеря
   for (var k=0;k<ORDER.length;k++) {
     for (var j=0;j<(n.sources||[]).length;j++) {
       if (n.sources[j].perspective===ORDER[k] && !n.sources[j].hidden) {
@@ -312,9 +323,30 @@ function openModal(idx) {
       }
     }
   }
+  // Дополнительные источники (_extra) — добавлены вручную
+  for (var j=0;j<(n.sources||[]).length;j++) {
+    var sp2 = n.sources[j].perspective || '';
+    if (sp2.indexOf('_extra') !== -1 && !n.sources[j].hidden) {
+      var s2=n.sources[j];
+      var baseP2 = sp2.replace(/_extra.*$/, '');
+      var ce2 = CAMP[baseP2] || CAMP['west'];
+      blocks +=
+        '<div class="src-block">'+
+          '<div class="src-header">'+
+            '<div class="src-flag '+ce2.flagCss+'">'+ce2.flag+'</div>'+
+            '<div class="src-meta"><div class="src-camp-label">'+ce2.label+'</div><div class="src-name">'+esc(s2.name)+'</div></div>'+
+          '</div>'+
+          '<div class="src-body">'+
+            '<div class="src-title">'+esc(s2.title)+'</div>'+
+            (s2.excerpt?'<div class="src-excerpt">'+esc(s2.excerpt)+'</div>':'')+
+            '<a href="'+esc(s2.url)+'" target="_blank" rel="noopener" class="src-link">Читать первоисточник ↗</a>'+
+          '</div>'+
+        '</div>';
+    }
+  }
   var visibleCount = 0;
   for (var vc=0;vc<(n.sources||[]).length;vc++) { if (!n.sources[vc].hidden) visibleCount++; }
-  var viewsLabel = visibleCount === 4 ? 'Четыре точки зрения' : visibleCount === 3 ? 'Три точки зрения' : visibleCount === 2 ? 'Две точки зрения' : 'Точки зрения';
+  var viewsLabel = visibleCount >= 4 ? 'Четыре точки зрения' : visibleCount === 3 ? 'Три точки зрения' : visibleCount === 2 ? 'Две точки зрения' : 'Точки зрения';
   document.getElementById('modal').innerHTML =
     '<div class="modal-header">'+
       '<span class="modal-tag">'+(TAG_ICONS[n.topic_tag]||'📰')+' '+esc(n.topic_tag)+'</span>'+
