@@ -514,21 +514,30 @@ function animateCardFlight(playerIdx, card, cb){
 
   // Следующий кадр — запускаем полёт
   requestAnimationFrame(function(){requestAnimationFrame(function(){
-    var scaleX=cw/bw;
-    var scaleY=ch/bh;
-    div.style.transition='left .42s cubic-bezier(.25,.46,.45,.94),top .42s cubic-bezier(.25,.46,.45,.94),width .42s ease,height .42s ease,transform .42s ease';
+    div.style.transition='left .38s cubic-bezier(.25,.46,.45,.94),top .38s cubic-bezier(.25,.46,.45,.94),width .38s ease,height .38s ease';
     div.style.left=toRect.left+'px';
     div.style.top=toRect.top+'px';
     div.style.width=cw+'px';
     div.style.height=ch+'px';
-    div.style.transform='rotate(0deg) scale(1)';
   });});
 
-  // По окончании — убираем div, вызываем колбэк
+  // После приземления — переворачиваем карту лицом, затем вызываем playCard
   setTimeout(function(){
-    if(div.parentNode)div.parentNode.removeChild(div);
-    cb();
-  }, 480);
+    try{
+      div.className='flying-card';
+      div.style.background='none';
+      div.style.border='none';
+      div.style.boxShadow='0 2px 10px rgba(0,0,0,.55)';
+      var fimg=document.createElement('img');
+      fimg.src=cardImg(card.rank,card.suit);
+      fimg.style.cssText='width:100%;height:100%;display:block;border-radius:7px;';
+      div.appendChild(fimg);
+    }catch(e){}
+    setTimeout(function(){
+      try{if(div.parentNode)div.parentNode.removeChild(div);}catch(e){}
+      cb();
+    }, 160);
+  }, 400);
 }
 
 function aiTurn(){
