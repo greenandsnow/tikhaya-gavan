@@ -4,8 +4,8 @@
     { "source": "/ask", "destination": "/ask.html" },
     { "source": "/games", "destination": "/games.html" },
     { "source": "/spider", "destination": "/spider.html" },
-    {"source": "/devyatka", "destination": "/devyatka.html" },
-    {"source": "/kosynka", "destination": "/kosynka.html" },
+    { "source": "/devyatka", "destination": "/devyatka.html" },
+    { "source": "/kosynka", "destination": "/solitaire.html" },
     { "source": "/reading", "destination": "/reading.html" },
     { "source": "/publisher", "destination": "/publisher.html" },
     { "source": "/library", "destination": "/library.html" },
@@ -21,10 +21,7 @@
     { "source": "/videos", "destination": "/news", "permanent": true }
   ],
   "crons": [
-    {
-      "path": "/api/news-fetch",
-      "schedule": "0 5 * * *"
-    }
+    { "path": "/api/news-fetch", "schedule": "0 5 * * *" }
   ],
   "headers": [
     {
