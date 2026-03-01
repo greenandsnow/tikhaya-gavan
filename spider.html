@@ -195,10 +195,10 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
 <div class="stuck-overlay" id="stuck-overlay">
   <div class="stuck-box">
     <div style="font-size:2.5rem;margin-bottom:.5rem">🤔</div>
-    <h2>Ходов больше нет</h2>
-    <p>Пасьянс зашёл в тупик. Попробуете ещё раз?</p>
+    <h2>Похоже, ходов больше нет</h2>
+    <p>Можно отменить несколько ходов и попробовать иначе.</p>
     <div class="win-buttons">
-      <button class="wbtn primary" onclick="startGame(currentSuits)">Переиграть</button>
+      <button class="wbtn primary" onclick="document.getElementById('stuck-overlay').classList.remove('show')">Продолжить</button>
       <button class="wbtn" onclick="showWelcome()">В меню</button>
     </div>
   </div>
