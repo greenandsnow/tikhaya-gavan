@@ -87,6 +87,11 @@ nav a.active{color:var(--sea);font-weight:600}
 .wbtn:hover{background:var(--sea);color:white}
 .wbtn.primary{background:var(--sea);color:white}
 .wbtn.primary:hover{background:var(--sea-light)}
+.stuck-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center}
+.stuck-overlay.show{display:flex}
+.stuck-box{background:var(--white);border-radius:18px;padding:2.5rem;text-align:center;max-width:360px;width:90%;animation:pop .4s ease}
+.stuck-box h2{font-size:1.6rem;font-weight:700;color:var(--stone);margin-bottom:.4rem}
+.stuck-box p{color:var(--text-light);margin-bottom:1.25rem}
 @media(max-width:768px){.logo-img{height:70px}.logo-name{font-size:1.1rem!important}
 .burger{display:flex}
 nav{display:none;position:absolute;top:88px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}
@@ -187,6 +192,18 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
   </div>
 </div>
 
+<div class="stuck-overlay" id="stuck-overlay">
+  <div class="stuck-box">
+    <div style="font-size:2.5rem;margin-bottom:.5rem">🤔</div>
+    <h2>Ходов больше нет</h2>
+    <p>Пасьянс зашёл в тупик. Попробуете ещё раз?</p>
+    <div class="win-buttons">
+      <button class="wbtn primary" onclick="startGame(currentSuits)">Переиграть</button>
+      <button class="wbtn" onclick="showWelcome()">В меню</button>
+    </div>
+  </div>
+</div>
+
 <script>
 var RANK_CODES = {A:'A','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','10':'0',J:'J',Q:'Q',K:'K'};
 var SUIT_CODES = {'♠':'S','♥':'H','♦':'D','♣':'C'};
@@ -238,6 +255,7 @@ function startGame(suits){
   document.getElementById('welcome').style.display='none';
   document.getElementById('game-screen').style.display='flex';
   document.getElementById('win-overlay').classList.remove('show');
+  document.getElementById('stuck-overlay').classList.remove('show');
   document.getElementById('mode-val').textContent=suits+(suits===1?' масть':' масти');
   document.getElementById('moves-val').textContent='0';
   document.getElementById('complete-val').textContent='0';
@@ -253,7 +271,7 @@ function startGame(suits){
   setTimeout(function(){calcCardSize();render();},50);
 }
 
-function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
+function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
 
 function render(){
   var sz=calcCardSize();
@@ -397,7 +415,9 @@ function tryMove(fromCol,fromIdx,toCol){
   for(var i=0;i<movingCards.length;i++)gameColumns[toCol].push(movingCards[i]);
   if(gameColumns[fromCol].length>0)gameColumns[fromCol][gameColumns[fromCol].length-1].faceUp=true;
   moves++;document.getElementById('moves-val').textContent=moves;
-  checkCompletions();return true;
+  checkCompletions();
+  setTimeout(function(){if(!document.getElementById('win-overlay').classList.contains('show')&&isStuck())showStuck();},300);
+  return true;
 }
 
 function checkCompletions(){
@@ -428,7 +448,9 @@ function dealFromStock(){
   undoStack.push({cols:JSON.parse(JSON.stringify(gameColumns)),stock:JSON.parse(JSON.stringify(stockPile)),foundations:foundations,moves:moves});
   for(var c=0;c<10;c++){var card=stockPile.pop();card.faceUp=true;gameColumns[c].push(card);}
   moves++;document.getElementById('moves-val').textContent=moves;
-  checkCompletions();render();
+  checkCompletions();
+  render();
+  setTimeout(function(){if(!document.getElementById('win-overlay').classList.contains('show')&&isStuck())showStuck();},300);
 }
 
 function undoMove(){
@@ -445,11 +467,83 @@ function undoMove(){
   render();
 }
 
+// ═══ ЗВУКИ ═══
+var audioCtx=null;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playSound(type){
+  try{
+    var ctx=getAudio();
+    if(type==='win'){
+      // Торжественные фанфары
+      [[523.2,0,0.12],[659.3,0.13,0.12],[784,0.26,0.12],[1046.5,0.39,0.3],
+       [523.2,0.72,0.6],[659.3,0.72,0.6],[784,0.72,0.6],[1046.5,0.72,0.6]
+      ].forEach(function(n){
+        var osc=ctx.createOscillator(),gain=ctx.createGain();
+        osc.connect(gain);gain.connect(ctx.destination);
+        osc.type='triangle';osc.frequency.value=n[0];
+        gain.gain.setValueAtTime(0,ctx.currentTime+n[1]);
+        gain.gain.linearRampToValueAtTime(0.2,ctx.currentTime+n[1]+0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+n[1]+n[2]);
+        osc.start(ctx.currentTime+n[1]);osc.stop(ctx.currentTime+n[1]+n[2]+0.05);
+      });
+    } else if(type==='stuck'){
+      // Грустный нисходящий мотив
+      [[392,0,0.2],[349.2,0.22,0.2],[311.1,0.44,0.2],[261.6,0.66,0.45]
+      ].forEach(function(n){
+        var osc=ctx.createOscillator(),gain=ctx.createGain();
+        osc.connect(gain);gain.connect(ctx.destination);
+        osc.type='sine';osc.frequency.value=n[0];
+        gain.gain.setValueAtTime(0,ctx.currentTime+n[1]);
+        gain.gain.linearRampToValueAtTime(0.15,ctx.currentTime+n[1]+0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+n[1]+n[2]);
+        osc.start(ctx.currentTime+n[1]);osc.stop(ctx.currentTime+n[1]+n[2]+0.05);
+      });
+    }
+  }catch(e){}
+}
+
+// ═══ ПРОВЕРКА ТУПИКА ═══
+function isStuck(){
+  // Есть карты в стопке — всегда есть ход
+  if(stockPile.length>0)return false;
+  // Проверяем: можно ли сделать хоть один ход
+  for(var fc=0;fc<10;fc++){
+    var fromCol=gameColumns[fc];
+    if(fromCol.length===0)continue;
+    // Ищем самую нижнюю открытую карту в последовательности одной масти
+    var fromIdx=fromCol.length-1;
+    while(fromIdx>0&&fromCol[fromIdx-1].faceUp&&fromCol[fromIdx-1].suit===fromCol[fromIdx].suit&&RANK_VAL[fromCol[fromIdx-1].rank]===RANK_VAL[fromCol[fromIdx].rank]+1){
+      fromIdx--;
+    }
+    if(!fromCol[fromIdx].faceUp)continue;
+    var topCard=fromCol[fromIdx];
+    for(var tc=0;tc<10;tc++){
+      if(tc===fc)continue;
+      var toCol=gameColumns[tc];
+      if(toCol.length===0){
+        // В пустую колонку — только если освобождает закрытую карту
+        if(fromIdx>0||fromCol.length>1)return false;
+      } else {
+        var targetTop=toCol[toCol.length-1];
+        if(targetTop.faceUp&&RANK_VAL[targetTop.rank]===RANK_VAL[topCard.rank]+1)return false;
+      }
+    }
+  }
+  return true;
+}
+
 function showWin(){
   clearInterval(timerInterval);
+  playSound('win');
   var m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');
   document.getElementById('win-stats').textContent='Время: '+m+':'+s+' · Ходов: '+moves;
   document.getElementById('win-overlay').classList.add('show');
+}
+
+function showStuck(){
+  clearInterval(timerInterval);
+  playSound('stuck');
+  document.getElementById('stuck-overlay').classList.add('show');
 }
 
 function toggleRules(){var b=document.getElementById('rules-box');b.style.display=b.style.display==='block'?'none':'block';}
