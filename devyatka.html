@@ -18,7 +18,7 @@
   --hw:108px; --hh:151px;   /* карты игрока */
   --bw:44px;  --bh:62px;    /* рубашки соперников */
 }
-html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text);overflow:hidden}
+html{font-size:clamp(15px,1.1vw,18px)}html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text);overflow:hidden}
 body{display:flex;flex-direction:column}
 
 /* ── HEADER ── */
@@ -27,7 +27,7 @@ header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:
 .logo{text-decoration:none;display:flex;align-items:center;gap:.75rem;line-height:1.1}
 .logo-img{height:110px;width:auto;display:block;position:relative;z-index:101}
 .logo-text{display:flex;flex-direction:column}
-.logo-name{font-weight:700;font-size:1.3rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
+.logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
 .logo-tag{font-size:.6rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
 nav ul{list-style:none;display:flex;gap:.2rem}
 nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-light);font-size:.82rem;border-radius:6px;transition:color .2s,background .2s}
@@ -410,7 +410,6 @@ function passMove(pi){
   setMsg(players[pi].name+' нет хода — пропускает (−'+f+' очко)',false);
   animateCoin(pi);
   updateUI();
-  if(players[pi].coins<=0){setTimeout(endGame,1300);return;}
   nextTurn();
 }
 
@@ -502,15 +501,11 @@ function endGame(){
   gameOver=true;clearTimeout(aiTimer);setYourTurn(false);
   var sorted=players.slice().sort(function(a,b){return b.coins-a.coins;});
   var w=sorted[0],isWin=w.isHuman;
-  // Звук победы в игре
   if(isWin) playSound('game');
-  // Таблица результатов
   var h='<tr><th>Игрок</th><th>Очки</th></tr>';
   sorted.forEach(function(p){
     h+='<tr'+(p===w?' class="winner"':'')+'><td>'+p.name+(p.isHuman?' (вы)':'')+'</td><td>'+p.coins+'</td></tr>';
   });
-  document.getElementById('scores-table').innerHTML=h;
-  // Показываем финальный оверлей
   var el=document.getElementById('end-overlay');
   el.innerHTML='<div class="eo-box '+(isWin?'eo-win':'eo-lose')+'">'
     +'<div class="eo-icon">'+(isWin?'🏆':'😔')+'</div>'
