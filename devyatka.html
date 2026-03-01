@@ -490,46 +490,45 @@ function getFanCardRect(playerIdx){
 }
 
 function animateCardFlight(playerIdx, card, cb){
-  try{
-    var fromRect=getFanCardRect(playerIdx);
-    var toRect=getTableSlotRect(card);
-    if(!fromRect||!toRect){cb();return;}
+  var fromRect=getFanCardRect(playerIdx);
+  var toRect=getTableSlotRect(card);
+  if(!fromRect||!toRect){cb();return;}
 
-    var bw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bw'))||44;
-    var bh=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bh'))||62;
-    var cw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cw'))||90;
-    var ch=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ch'))||126;
+  var bw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bw'))||44;
+  var bh=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bh'))||62;
+  var cw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cw'))||90;
+  var ch=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ch'))||126;
 
-    var div=document.createElement('div');
-    div.className='flying-card';
-    div.style.width=bw+'px';
-    div.style.height=bh+'px';
-    div.style.left=fromRect.left+'px';
-    div.style.top=fromRect.top+'px';
-    div.style.transition='none';
-    div.style.transform='rotate(0deg)';
+  // Создаём летящую карту — рубашкой вверх (соперник)
+  var div=document.createElement('div');
+  div.className='flying-card back-card';
+  div.style.width=bw+'px';
+  div.style.height=bh+'px';
+  div.style.left=fromRect.left+'px';
+  div.style.top=fromRect.top+'px';
+  div.style.transition='none';
+  div.style.transform='rotate(0deg)';
 
-    var img=document.createElement('img');
-    img.src=backImg();
-    div.appendChild(img);
-    document.body.appendChild(div);
+  // Рубашка — используем существующий CSS класс back-card
+  document.body.appendChild(div);
 
-    requestAnimationFrame(function(){requestAnimationFrame(function(){
-      div.style.transition='left .42s cubic-bezier(.25,.46,.45,.94),top .42s cubic-bezier(.25,.46,.45,.94),width .42s ease,height .42s ease';
-      div.style.left=toRect.left+'px';
-      div.style.top=toRect.top+'px';
-      div.style.width=cw+'px';
-      div.style.height=ch+'px';
-    });});
+  // Следующий кадр — запускаем полёт
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    var scaleX=cw/bw;
+    var scaleY=ch/bh;
+    div.style.transition='left .42s cubic-bezier(.25,.46,.45,.94),top .42s cubic-bezier(.25,.46,.45,.94),width .42s ease,height .42s ease,transform .42s ease';
+    div.style.left=toRect.left+'px';
+    div.style.top=toRect.top+'px';
+    div.style.width=cw+'px';
+    div.style.height=ch+'px';
+    div.style.transform='rotate(0deg) scale(1)';
+  });});
 
-    setTimeout(function(){
-      try{if(div.parentNode)div.parentNode.removeChild(div);}catch(e){}
-      cb();
-    }, 500);
-  }catch(e){
-    console.log('animateCardFlight error:',e.message);
+  // По окончании — убираем div, вызываем колбэк
+  setTimeout(function(){
+    if(div.parentNode)div.parentNode.removeChild(div);
     cb();
-  }
+  }, 480);
 }
 
 function aiTurn(){
