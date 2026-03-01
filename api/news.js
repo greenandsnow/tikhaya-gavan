@@ -11,7 +11,13 @@ module.exports = async function handler(req, res) {
     var supabaseAnonKey = process.env.SUPABASE_PUBLISHABLE_KEY;
     var serviceKey = process.env.SUPABASE_SERVICE_KEY;
 
-    var date = req.query.date || new Date().toISOString().split('T')[0];
+    // Дата в канадском времени
+    var _now = new Date();
+    var _toronto = new Date(_now.toLocaleString('en-CA', { timeZone: 'America/Toronto' }));
+    var todayToronto = _toronto.getFullYear() + '-'
+      + String(_toronto.getMonth() + 1).padStart(2, '0') + '-'
+      + String(_toronto.getDate()).padStart(2, '0');
+    var date = req.query.date || todayToronto;
     var status = req.query.status || 'published';
 
     // Используем service key для всех запросов (обходит RLS)

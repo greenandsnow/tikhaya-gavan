@@ -201,7 +201,15 @@ module.exports = async function handler(req, res) {
     }
 
     // ── Шаг 4: Сохраняем как published (автопубликация) ──
-    var today = new Date().toISOString().split('T')[0];
+    // Если дата передана явно (?date=2026-03-01) — используем её
+    // Иначе берём текущую дату по Торонто (cron в 5:00 UTC = 00:00 Toronto — совпадает)
+    var _n = new Date();
+    var _t = new Date(_n.toLocaleString('en-CA', { timeZone: 'America/Toronto' }));
+    var today = req.query.date || (
+      _t.getFullYear() + '-' +
+      String(_t.getMonth() + 1).padStart(2, '0') + '-' +
+      String(_t.getDate()).padStart(2, '0')
+    );
     var saved = 0;
     var skipped = [];
     var required = ['west', 'ukraine', 'russia', 'china'];
