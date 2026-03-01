@@ -1,7 +1,30 @@
+// Rate limiting: максимум 20 запросов в час с одного IP
+const rateMap = new Map();
+const LIMIT = 20;
+const WINDOW = 60 * 60 * 1000; // 1 час в миллисекундах
+
+function checkRate(ip) {
+  const now = Date.now();
+  const entry = rateMap.get(ip);
+  if (!entry || now - entry.start > WINDOW) {
+    rateMap.set(ip, { start: now, count: 1 });
+    return true;
+  }
+  if (entry.count >= LIMIT) return false;
+  entry.count++;
+  return true;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+  if (!checkRate(ip)) {
+    return res.status(429).json({ error: 'Слишком много запросов. Попробуйте через час.' });
+  }
+
   try {
     let body = req.body;
     if (typeof body === 'string') {
