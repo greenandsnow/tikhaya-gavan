@@ -687,6 +687,7 @@ function updateUI(){
 }
 
 function renderFan(idx,n){
+  if(animating)return;
   var el=document.getElementById('fan-'+idx);
   if(!el||n===0){if(el)el.innerHTML='';return;}
   var cards=Math.min(n,9);
@@ -786,6 +787,7 @@ function updateSlot(card){
 }
 
 function renderHand(){
+  if(animating)return;
   // Сортируем руку: ♠→♣→♦→♥, внутри масти 6→...→A
   var SUIT_ORDER={'♠':0,'♣':1,'♦':2,'♥':3};
   players[0].hand.sort(function(a,b){
