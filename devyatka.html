@@ -486,7 +486,7 @@ function animateCardFlight(playerIdx, card, cb){
   animating=true;
   var fromRect=getFanCardRect(playerIdx);
   var toRect=getTableSlotRect(card);
-  if(!fromRect||!toRect){animating=false;cb();return;}
+  if(!fromRect||!toRect){animating=false;updateUI();cb();return;}
 
   var bw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bw'))||44;
   var bh=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bh'))||62;
@@ -525,6 +525,7 @@ function animateCardFlight(playerIdx, card, cb){
     setTimeout(function(){
       try{if(div.parentNode)div.parentNode.removeChild(div);}catch(e){}
       animating=false;
+      updateUI();
       cb();
     }, 120);
   }, 400);
@@ -661,6 +662,7 @@ function playSound(type){
 
 /* ── ОТРИСОВКА ── */
 function updateUI(){
+  if(animating)return;
   document.getElementById('round-val').textContent=round;
   document.getElementById('turn-val').textContent=players[currentPlayer].name;
   document.getElementById('bank-val').textContent=bank;
