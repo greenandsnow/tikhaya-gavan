@@ -170,18 +170,17 @@ nav a.active{color:var(--sea);font-weight:600}
   100%{opacity:0;transform:scale(.3) translate(var(--tx),var(--ty))}
 }
 
-/* ── АНИМАЦИЯ КАРТЫ AI ── */
-.card-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.6);
-  z-index:150;pointer-events:none;opacity:0;
-  transition:transform .25s ease,opacity .25s ease}
-.card-flash.show{transform:translate(-50%,-50%) scale(1);opacity:1}
-.card-flash img{width:108px;height:151px;border-radius:10px;
-  box-shadow:0 8px 32px rgba(0,0,0,.7)}
-.card-flash-label{position:fixed;top:calc(50% + 90px);left:50%;transform:translateX(-50%);
-  z-index:151;pointer-events:none;opacity:0;transition:opacity .25s ease;
-  background:rgba(0,0,0,.75);color:white;padding:.3rem .9rem;border-radius:8px;
-  font-size:.85rem;font-weight:600;white-space:nowrap}
-.card-flash-label.show{opacity:1}
+/* ── АНИМАЦИЯ ПОЛЁТА КАРТЫ ── */
+.flying-card{
+  position:fixed;pointer-events:none;z-index:300;
+  border-radius:7px;overflow:hidden;
+  box-shadow:0 6px 24px rgba(0,0,0,.6);
+  transition:left .45s cubic-bezier(.25,.46,.45,.94),
+             top .45s cubic-bezier(.25,.46,.45,.94),
+             transform .45s ease,
+             opacity .15s ease;
+}
+.flying-card img{width:100%;height:100%;display:block;}
 
 /* ── ОВЕРЛЕЙ КОНЦА КРУГА ── */
 .round-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,.52);z-index:100;align-items:center;justify-content:center}
@@ -349,9 +348,7 @@ nav a.active{color:var(--sea);font-weight:600}
 <!-- КОНЕЦ ИГРЫ -->
 <div class="end-overlay" id="end-overlay"></div>
 
-<!-- АНИМАЦИЯ КАРТЫ AI -->
-<div class="card-flash" id="card-flash"><img id="card-flash-img" src="" alt=""/></div>
-<div class="card-flash-label" id="card-flash-label"></div>
+
 
 <script>
 var SUITS_DISPLAY=['♠','♣','♦','♥'];
@@ -466,19 +463,75 @@ function roundWin(pi){
   showRoundOverlay(players[pi].name, won, players[pi].isHuman);
 }
 
-function showCardFlash(card, playerName, cb){
-  var img=document.getElementById('card-flash-img');
-  var flash=document.getElementById('card-flash');
-  var label=document.getElementById('card-flash-label');
-  img.src=cardImg(card.rank,card.suit);
-  label.textContent=playerName+' играет '+card.rank+card.suit;
-  // Показываем
-  setTimeout(function(){flash.classList.add('show');label.classList.add('show');},30);
-  // Скрываем через 900мс и вызываем колбэк
+// ── АНИМАЦИЯ ПОЛЁТА КАРТЫ ──
+// Находит координаты слота на столе для данной карты
+function getTableSlotRect(card){
+  var displayOrder=['♥','♦','♣','♠'];
+  var SLOT_HINTS=['6','7','8','9','10','J','Q','K','A'];
+  var suitIdx=displayOrder.indexOf(card.suit);
+  var rankIdx=SLOT_HINTS.indexOf(card.rank);
+  if(suitIdx<0||rankIdx<0)return null;
+  var rows=document.querySelectorAll('#table-suits .suit-row');
+  if(!rows[suitIdx])return null;
+  var slots=rows[suitIdx].querySelectorAll('.t-slot,.t-card');
+  if(!slots[rankIdx])return null;
+  return slots[rankIdx].getBoundingClientRect();
+}
+
+// Находит координаты последней (верхней) карты в веере соперника
+function getFanCardRect(playerIdx){
+  var fan=document.getElementById('fan-'+playerIdx);
+  if(!fan)return null;
+  var cards=fan.querySelectorAll('.back-card');
+  if(!cards||cards.length===0)return fan.getBoundingClientRect();
+  // Последняя карта в DOM — верхняя в веере (наибольший z-index)
+  var topCard=cards[cards.length-1];
+  return topCard.getBoundingClientRect();
+}
+
+function animateCardFlight(playerIdx, card, cb){
+  var fromRect=getFanCardRect(playerIdx);
+  var toRect=getTableSlotRect(card);
+  if(!fromRect||!toRect){cb();return;}
+
+  var bw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bw'))||44;
+  var bh=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bh'))||62;
+  var cw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cw'))||90;
+  var ch=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ch'))||126;
+
+  // Создаём летящую карту — рубашкой вверх (соперник)
+  var div=document.createElement('div');
+  div.className='flying-card';
+  div.style.width=bw+'px';
+  div.style.height=bh+'px';
+  div.style.left=fromRect.left+'px';
+  div.style.top=fromRect.top+'px';
+  div.style.transition='none';
+  div.style.transform='rotate(0deg)';
+
+  // Рубашка (inline SVG base64 — такая же как в игроке)
+  var img=document.createElement('img');
+  img.src=backImg();
+  div.appendChild(img);
+  document.body.appendChild(div);
+
+  // Следующий кадр — запускаем полёт
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    var scaleX=cw/bw;
+    var scaleY=ch/bh;
+    div.style.transition='left .42s cubic-bezier(.25,.46,.45,.94),top .42s cubic-bezier(.25,.46,.45,.94),width .42s ease,height .42s ease,transform .42s ease';
+    div.style.left=toRect.left+'px';
+    div.style.top=toRect.top+'px';
+    div.style.width=cw+'px';
+    div.style.height=ch+'px';
+    div.style.transform='rotate(0deg) scale(1)';
+  });});
+
+  // По окончании — убираем div, вызываем колбэк
   setTimeout(function(){
-    flash.classList.remove('show');label.classList.remove('show');
-    setTimeout(cb,250);
-  },950);
+    if(div.parentNode)div.parentNode.removeChild(div);
+    cb();
+  }, 480);
 }
 
 function aiTurn(){
@@ -494,16 +547,14 @@ function aiTurn(){
     if(sc>bs){bs=sc;best=idx;}
   });
   var c=players[p].hand[best];
-  setMsg(players[p].name+' думает...',false);
-  // Пауза перед ходом — игрок видит "думает"
+  setMsg(players[p].name+' ходит...',false);
   setTimeout(function(){
     if(gameOver)return;
-    setMsg(players[p].name+' играет '+c.rank+c.suit,false);
-    showCardFlash(c, players[p].name, function(){
+    animateCardFlight(p, c, function(){
       if(gameOver)return;
       playCard(p,best);
     });
-  }, 800+Math.random()*400);
+  }, 500+Math.random()*300);
 }
 
 function humanPlay(ci){
