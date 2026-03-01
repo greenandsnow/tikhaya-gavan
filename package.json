@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
-    "formidable": "^3.5.1"
+    "formidable": "^3.5.1",
+    "node-fetch": "^2.7.0"
   }
 }
