@@ -358,7 +358,7 @@ var RANK_CODES={'6':'6','7':'7','8':'8','9':'9','10':'0','J':'J','Q':'Q','K':'K'
 var RANK_VAL={'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14};
 var PLAYER_NAMES=['Игрок','Иван','Арина','Михаил'];
 var START_COINS=50,ROUND_FEE=5,PASS_FEE=1;
-var players=[],table={},bank=0,currentPlayer=0,round=0,gameOver=false,aiTimer=null;
+var players=[],table={},bank=0,currentPlayer=0,round=0,gameOver=false,aiTimer=null,animating=false;
 var TURN_ORDER=[0,2,1,3]; // по часовой: Игрок→Арина→Иван→Михаил
 
 function cardImg(r,s){return 'https://deckofcardsapi.com/static/img/'+RANK_CODES[r]+SUIT_CODES[s]+'.png';}
@@ -466,16 +466,9 @@ function roundWin(pi){
 // ── АНИМАЦИЯ ПОЛЁТА КАРТЫ ──
 // Находит координаты слота на столе для данной карты
 function getTableSlotRect(card){
-  var displayOrder=['♥','♦','♣','♠'];
-  var SLOT_HINTS=['6','7','8','9','10','J','Q','K','A'];
-  var suitIdx=displayOrder.indexOf(card.suit);
-  var rankIdx=SLOT_HINTS.indexOf(card.rank);
-  if(suitIdx<0||rankIdx<0)return null;
-  var rows=document.querySelectorAll('#table-suits .suit-row');
-  if(!rows[suitIdx])return null;
-  var slots=rows[suitIdx].querySelectorAll('.t-slot,.t-card');
-  if(!slots[rankIdx])return null;
-  return slots[rankIdx].getBoundingClientRect();
+  var el=document.getElementById('slot-'+card.suit+'-'+card.rank);
+  if(!el)return null;
+  return el.getBoundingClientRect();
 }
 
 // Находит координаты последней (верхней) карты в веере соперника
@@ -490,9 +483,10 @@ function getFanCardRect(playerIdx){
 }
 
 function animateCardFlight(playerIdx, card, cb){
+  animating=true;
   var fromRect=getFanCardRect(playerIdx);
   var toRect=getTableSlotRect(card);
-  if(!fromRect||!toRect){cb();return;}
+  if(!fromRect||!toRect){animating=false;cb();return;}
 
   var bw=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bw'))||44;
   var bh=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bh'))||62;
@@ -514,29 +508,25 @@ function animateCardFlight(playerIdx, card, cb){
 
   // Следующий кадр — запускаем полёт
   requestAnimationFrame(function(){requestAnimationFrame(function(){
-    div.style.transition='left .38s cubic-bezier(.25,.46,.45,.94),top .38s cubic-bezier(.25,.46,.45,.94),width .38s ease,height .38s ease';
+    var scaleX=cw/bw;
+    var scaleY=ch/bh;
+    div.style.transition='left .42s cubic-bezier(.25,.46,.45,.94),top .42s cubic-bezier(.25,.46,.45,.94),width .42s ease,height .42s ease,transform .42s ease';
     div.style.left=toRect.left+'px';
     div.style.top=toRect.top+'px';
     div.style.width=cw+'px';
     div.style.height=ch+'px';
+    div.style.transform='rotate(0deg) scale(1)';
   });});
 
-  // После приземления — переворачиваем карту лицом, затем вызываем playCard
+  // По окончании — убираем div, вызываем колбэк
   setTimeout(function(){
-    try{
-      div.className='flying-card';
-      div.style.background='none';
-      div.style.border='none';
-      div.style.boxShadow='0 2px 10px rgba(0,0,0,.55)';
-      var fimg=document.createElement('img');
-      fimg.src=cardImg(card.rank,card.suit);
-      fimg.style.cssText='width:100%;height:100%;display:block;border-radius:7px;';
-      div.appendChild(fimg);
-    }catch(e){}
+    // Обновляем только нужный слот, без перерисовки всего стола
+    try{updateSlot(card);}catch(e){}
     setTimeout(function(){
       try{if(div.parentNode)div.parentNode.removeChild(div);}catch(e){}
+      animating=false;
       cb();
-    }, 160);
+    }, 120);
   }, 400);
 }
 
@@ -743,6 +733,7 @@ function renderFan(idx,n){
 }
 
 function renderTable(){
+  if(animating)return;
   // Порядок на экране сверху вниз: ♥ ♦ ♣ ♠
   var displayOrder=['♥','♦','♣','♠'];
 
@@ -767,17 +758,29 @@ function renderTable(){
     SLOT_HINTS.forEach(function(rank,i){
       var card=placed[rank];
       var isPivot=(rank==='9');
+      var slotId='slot-'+suit+'-'+rank;
       if(card){
-        html+='<div class="t-card"><img src="'+cardImg(card.rank,card.suit)+'" loading="lazy"/></div>';
+        html+='<div class="t-card" id="'+slotId+'"><img src="'+cardImg(card.rank,card.suit)+'" loading="lazy"/></div>';
       } else {
         var hint='<span style="font-size:.55rem;color:rgba(255,255,255,.15)">'+(isPivot?'<span style="font-size:.75rem;color:rgba(212,160,23,.6);font-weight:700">9</span>':rank)+'</span>';
-        html+='<div class="t-slot'+(isPivot?' pivot':'')+'" style="display:flex;align-items:center;justify-content:center">'+hint+'</div>';
+        html+='<div class="t-slot'+(isPivot?' pivot':'')+'" id="'+slotId+'" style="display:flex;align-items:center;justify-content:center">'+hint+'</div>';
       }
     });
 
     html+='</div></div>';
   });
   document.getElementById('table-suits').innerHTML=html;
+}
+
+function updateSlot(card){
+  var slotId='slot-'+card.suit+'-'+card.rank;
+  var el=document.getElementById(slotId);
+  if(!el)return;
+  var newEl=document.createElement('div');
+  newEl.className='t-card';
+  newEl.id=slotId;
+  newEl.innerHTML='<img src="'+cardImg(card.rank,card.suit)+'" loading="lazy"/>';
+  el.parentNode.replaceChild(newEl,el);
 }
 
 function renderHand(){
