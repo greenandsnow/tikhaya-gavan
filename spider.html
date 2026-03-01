@@ -9,12 +9,12 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--sand:#f5f0e8;--sand-dark:#e8e0d0;--stone:#8a8278;--sea:#4a7c8e;--sea-light:#6a9cae;--sea-pale:#d6e8ed;--text:#3a3530;--text-light:#6b6560;--white:#fdfcfa;--felt:#1e4d2b;--felt-dark:#163d22;--gold:#d4a017;--cw:80px;--ch:112px}
-html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text)}
+html{font-size:clamp(15px,1.1vw,18px)}html,body{height:100%;font-family:'Jost',sans-serif;font-weight:300;background:var(--sand);color:var(--text)}
 body{display:flex;flex-direction:column}
 header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;flex-shrink:0}
 .hi{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:88px;gap:1.5rem}
 .logo{text-decoration:none;display:flex;align-items:center;gap:.75rem;line-height:1.1}.logo-img{height:110px;width:auto;display:block;position:relative;z-index:101}.logo-text{display:flex;flex-direction:column}
-.logo-name{font-weight:700;font-size:1.3rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
+.logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
 .logo-tag{font-size:.6rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
 nav ul{list-style:none;display:flex;gap:.2rem}
 nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-light);font-size:.82rem;border-radius:6px;transition:color .2s,background .2s}
@@ -253,7 +253,7 @@ function startGame(suits){
   setTimeout(function(){calcCardSize();render();},50);
 }
 
-function showWelcome(){clearInterval(timerInterval);document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
+function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
 
 function render(){
   var sz=calcCardSize();
