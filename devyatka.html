@@ -170,6 +170,19 @@ nav a.active{color:var(--sea);font-weight:600}
   100%{opacity:0;transform:scale(.3) translate(var(--tx),var(--ty))}
 }
 
+/* ── АНИМАЦИЯ КАРТЫ AI ── */
+.card-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.6);
+  z-index:150;pointer-events:none;opacity:0;
+  transition:transform .25s ease,opacity .25s ease}
+.card-flash.show{transform:translate(-50%,-50%) scale(1);opacity:1}
+.card-flash img{width:108px;height:151px;border-radius:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,.7)}
+.card-flash-label{position:fixed;top:calc(50% + 90px);left:50%;transform:translateX(-50%);
+  z-index:151;pointer-events:none;opacity:0;transition:opacity .25s ease;
+  background:rgba(0,0,0,.75);color:white;padding:.3rem .9rem;border-radius:8px;
+  font-size:.85rem;font-weight:600;white-space:nowrap}
+.card-flash-label.show{opacity:1}
+
 /* ── ОВЕРЛЕЙ КОНЦА КРУГА ── */
 .round-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,.52);z-index:100;align-items:center;justify-content:center}
 .round-overlay.show{display:flex}
@@ -336,6 +349,10 @@ nav a.active{color:var(--sea);font-weight:600}
 <!-- КОНЕЦ ИГРЫ -->
 <div class="end-overlay" id="end-overlay"></div>
 
+<!-- АНИМАЦИЯ КАРТЫ AI -->
+<div class="card-flash" id="card-flash"><img id="card-flash-img" src="" alt=""/></div>
+<div class="card-flash-label" id="card-flash-label"></div>
+
 <script>
 var SUITS_DISPLAY=['♠','♣','♦','♥'];
 var SUIT_CODES={'♦':'D','♣':'C','♥':'H','♠':'S'};
@@ -444,9 +461,24 @@ function roundWin(pi){
   players[pi].coins+=bank;
   bank=0;
   updateUI();
-  // Звук победы в круге для игрока
-  if(players[pi].isHuman) playSound('round');
+  // Звук при конце любого круга
+  playSound('round');
   showRoundOverlay(players[pi].name, won, players[pi].isHuman);
+}
+
+function showCardFlash(card, playerName, cb){
+  var img=document.getElementById('card-flash-img');
+  var flash=document.getElementById('card-flash');
+  var label=document.getElementById('card-flash-label');
+  img.src=cardImg(card.rank,card.suit);
+  label.textContent=playerName+' играет '+card.rank+card.suit;
+  // Показываем
+  setTimeout(function(){flash.classList.add('show');label.classList.add('show');},30);
+  // Скрываем через 900мс и вызываем колбэк
+  setTimeout(function(){
+    flash.classList.remove('show');label.classList.remove('show');
+    setTimeout(cb,250);
+  },950);
 }
 
 function aiTurn(){
@@ -462,8 +494,16 @@ function aiTurn(){
     if(sc>bs){bs=sc;best=idx;}
   });
   var c=players[p].hand[best];
-  setMsg(players[p].name+' играет '+c.rank+c.suit,false);
-  setTimeout(function(){playCard(p,best);},300);
+  setMsg(players[p].name+' думает...',false);
+  // Пауза перед ходом — игрок видит "думает"
+  setTimeout(function(){
+    if(gameOver)return;
+    setMsg(players[p].name+' играет '+c.rank+c.suit,false);
+    showCardFlash(c, players[p].name, function(){
+      if(gameOver)return;
+      playCard(p,best);
+    });
+  }, 800+Math.random()*400);
 }
 
 function humanPlay(ci){
