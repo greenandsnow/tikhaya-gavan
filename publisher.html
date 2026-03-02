@@ -125,20 +125,51 @@ footer{background:var(--white);border-top:1px solid var(--sand-dark);padding:1.5
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .card{animation:fadeUp .4s ease both}
+header{background:var(--white);border-bottom:1px solid var(--sand-dark);padding:0 2rem;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(74,124,142,0.06)}
+.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:88px;gap:2rem}
+.logo{text-decoration:none;display:flex;align-items:center;gap:.75rem;line-height:1.1}
+.logo-img{height:110px;width:auto;display:block;position:relative;z-index:101}
+.logo-text{display:flex;flex-direction:column}
+.logo-name{font-weight:700;font-size:1.45rem;color:var(--sea);letter-spacing:.1em;text-transform:uppercase}
+.logo-tagline{font-size:.65rem;color:var(--stone);letter-spacing:.12em;text-transform:uppercase}
+nav ul{list-style:none;display:flex;gap:.25rem}
+nav a{display:block;padding:.45rem .85rem;text-decoration:none;color:var(--text-light);font-size:.88rem;font-weight:400;border-radius:6px;transition:color .2s,background .2s}
+nav a:hover{color:var(--sea);background:var(--sea-pale)}
+nav a.active{color:var(--sea);font-weight:600}
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}
+@media(max-width:768px){
+.burger{display:flex}
+.logo-img{height:80px}
+.logo-name{font-size:1.2rem!important}
+nav{display:none;position:absolute;top:88px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--sand-dark);padding:1rem 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,0.06);z-index:90}
+nav.open{display:block}
+nav ul{flex-direction:column;align-items:flex-start;gap:.25rem}
+nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
+}
 </style>
 </head>
 <body>
 <header>
-  <div class="hi">
-    <a href="/" class="logo"><span class="logo-name">Тихая гавань</span><span class="logo-tag">Место для вашего досуга</span></a>
-    <nav><ul>
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <img src="/logo_tg.png" alt="Тихая гавань" class="logo-img"/>
+      <div class="logo-text">
+        <span class="logo-name">Тихая гавань</span>
+        <span class="logo-tagline">Место для вашего досуга</span>
+      </div>
+    </a>
+    <button class="burger" aria-label="Меню" onclick="document.getElementById('main-nav').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <nav id="main-nav">
+      <ul>
       <li><a href="/crosswords">Кроссворды</a></li>
       <li><a href="/ask">Задай вопрос</a></li>
       <li><a href="/reading" class="active">Чтиво</a></li>
-      <li><a href="/videos">Видео</a></li>
+      <li><a href="/news">Новости</a></li>
       <li><a href="/games">Игры</a></li>
       <li><a href="/support">Поддержка</a></li>
-    </ul></nav>
+      </ul>
+    </nav>
   </div>
 </header>
 
