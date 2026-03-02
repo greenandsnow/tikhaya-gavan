@@ -160,13 +160,16 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
     <button class="rules-toggle" onclick="toggleRules()">📖 Правила игры</button>
     <div class="rules-box" id="rules-box">
       <ul>
-        <li>10 колонок: первые 4 получают по 6 карт, остальные 6 — по 5 карт</li>
+        <li>На столе 10 стопок: первые 4 получают по 6 карт, остальные 6 — по 5 карт</li>
         <li>Верхняя карта каждой колонки открыта, остальные закрыты</li>
-        <li>Карту можно положить на карту на 1 больше по значению</li>
+        <li>Карту можно переместить только на карту на один ранг старше</li>
+        <li>Стопка собирается от Короля до Туза по нисходящей — Туз кладётся на Двойку</li>
         <li>Группу карт одной масти в порядке убывания можно перемещать вместе</li>
-        <li>Пустая колонка принимает любую карту или группу</li>
-        <li>Полная последовательность К→Т одной масти убирается автоматически</li>
-        <li>«Добавить карты» раздаёт по одной карте на каждую колонку из запаса</li>
+        <li>В освободившуюся колонку можно поместить любую карту или группу</li>
+        <li>Внизу расположен банк карт (Колода)</li>
+        <li>Когда нет вариантов для перемещения, нажмите на Колоду — она раздаст по одной карте в каждую стопку. Свободных колонок в этот момент быть не должно</li>
+        <li>Собранная последовательность от Короля до Туза одной масти автоматически перемещается на базу</li>
+        <li>Игра заканчивается победой, когда все карты перемещены на базу. Если нет возможных ходов — нажмите «Отмена» для отмены последних ходов</li>
       </ul>
     </div>
   </div>
@@ -444,7 +447,7 @@ function tryMove(fromCol,fromIdx,toCol){
   if(gameColumns[fromCol].length>0)gameColumns[fromCol][gameColumns[fromCol].length-1].faceUp=true;
   moves++;document.getElementById('moves-val').textContent=moves;
   checkCompletions();
-  setTimeout(function(){if(!document.getElementById('win-overlay').classList.contains('show')&&isStuck())showStuck();},300);
+  setTimeout(function(){if(!document.getElementById('win-overlay').classList.contains('show')&&isStuck())showStuck();},600);
   return true;
 }
 
@@ -478,7 +481,7 @@ function dealFromStock(){
   moves++;document.getElementById('moves-val').textContent=moves;
   checkCompletions();
   render();
-  setTimeout(function(){if(!document.getElementById('win-overlay').classList.contains('show')&&isStuck())showStuck();},300);
+  setTimeout(function(){if(!document.getElementById('win-overlay').classList.contains('show')&&isStuck())showStuck();},600);
 }
 
 function undoMove(){
