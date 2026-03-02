@@ -129,7 +129,7 @@ nav a.active{color:var(--sea);font-weight:600}
 
 /* ── "ВАШ ХОД" всплывашка ── */
 .your-turn-badge{
-  display:none;position:absolute;bottom:calc(var(--hh) + 80px);left:16px;transform:none;
+  display:none;position:absolute;bottom:calc(var(--hh) + 110px);left:calc(50% - var(--hw)*5 - 60px);transform:none;
   background:var(--sand);border:2px solid var(--gold);border-radius:10px;
   padding:.4rem 1.1rem;font-size:.85rem;font-weight:700;color:var(--text);
   box-shadow:0 4px 16px rgba(0,0,0,.4);white-space:nowrap;z-index:20;
@@ -149,10 +149,7 @@ nav a.active{color:var(--sea);font-weight:600}
 .pmsg.hl{color:#ffd700;font-weight:600}
 
 /* Кошелёк игрока — справа от карт, внизу */
-.player-wallet-wrap{position:absolute;bottom:12px;right:16px;z-index:6}
-/* Нижняя строка игрока: веер + кошелёк */
-.player-bottom-row{display:flex;align-items:flex-end;justify-content:center;gap:12px;position:relative}
-.player-wallet-inline{position:relative;margin-bottom:8px;flex-shrink:0}
+.player-wallet-wrap{position:absolute;bottom:calc(var(--hh) + 20px);left:calc(50% - var(--hw)*5 - 60px);z-index:6}
 
 /* Веер карт игрока */
 .hand-fan{position:relative;height:calc(var(--hh) + 48px);display:flex;justify-content:center;align-items:flex-end}
@@ -333,16 +330,18 @@ nav a.active{color:var(--sea);font-weight:600}
       <div class="player-top">
         <div class="pmsg" id="msg-bar">—</div>
       </div>
-      <div class="player-bottom-row">
-        <div class="hand-fan" id="hand-fan"></div>
-        <div class="wallet player-wallet-inline" id="wallet-0">
-          <div class="wallet-name">Игрок</div>
-          <div class="wallet-coins" id="wcoins-0">50</div>
-        </div>
-      </div>
+      <div class="hand-fan" id="hand-fan"></div>
     </div>
 
 
+
+    <!-- Кошелёк игрока — слева от веера -->
+    <div class="player-wallet-wrap">
+      <div class="wallet" id="wallet-0">
+        <div class="wallet-name">Игрок</div>
+        <div class="wallet-coins" id="wcoins-0">50</div>
+      </div>
+    </div>
 
     <!-- КОНЕЦ КРУГА (внутри поля) -->
     <div class="round-overlay" id="round-overlay"></div>
