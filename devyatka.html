@@ -129,7 +129,7 @@ nav a.active{color:var(--sea);font-weight:600}
 
 /* ── "ВАШ ХОД" всплывашка ── */
 .your-turn-badge{
-  display:none;position:absolute;bottom:calc(var(--hh) + 110px);left:calc(50% - var(--hw)*5 - 60px);transform:none;
+  display:none;position:absolute;bottom:calc(var(--hh)/2 + 10px);left:calc(50% - var(--hw)*5.5 - 70px);transform:none;
   background:var(--sand);border:2px solid var(--gold);border-radius:10px;
   padding:.4rem 1.1rem;font-size:.85rem;font-weight:700;color:var(--text);
   box-shadow:0 4px 16px rgba(0,0,0,.4);white-space:nowrap;z-index:20;
@@ -149,7 +149,7 @@ nav a.active{color:var(--sea);font-weight:600}
 .pmsg.hl{color:#ffd700;font-weight:600}
 
 /* Кошелёк игрока — справа от карт, внизу */
-.player-wallet-wrap{position:absolute;bottom:calc(var(--hh) + 20px);left:calc(50% - var(--hw)*5 - 60px);z-index:6}
+.player-wallet-wrap{position:absolute;bottom:calc(var(--hh)/2 + 10px);left:calc(50% + var(--hw)*4.5 + 20px);z-index:6}
 
 /* Веер карт игрока */
 .hand-fan{position:relative;height:calc(var(--hh) + 48px);display:flex;justify-content:center;align-items:flex-end}
