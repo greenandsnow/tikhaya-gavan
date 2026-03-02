@@ -8,23 +8,20 @@ module.exports = async function handler(req, res) {
 
   try {
     var supabaseUrl = process.env.SUPABASE_URL;
-    var supabaseAnonKey = process.env.SUPABASE_PUBLISHABLE_KEY;
     var serviceKey = process.env.SUPABASE_SERVICE_KEY;
 
-    // Дата в канадском времени
-    var _now = new Date();
-    var _toronto = new Date(_now.toLocaleString('en-CA', { timeZone: 'America/Toronto' }));
-    var todayToronto = _toronto.getFullYear() + '-'
-      + String(_toronto.getMonth() + 1).padStart(2, '0') + '-'
-      + String(_toronto.getDate()).padStart(2, '0');
-    var date = req.query.date || todayToronto;
-    var status = req.query.status || 'published';
+    // Дата UTC (как в базе)
+    var now = new Date();
+    var todayUTC = now.getUTCFullYear() + '-'
+      + String(now.getUTCMonth() + 1).padStart(2, '0') + '-'
+      + String(now.getUTCDate()).padStart(2, '0');
 
-    // Используем service key для всех запросов (обходит RLS)
+    var date = req.query.date || todayUTC;
+    var status = req.query.status || 'published';
     var key = serviceKey;
 
     var url = supabaseUrl + '/rest/v1/news?date=eq.' + date + '&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,sort_order,created_at';
-    if (status === 'draft' || status === 'hidden' || status === 'published') {
+    if (['draft', 'hidden', 'published'].includes(status)) {
       url += '&status=eq.' + status;
     } else {
       url += '&status=eq.published';
@@ -38,8 +35,10 @@ module.exports = async function handler(req, res) {
     // Если за сегодня нет published — попробовать вчера
     if ((!news || news.length === 0) && !req.query.date && status === 'published') {
       var yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      var yDate = yesterday.toISOString().split('T')[0];
+      yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+      var yDate = yesterday.getUTCFullYear() + '-'
+        + String(yesterday.getUTCMonth() + 1).padStart(2, '0') + '-'
+        + String(yesterday.getUTCDate()).padStart(2, '0');
 
       var r2 = await fetch(
         supabaseUrl + '/rest/v1/news?date=eq.' + yDate + '&status=eq.published&order=created_at.asc&select=id,date,headline,summary,sources,topic_tag,status,sort_order,created_at',
@@ -48,11 +47,7 @@ module.exports = async function handler(req, res) {
       news = await r2.json();
     }
 
-    if (req.query.status) {
-      res.setHeader('Cache-Control', 'no-store');
-    } else {
-      res.setHeader('Cache-Control', 'public, max-age=60');
-    }
+    res.setHeader('Cache-Control', req.query.status ? 'no-store' : 'public, max-age=60');
     return res.status(200).json(news || []);
   } catch (err) {
     return res.status(500).json({ error: err.message });
