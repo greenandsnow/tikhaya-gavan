@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Паук — Игры — Тихая гавань</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="manifest" href="/spider-manifest.json"/>
+<meta name="theme-color" content="#1e4d2b"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Паук"/>
+<link rel="apple-touch-icon" href="/spider-icon-192.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -286,11 +292,11 @@ function startGame(suits){
   }
   stockPile=deck;
   timerInterval=setInterval(function(){seconds++;var m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');document.getElementById('timer-val').textContent=m+':'+s;},1000);
-  if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))enterGameMode();
   setTimeout(function(){calcCardSize();render();checkOrientation();},50);
+  if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))enterFullscreen();
 }
 
-function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');exitGameMode();document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
+function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
 
 function render(){
   var sz=calcCardSize();
@@ -572,18 +578,16 @@ function toggleRules(){var b=document.getElementById('rules-box');b.style.displa
 
 window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display==='flex')render();});
 
-// ═══ ПСЕВДО-ПОЛНЫЙ ЭКРАН (скрываем хедер и заголовок) ═══
-function enterGameMode(){
-  document.querySelector('header').style.display='none';
-  document.querySelector('.page-title').style.display='none';
-  document.body.style.overflow='hidden';
-  // На iOS — скроллим вверх чтобы спрятать адресную строку
-  setTimeout(function(){window.scrollTo(0,1);},100);
-}
-function exitGameMode(){
-  document.querySelector('header').style.display='';
-  document.querySelector('.page-title').style.display='';
-  document.body.style.overflow='';
+// ═══ ПОЛНЫЙ ЭКРАН + ОРИЕНТАЦИЯ ═══
+function enterFullscreen(){
+  var el=document.documentElement;
+  try{
+    if(el.requestFullscreen)el.requestFullscreen();
+    else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
+  }catch(e){}
+  try{
+    if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){});
+  }catch(e){}
 }
 
 function checkOrientation(){
@@ -626,6 +630,11 @@ function onTouchMove(e){
 }
 
 document.addEventListener('touchmove',function(e){if(touchState&&touchState.moved)e.preventDefault();},{passive:false});
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/spider-sw.js');
+}
 </script>
 </body>
 </html>
