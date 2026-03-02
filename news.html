@@ -183,22 +183,15 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
 
 <div class="hero">
   <div class="eyebrow">Четыре взгляда на мир</div>
-  <h1>Новости</h1>
+  <h1>Новости за сегодня</h1>
   <div class="hero-sub">
     Главные темы — четыре точки зрения на каждую.<br>
     Запад, Украина, Россия и Глобальный Юг. Читайте оригиналы и думайте сами.
   </div>
-  <div class="hero-date" id="hero-date">
-    <svg viewBox="0 0 16 16"><path d="M5 0v2H3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2h-2V0h-1v2H6V0H5zm8 6H3v8h10V6z"/></svg>
-    <span id="date-display">Загрузка...</span>
-  </div>
+
 </div>
 
-<div class="date-nav">
-  <button class="date-btn" id="btn-prev" onclick="changeDate(-1)">← Вчера</button>
-  <button class="date-btn" id="btn-today" onclick="goToday()" disabled>Сегодня</button>
-  <button class="date-btn" id="btn-next" onclick="changeDate(1)" disabled>Завтра →</button>
-</div>
+
 
 <div class="legend">
   <div class="legend-item"><div class="legend-dot" style="background:var(--c-west)"></div> Запад</div>
@@ -217,7 +210,7 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
   </div>
 </div>
 
-<div class="collect-note">Новости собраны в 00:00 UTC</div>
+
 
 <div class="ai-promo">
   <span>🤖</span>
@@ -244,7 +237,7 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
 var newsData = [];
 function getLocalDate(d) {
   var dd = d || new Date();
-  return dd.getFullYear() + '-' + String(dd.getMonth()+1).padStart(2,'0') + '-' + String(dd.getDate()).padStart(2,'0');
+  return dd.getUTCFullYear() + '-' + String(dd.getUTCMonth()+1).padStart(2,'0') + '-' + String(dd.getUTCDate()).padStart(2,'0');
 }
 var currentDate = getLocalDate();
 var today = currentDate;
@@ -270,9 +263,7 @@ async function loadNews(date) {
   document.getElementById('loading').style.display = 'block';
   document.getElementById('news-grid').style.display = 'none';
   document.getElementById('empty').style.display = 'none';
-  document.getElementById('date-display').textContent = formatDateRu(date);
-  document.getElementById('btn-today').disabled = (date === today);
-  document.getElementById('btn-next').disabled = (date >= today);
+
 
   try {
     var url = '/api/news' + (date === today ? '' : '?date=' + date);
@@ -397,7 +388,7 @@ function openModal(idx) {
   document.body.style.overflow='hidden';
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('show');document.body.style.overflow='';}
-function changeDate(d){var dt=new Date(currentDate+'T12:00:00');dt.setDate(dt.getDate()+d);var nd=getLocalDate(dt);if(nd>today)return;loadNews(nd);}
+function changeDate(d){var dt=new Date(currentDate+'T12:00:00Z');dt.setUTCDate(dt.getUTCDate()+d);var nd=getLocalDate(dt);if(nd>today)return;loadNews(nd);}
 function goToday(){loadNews(today);}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();if(e.key==='ArrowLeft')changeDate(-1);if(e.key==='ArrowRight'&&currentDate<today)changeDate(1);});
 loadNews(today);
