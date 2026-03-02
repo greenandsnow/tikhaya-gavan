@@ -253,10 +253,10 @@
   <!-- ADMIN -->
   <div id="admin-screen" style="display:none">
     <h1>📰 Модерация новостей</h1>
-    <div class="subtitle">Черновики собраны в 05:00 UTC. Проверьте и опубликуйте.</div>
+    <div class="subtitle">Новости публикуются автоматически в 05:00 UTC.</div>
 
     <div class="tabs">
-      <button class="tab-btn active" id="tab-drafts" onclick="switchTab('drafts')">📝 Черновики</button>
+
       <button class="tab-btn" id="tab-published" onclick="switchTab('published')">✅ Опубликованные</button>
     </div>
 
@@ -269,7 +269,7 @@
       </div>
       <div style="display:flex;gap:.5rem;align-items:center">
         <span class="stats" id="stats-text"></span>
-        <button class="btn btn-green" id="publish-all-btn" onclick="publishAll()" style="display:none">✓ Опубликовать все</button>
+
       </div>
     </div>
 
@@ -291,7 +291,7 @@
 <script>
 var adminPassword = '';
 var currentDate = new Date().toISOString().split('T')[0];
-var currentTab = 'drafts';
+var currentTab = 'published';
 var items = [];
 
 var FLAGS = { west: '🌍', ukraine: '🇺🇦', russia: '🇷🇺', china: '🌏' };
@@ -330,15 +330,15 @@ function doLogin() {
 
 function switchTab(tab) {
   currentTab = tab;
-  document.getElementById('tab-drafts').classList.toggle('active', tab === 'drafts');
+
   document.getElementById('tab-published').classList.toggle('active', tab === 'published');
-  document.getElementById('publish-all-btn').style.display = (tab === 'drafts') ? '' : 'none';
+
   loadCurrentTab();
 }
 
 function loadCurrentTab() {
   currentDate = document.getElementById('date-picker').value || currentDate;
-  loadItems(currentTab === 'drafts' ? 'draft' : 'published');
+  loadItems('published');
 }
 
 async function loadItems(status) {
