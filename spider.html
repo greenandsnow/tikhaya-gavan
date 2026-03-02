@@ -286,11 +286,11 @@ function startGame(suits){
   }
   stockPile=deck;
   timerInterval=setInterval(function(){seconds++;var m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');document.getElementById('timer-val').textContent=m+':'+s;},1000);
+  if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))enterGameMode();
   setTimeout(function(){calcCardSize();render();checkOrientation();},50);
-  if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))enterFullscreen();
 }
 
-function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
+function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');exitGameMode();document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
 
 function render(){
   var sz=calcCardSize();
@@ -572,16 +572,18 @@ function toggleRules(){var b=document.getElementById('rules-box');b.style.displa
 
 window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display==='flex')render();});
 
-// ═══ ПОЛНЫЙ ЭКРАН + ОРИЕНТАЦИЯ ═══
-function enterFullscreen(){
-  var el=document.documentElement;
-  try{
-    if(el.requestFullscreen)el.requestFullscreen();
-    else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
-  }catch(e){}
-  try{
-    if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){});
-  }catch(e){}
+// ═══ ПСЕВДО-ПОЛНЫЙ ЭКРАН (скрываем хедер и заголовок) ═══
+function enterGameMode(){
+  document.querySelector('header').style.display='none';
+  document.querySelector('.page-title').style.display='none';
+  document.body.style.overflow='hidden';
+  // На iOS — скроллим вверх чтобы спрятать адресную строку
+  setTimeout(function(){window.scrollTo(0,1);},100);
+}
+function exitGameMode(){
+  document.querySelector('header').style.display='';
+  document.querySelector('.page-title').style.display='';
+  document.body.style.overflow='';
 }
 
 function checkOrientation(){
