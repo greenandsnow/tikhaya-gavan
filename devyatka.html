@@ -380,10 +380,8 @@ function resizeLayout(){
   felt.style.top=barH+'px';
   felt.style.transformOrigin='top left';
   felt.style.transform='scale('+scale+')';
-  alert('nW='+naturalW+' nH='+naturalH+' aW='+availW+' aH='+availH+' scale='+scale.toFixed(3));
 }
-resizeLayout();
-window.addEventListener('resize',resizeLayout);
+window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display!=='none')resizeLayout();});
 
 var SUITS_DISPLAY=['♠','♣','♦','♥'];
 var SUIT_CODES={'♦':'D','♣':'C','♥':'H','♠':'S'};
