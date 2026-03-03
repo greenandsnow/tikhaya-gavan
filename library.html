@@ -127,6 +127,35 @@ nav a:hover{color:var(--sea);background:var(--sea-pale)}
 nav a.active{color:var(--sea);font-weight:600}
 .burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
 .burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}
+
+@media(max-width:768px){
+  /* Сетка книг — 3 колонки */
+  .books-grid{grid-template-columns:repeat(3,1fr)!important;gap:.5rem!important}
+  /* Жанры — скрыть десктопные кнопки, показать select */
+  .filters{display:none!important}
+  .genre-select-wrap{display:block}
+}
+.genre-select-wrap{
+  display:none;
+  margin-bottom:.75rem;
+}
+.genre-select{
+  width:100%;
+  padding:.55rem .85rem;
+  border:1.5px solid var(--sand-dark);
+  border-radius:20px;
+  background:var(--white);
+  font-family:'Jost',sans-serif;
+  font-size:.88rem;
+  color:var(--text);
+  cursor:pointer;
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8278' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right .85rem center;
+  padding-right:2.2rem;
+}
 @media(max-width:768px){
 .burger{display:flex}
 .logo-img{height:80px}
@@ -187,6 +216,22 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
       </div>
     </div>
 
+    <div class="genre-select-wrap">
+      <select class="genre-select" id="genre-select" onchange="setFilterMobile(this)">
+        <option value="all">Все жанры</option>
+        <option value="Фантастика">🚀 Фантастика</option>
+        <option value="Фэнтези">🧙 Фэнтези</option>
+        <option value="Детектив">🔍 Детектив</option>
+        <option value="Любовный роман">💕 Роман</option>
+        <option value="Приключения">🗺️ Приключения</option>
+        <option value="Исторический">📜 Исторический</option>
+        <option value="Биография">👤 Биография</option>
+        <option value="Юмор">😄 Юмор</option>
+        <option value="Драма">🎭 Драма</option>
+        <option value="Философия">🧠 Философия</option>
+        <option value="Лирика">🌸 Лирика</option>
+      </select>
+    </div>
     <div class="filters" id="filters">
       <button class="filter-btn active" onclick="setFilter('all',this)">Все жанры</button>
       <button class="filter-btn" onclick="setFilter('Фантастика',this)">🚀 Фантастика</button>
@@ -365,6 +410,16 @@ window.setFilter = setFilter;
 window.filterBooks = filterBooks;
 
 loadBooks();
+function setFilterMobile(sel){
+  var val = sel.value;
+  // найти соответствующую кнопку и кликнуть
+  var btns = document.querySelectorAll('.filter-btn');
+  btns.forEach(function(b){
+    var matches = (val==='all' && b.textContent.trim()==='Все жанры') ||
+                  b.getAttribute('onclick').includes("'"+val+"'");
+    if(matches) b.click();
+  });
+}
 </script>
 </body>
 </html>
