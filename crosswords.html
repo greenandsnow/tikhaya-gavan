@@ -953,6 +953,7 @@ function buildGrid() {
 // ═══════════════════════════════════════════════
 function onCellClick(r, c) {
   document.body.classList.add('cw-active');
+  alert('cw-active: ' + document.body.classList.contains('cw-active'));
   if (!isStarted) startTimer();
 
   const key = `${r},${c}`;
