@@ -819,7 +819,10 @@ function saveProgress() {
   const key = 'crossword_progress_week_' + currentWeek;
   localStorage.setItem(key, JSON.stringify({
     userGrid: userGrid,
-    lockedCells: lockedCells
+    lockedCells: lockedCells,
+    seconds: seconds,
+    score: score,
+    isStarted: isStarted
   }));
 }
 
@@ -865,6 +868,15 @@ function loadProgress() {
         });
         updateWordCount();
       }
+      if (data.seconds) {
+        seconds = data.seconds;
+        document.getElementById('timer').textContent = formatTime(seconds);
+      }
+      if (data.score !== undefined) {
+        score = data.score;
+        document.getElementById('score').textContent = score;
+      }
+      if (data.isStarted) isStarted = true;
       return true;
     }
   } catch(e) {}
@@ -1499,6 +1511,7 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
       cwShowHeader();
     }
   });
+  window.addEventListener('beforeunload',function(){if(isStarted&&!isComplete)saveProgress();});
 </script>
 </body>
 </html>
