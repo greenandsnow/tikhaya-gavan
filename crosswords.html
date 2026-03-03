@@ -789,6 +789,17 @@
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+var cwHeaderHidden = false;
+function cwHideHeader() {
+  var hdr = document.querySelector('header');
+  if(hdr) hdr.style.display='none';
+  cwHeaderHidden = true;
+}
+function cwShowHeader() {
+  var hdr = document.querySelector('header');
+  if(hdr) hdr.style.display='';
+  cwHeaderHidden = false;
+}
 // ═══════════════════════════════════════════════
 // LOAD PUZZLE FROM SERVER
 // ═══════════════════════════════════════════════
@@ -1481,17 +1492,6 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
   if (!isStarted && key !== 'Backspace') startTimer();
 });
   // снять фокус при клике вне кроссворда
-  var cwHeaderHidden = false;
-  function cwHideHeader() {
-    var hdr = document.querySelector('header');
-    if(hdr) hdr.style.display='none';
-    cwHeaderHidden = true;
-  }
-  function cwShowHeader() {
-    var hdr = document.querySelector('header');
-    if(hdr) hdr.style.display='';
-    cwHeaderHidden = false;
-  }
   document.addEventListener('click', function(e) {
     if (e.target.closest('.grid-wrapper, #mobile-keyboard, .clues-panel, .top-bar, .btn')) {
       cwHideHeader();
