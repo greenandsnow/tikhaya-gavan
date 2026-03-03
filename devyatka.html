@@ -60,7 +60,7 @@ body.game-active{padding-top:0}
 .rules-box li{margin-bottom:.25rem}
 
 /* ── GAME SCREEN ── */
-.game-screen{display:none;flex:1;flex-direction:column;overflow:hidden;position:relative}
+.game-screen{display:none;flex:1;flex-direction:column;overflow:visible;position:relative}
 
 /* ── GAME BAR ── */
 .game-bar{background:rgba(0,0,0,.5);padding:.4rem 1rem;display:flex;align-items:center;gap:.75rem;flex-shrink:0;z-index:10}
@@ -73,7 +73,7 @@ body.game-active{padding-top:0}
 .gbtn:hover{background:rgba(255,255,255,.22)}
 
 /* ── FELT ── */
-.felt{flex:1;background:radial-gradient(ellipse at center,#1f7a3a 0%,var(--felt) 55%,var(--felt-dark) 100%);position:relative;overflow:hidden}
+.felt{flex:1;background:radial-gradient(ellipse at center,#1f7a3a 0%,var(--felt) 55%,var(--felt-dark) 100%);position:relative;overflow:visible}
 .felt::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3L3 1' stroke='rgba(0,0,0,0.06)' stroke-width='1'/%3E%3C/svg%3E");pointer-events:none}
 
 /* ── БАНК — правый верхний угол ── */
