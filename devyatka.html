@@ -60,7 +60,7 @@ body.game-active{padding-top:0}
 .rules-box li{margin-bottom:.25rem}
 
 /* ── GAME SCREEN ── */
-.game-screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.game-screen{display:none;flex:1;flex-direction:column;overflow:hidden;position:relative}
 
 /* ── GAME BAR ── */
 .game-bar{background:rgba(0,0,0,.5);padding:.4rem 1rem;display:flex;align-items:center;gap:.75rem;flex-shrink:0;z-index:10}
@@ -358,10 +358,11 @@ body.game-active{padding-top:0}
 function resizeLayout(){
   var felt=document.getElementById('felt');
   if(!felt)return;
-  // Сбросим transform чтобы получить реальные размеры
   felt.style.transform='';
   felt.style.width='';
   felt.style.height='';
+  felt.style.position='';
+  felt.style.left='';
   var bar=document.querySelector('.game-bar');
   var barH=bar?bar.offsetHeight:40;
   var availW=window.innerWidth;
@@ -369,14 +370,16 @@ function resizeLayout(){
   var naturalW=felt.scrollWidth;
   var naturalH=felt.scrollHeight;
   if(!naturalW||!naturalH)return;
-  var scaleW=availW/naturalW;
-  var scaleH=availH/naturalH;
-  var scale=Math.min(scaleW,scaleH,1);
-  felt.style.transformOrigin='top left';
-  felt.style.transform='scale('+scale+')';
+  var scale=Math.min(availW/naturalW, availH/naturalH, 1);
+  var scaledW=Math.round(naturalW*scale);
+  var offsetX=Math.round((availW-scaledW)/2);
   felt.style.width=naturalW+'px';
   felt.style.height=naturalH+'px';
-  felt.style.marginBottom=Math.round((scale-1)*naturalH)+'px';
+  felt.style.position='absolute';
+  felt.style.left=offsetX+'px';
+  felt.style.top='0';
+  felt.style.transformOrigin='top left';
+  felt.style.transform='scale('+scale+')';
 }
 resizeLayout();
 window.addEventListener('resize',resizeLayout);
