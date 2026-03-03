@@ -26,6 +26,8 @@ nav ul{list-style:none;display:flex;gap:.2rem}
 nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-light);font-size:.82rem;border-radius:6px;transition:color .2s,background .2s}
 nav a:hover{color:var(--sea);background:var(--sea-pale)}
 nav a.active{color:var(--sea);font-weight:600}
+body.game-active header{display:none}
+body.game-active{padding-top:0}
 
 .welcome{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem}
 .welcome-box{background:var(--white);border:1px solid var(--sand-dark);border-radius:18px;padding:2.5rem 2rem;max-width:460px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
@@ -262,8 +264,9 @@ function calcCardSize(){
   var W=felt.clientWidth-16;
   var cwByW=Math.floor((W-4)/10)-2;
   cwByW=Math.max(50,Math.min(130,cwByW));
-  var H=felt.clientHeight-16;
-  var cwByH=Math.floor((H-19*18)/1.4);
+  var H=window.innerHeight-50;
+  var overlap=Math.round(cwByW*0.22);
+  var cwByH=Math.floor((H - cwByW*1.4) / (13*overlap) * cwByW);
   cwByH=Math.max(50,Math.min(130,cwByH));
   var cw=Math.min(cwByW,cwByH);
   var ch=Math.round(cw*1.4);
@@ -281,6 +284,7 @@ function makeDeck(n){
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
 
 function startGame(suits){
+  document.body.classList.add('game-active');
   currentSuits=suits;gameColumns=[];stockPile=[];foundations=0;completedSuits=[];selected=null;moves=0;seconds=0;undoStack=[];dragState=null;
   clearInterval(timerInterval);
   document.getElementById('welcome').style.display='none';
@@ -303,7 +307,7 @@ function startGame(suits){
   if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))enterFullscreen();
 }
 
-function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}
+function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}document.body.classList.remove('game-active');
 
 function render(){
   var sz=calcCardSize();
