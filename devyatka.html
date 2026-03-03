@@ -358,24 +358,25 @@ body.game-active{padding-top:0}
 function resizeLayout(){
   var felt=document.getElementById('felt');
   if(!felt)return;
+  // Сбросим transform чтобы получить реальные размеры
+  felt.style.transform='';
+  felt.style.width='';
+  felt.style.height='';
   var bar=document.querySelector('.game-bar');
   var barH=bar?bar.offsetHeight:40;
   var availW=window.innerWidth;
   var availH=window.innerHeight-barH;
-  var baseW=1200;
-  var baseH=820;
-  var scaleW=availW/baseW;
-  var scaleH=availH/baseH;
+  var naturalW=felt.scrollWidth;
+  var naturalH=felt.scrollHeight;
+  if(!naturalW||!naturalH)return;
+  var scaleW=availW/naturalW;
+  var scaleH=availH/naturalH;
   var scale=Math.min(scaleW,scaleH,1);
-  felt.style.transformOrigin='top center';
+  felt.style.transformOrigin='top left';
   felt.style.transform='scale('+scale+')';
-  felt.style.width=baseW+'px';
-  felt.style.height=baseH+'px';
-  felt.style.marginLeft='auto';
-  felt.style.marginRight='auto';
-  felt.style.marginBottom=Math.round((scale-1)*baseH)+'px';
-  felt.style.display='block';
-  alert('aW='+availW+' aH='+availH+' sW='+scaleW.toFixed(2)+' sH='+scaleH.toFixed(2)+' scale='+scale.toFixed(2));
+  felt.style.width=naturalW+'px';
+  felt.style.height=naturalH+'px';
+  felt.style.marginBottom=Math.round((scale-1)*naturalH)+'px';
 }
 resizeLayout();
 window.addEventListener('resize',resizeLayout);
