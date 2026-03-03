@@ -66,8 +66,8 @@ main{flex:1;padding:2.5rem 2rem 4rem}
 .book-body{display:none}
 .book-footer{display:none}
 .book-rating-block{padding:.35rem .55rem .45rem;border-top:1px solid var(--sand-dark);background:var(--white)}
-.rating-bar-wrap{height:5px;background:var(--sand-dark);border-radius:3px;overflow:hidden}
-.rating-bar-fill{height:100%;background:var(--green);border-radius:3px}
+.rating-bar-wrap{height:6px;background:var(--sand-dark);border-radius:3px;overflow:hidden}
+.rating-bar-fill{height:100%;background:#e63946;border-radius:3px}
 .rating-label{font-size:.58rem;color:var(--stone);margin-top:.2rem}
 .rating-stars{display:none}
 .book-type{display:none}
@@ -138,6 +138,9 @@ nav a.active{color:var(--sea);font-weight:600}
 .genre-select-wrap{
   display:none;
   margin-bottom:.75rem;
+}
+@media(min-width:769px){
+  .genre-select-wrap{display:none!important}
 }
 .genre-select{
   width:100%;
