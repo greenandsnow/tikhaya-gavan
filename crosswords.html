@@ -797,6 +797,7 @@ function cwHideHeader() {
 }
 function cwShowHeader() {
   var hdr = document.querySelector('header');
+  alert('hdr=' + (hdr ? hdr.tagName : 'null') + ' display=' + (hdr ? hdr.style.display : 'n/a'));
   if(hdr) hdr.style.display='';
   cwHeaderHidden = false;
 }
