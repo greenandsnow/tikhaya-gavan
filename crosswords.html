@@ -773,11 +773,11 @@
       <a href="/privacy">Политика конфиденциальности</a>
       <a href="/terms">Условия</a>
     </div>
-    <span class="footer-email">Написать нам: <a href="mailto:info@greenandsnowstudio.com">info@greenandsnowstudio.com</a></span>
+    <span class="footer-email">Написать нам: <a href="/cdn-cgi/l/email-protection#88e1e6eee7c8effaedede6e9e6ecfbe6e7fffbfcfdece1e7a6ebe7e5"><span class="__cf_email__" data-cfemail="01686f676e41667364646f606f65726f6e7672757465686e2f626e6c">[email&#160;protected]</span></a></span>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══════════════════════════════════════════════
 // LOAD PUZZLE FROM SERVER
 // ═══════════════════════════════════════════════
@@ -792,8 +792,42 @@ let seconds = 0;
 let score = 100;
 let isStarted = false;
 let isComplete = false;
+
+function saveProgress() {
+  const key = 'crossword_progress_week_' + currentWeek;
+  localStorage.setItem(key, JSON.stringify({
+    userGrid: userGrid,
+    lockedCells: lockedCells
+  }));
+}
+
+function loadProgress() {
+  const key = 'crossword_progress_week_' + currentWeek;
+  const saved = localStorage.getItem(key);
+  if (!saved) return false;
+  try {
+    const data = JSON.parse(saved);
+    if (data.userGrid) {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          if (data.lockedCells && data.lockedCells[r][c]) continue;
+          const letter = data.userGrid[r][c];
+          if (letter) {
+            userGrid[r][c] = letter;
+            const el = document.getElementById('letter-' + r + '-' + c);
+            if (el) el.textContent = letter;
+          }
+        }
+      }
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
 const cellEntries = {};
 const cellNumbers = {};
+let currentWeek = 1;
 
 (async function loadPuzzle() {
   const grid = document.getElementById('crossword-grid');
@@ -803,6 +837,7 @@ const cellNumbers = {};
     const resp = await fetch('/api/crossword');
     const data = await resp.json();
     PUZZLE = data.puzzle;
+    currentWeek = data.week || 1;
   } catch(e) {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#a0614a;font-size:1rem;">Не удалось загрузить кроссворд. Попробуйте обновить страницу.</div>';
     return;
@@ -834,6 +869,7 @@ const cellNumbers = {};
   buildGrid();
   buildClueLists();
   updateWordCount();
+  loadProgress();
   focusInput();
 })();
 
@@ -997,6 +1033,7 @@ function enterLetter(ch) {
   if (el) el.textContent = ch;
   advanceCursor();
   checkWord(currentEntry);
+  saveProgress();
 }
 
 function deleteLetter() {
@@ -1008,6 +1045,7 @@ function deleteLetter() {
     userGrid[selectedRow][selectedCol] = '';
     const el = document.getElementById(`letter-${selectedRow}-${selectedCol}`);
     if (el) el.textContent = '';
+    saveProgress();
   } else {
     retreatCursor();
   }
@@ -1290,6 +1328,7 @@ function hintLetter() {
   const key = `${r},${c}`;
   const other = cellEntries[key]?.[selectedDir === 'across' ? 'down' : 'across'];
   if (other) checkWord(other);
+  saveProgress();
 }
 function hintWord() {
   closeHintModal();
@@ -1308,6 +1347,7 @@ function hintWord() {
   lockWord(currentEntry);
   updateWordCount();
   checkComplete();
+  saveProgress();
 }
 
 // ═══════════════════════════════════════════════
@@ -1315,6 +1355,7 @@ function hintWord() {
 // ═══════════════════════════════════════════════
 function resetPuzzle() {
   if (!confirm('Начать кроссворд заново?')) return;
+  localStorage.removeItem('crossword_progress_week_' + currentWeek);
   stopTimer();
   seconds = 0; score = 100; isStarted = false; isComplete = false;
   userGrid = Array.from({length: ROWS}, () => Array(COLS).fill(''));
@@ -1399,14 +1440,3 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
     deleteLetter();
   } else if (/^[А-ЯЁ]$/.test(key)) {
     enterLetter(key);
-    if (!isStarted) startTimer();
-  }
-});
-
-// On mobile, prevent hidden-input from getting focus (blocks system keyboard)
-if (window.innerWidth <= 480) {
-  document.getElementById('hidden-input').setAttribute('readonly', 'true');
-}
-</script>
-</body>
-</html>
