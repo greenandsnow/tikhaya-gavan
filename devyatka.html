@@ -356,21 +356,20 @@ body.game-active{padding-top:0}
 
 <script>
 function resizeLayout(){
-  var h=window.innerHeight;
-  var scale=Math.min(1, h/820);
-  var cw=Math.round(90*scale);
-  var ch=Math.round(cw*1.4);
-  var hw=Math.round(90*scale);
-  var hh=Math.round(hw*1.4);
-  var bw=Math.round(44*scale);
-  var bh=Math.round(bw*1.41);
-  var r=document.documentElement;
-  r.style.setProperty('--cw',cw+'px');
-  r.style.setProperty('--ch',ch+'px');
-  r.style.setProperty('--hw',hw+'px');
-  r.style.setProperty('--hh',hh+'px');
-  r.style.setProperty('--bw',bw+'px');
-  r.style.setProperty('--bh',bh+'px');
+  var felt=document.getElementById('felt');
+  if(!felt)return;
+  var bar=document.querySelector('.game-bar');
+  var barH=bar?bar.offsetHeight:40;
+  var availH=window.innerHeight-barH;
+  var availW=window.innerWidth;
+  var baseW=1200;
+  var baseH=820;
+  var scaleW=availW/baseW;
+  var scaleH=availH/baseH;
+  var scale=Math.min(scaleW,scaleH,1);
+  felt.style.transformOrigin='top center';
+  felt.style.transform='scale('+scale+')';
+  felt.style.marginBottom=Math.round((scale-1)*baseH)+'px';
 }
 resizeLayout();
 window.addEventListener('resize',resizeLayout);
