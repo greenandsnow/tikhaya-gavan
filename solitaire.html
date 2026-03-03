@@ -224,7 +224,7 @@ function calcLayout(){
     colY = p + CHt + g*2;
     offDown = Math.max(10, Math.round(CHt * 0.18));
     var avail = H - colY - CHt - 4;
-    offUp = Math.max(14, Math.min(Math.round(CHt * 0.38), Math.floor(avail / 12)));
+    offUp = offDown;
     if(colY + 6*offDown + 12*offUp + CHt <= H) break;
     CWt = Math.floor(CWt * 0.93);
     if(CWt < 42){ CWt = 42; break; }
