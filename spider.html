@@ -255,11 +255,11 @@ function calcCardSize(){
   if(!felt)return;
   var W=felt.clientWidth-16;
   var cwByW=Math.floor((W-4)/10)-2;
-  cwByW=Math.max(50,Math.min(130,cwByW));
+  cwByW=Math.max(28,Math.min(130,cwByW));
   var H=window.innerHeight-50;
   var overlap=Math.round(cwByW*0.22);
   var cwByH=Math.floor((H - cwByW*1.4) / (13*overlap) * cwByW);
-  cwByH=Math.max(50,Math.min(130,cwByH));
+  cwByH=Math.max(28,Math.min(130,cwByH));
   var cw=Math.min(cwByW,cwByH);
   var ch=Math.round(cw*1.4);
   document.documentElement.style.setProperty('--cw',cw+'px');
