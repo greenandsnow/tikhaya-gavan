@@ -400,6 +400,7 @@ function startGame(){
   document.getElementById('welcome').style.display='none';
   document.getElementById('game-screen').style.display='flex';
   resizeLayout();
+  alert('felt w='+document.getElementById('felt').offsetWidth+' h='+document.getElementById('felt').offsetHeight+' scale='+document.getElementById('felt').style.transform);
   document.getElementById('round-overlay').classList.remove('show');
   document.getElementById('end-overlay').classList.remove('show');
   startRound();
