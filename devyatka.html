@@ -399,6 +399,7 @@ function startGame(){
   players=PLAYER_NAMES.map(function(n,i){return{name:n,coins:START_COINS,hand:[],isHuman:i===0};});
   document.getElementById('welcome').style.display='none';
   document.getElementById('game-screen').style.display='flex';
+  resizeLayout();
   document.getElementById('round-overlay').classList.remove('show');
   document.getElementById('end-overlay').classList.remove('show');
   startRound();
