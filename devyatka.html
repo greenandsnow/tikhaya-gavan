@@ -34,6 +34,17 @@ nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-l
 nav a:hover{color:var(--sea);background:var(--sea-pale)}
 nav a.active{color:var(--sea);font-weight:600}
 body.game-active header{display:none}
+/* ── МОБИЛЬНАЯ ЗАГЛУШКА ── */
+.mobile-stub{display:none}
+@media(max-width:768px){
+  .mobile-stub{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center}
+  .mobile-stub-icon{font-size:3rem}
+  .mobile-stub-title{font-size:1.3rem;font-weight:600;color:var(--sea)}
+  .mobile-stub-text{color:var(--text-light);font-size:.95rem;line-height:1.5}
+  .mobile-stub-badge{background:var(--sand-dark);color:var(--stone);font-size:.75rem;padding:.3rem .8rem;border-radius:20px;margin-top:.5rem}
+  #game-screen .felt{display:none}
+  #game-screen .game-bar ~ *:not(.mobile-stub){display:none!important}
+}
 body.game-active{padding-top:0}
 .burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
 .burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
@@ -275,6 +286,12 @@ body.game-active{padding-top:0}
     <button class="gbtn" onclick="startGame()">↺ Новая игра</button>
   </div>
 
+  <div class="mobile-stub">
+    <div class="mobile-stub-icon">📱</div>
+    <div class="mobile-stub-title">Девятка</div>
+    <div class="mobile-stub-text">Эта игра оптимизирована для большого экрана.<br>Мобильное приложение уже в разработке.</div>
+    <div class="mobile-stub-badge">Приложение — скоро</div>
+  </div>
   <div class="felt" id="felt">
 
     <!-- БАНК — правый верхний угол -->
@@ -358,28 +375,19 @@ body.game-active{padding-top:0}
 function resizeLayout(){
   var felt=document.getElementById('felt');
   if(!felt)return;
-  felt.style.transform='';
-  felt.style.width='';
-  felt.style.height='';
-  felt.style.position='';
-  felt.style.left='';
+  if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))return;
   var bar=document.querySelector('.game-bar');
   var barH=bar?bar.offsetHeight:40;
-  var availW=window.innerWidth;
   var availH=window.innerHeight-barH;
-  var naturalW=felt.scrollWidth;
-  var naturalH=felt.scrollHeight;
-  if(!naturalW||!naturalH)return;
-  var scale=Math.min(availW/naturalW, availH/naturalH, 1);
-  var scaledW=Math.round(naturalW*scale);
-  var offsetX=Math.round((availW-scaledW)/2);
-  felt.style.width=naturalW+'px';
-  felt.style.height=naturalH+'px';
-  felt.style.position='absolute';
-  felt.style.left=offsetX+'px';
-  felt.style.top=barH+'px';
-  felt.style.transformOrigin='top left';
+  var availW=window.innerWidth;
+  var baseW=1200;
+  var baseH=820;
+  var scaleW=availW/baseW;
+  var scaleH=availH/baseH;
+  var scale=Math.min(scaleW,scaleH,1);
+  felt.style.transformOrigin='top center';
   felt.style.transform='scale('+scale+')';
+  felt.style.marginBottom=Math.round((scale-1)*baseH)+'px';
 }
 window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display!=='none')resizeLayout();});
 
