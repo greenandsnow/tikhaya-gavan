@@ -28,6 +28,8 @@ nav ul{list-style:none;display:flex;gap:.2rem}
 nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-light);font-size:.82rem;border-radius:6px;transition:color .2s,background .2s}
 nav a:hover{color:var(--sea);background:var(--sea-pale)}
 nav a.active{color:var(--sea);font-weight:600}
+body.game-active header{display:none}
+body.game-active{padding-top:0}
 .burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
 .burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
 @media(max-width:768px){
@@ -216,7 +218,10 @@ function calcLayout(){
   var W = felt.offsetWidth, H = felt.offsetHeight;
   var p = L.pad, g = L.gap;
   // CW чтобы 7 колонн влезли
-  CW = Math.min(120, Math.floor((W - 2*p - 6*g) / 7));
+  var cwByW = Math.floor((W - 2*p - 6*g) / 7);
+  var maxRows = 13; var minOffset = 18;
+  var cwByH = Math.floor((H - CH - L.gap*2 - L.pad*2 - maxRows*minOffset) / 1.4 + minOffset);
+  CW = Math.min(80, cwByW, Math.max(40, cwByH));
   CH = Math.round(CW * 1.4);
   var step = Math.floor((W - 2*p) / 7);
   for(var i=0;i<7;i++) L.colX[i] = p + i*step;
@@ -271,6 +276,7 @@ function makeDeck(){
 }
 
 function startGame(){
+  document.body.classList.add('game-active');
   clearInterval(tmr); secs=0; moves=0; rounds=0; over=false; hist=[];
   stock=[]; waste=[]; found=[[],[],[],[]]; tab=[[],[],[],[],[],[],[]];
   DEAL_BY = 3;
@@ -677,6 +683,7 @@ function endGame(win){
 }
 
 function showWelcome(){
+  document.body.classList.remove('game-active');
   clearInterval(tmr); over=true; resetDrag();
   document.getElementById('welcome').style.display='flex';
   document.getElementById('game-screen').style.display='none';
