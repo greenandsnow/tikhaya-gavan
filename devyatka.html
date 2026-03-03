@@ -360,16 +360,15 @@ function resizeLayout(){
   if(!felt)return;
   var bar=document.querySelector('.game-bar');
   var barH=bar?bar.offsetHeight:40;
-  var availH=window.innerHeight-barH;
   var availW=window.innerWidth;
+  var availH=window.innerHeight-barH;
   var baseW=1200;
-  var baseH=820;
   var scaleW=availW/baseW;
-  var scaleH=availH/baseH;
-  var scale=Math.min(scaleW,scaleH,1);
+  var scale=Math.min(scaleW,1);
   felt.style.transformOrigin='top center';
   felt.style.transform='scale('+scale+')';
-  felt.style.marginBottom=Math.round((scale-1)*baseH)+'px';
+  var scaledH=felt.offsetHeight*scale;
+  felt.style.marginBottom=Math.round(scaledH-felt.offsetHeight)+'px';
 }
 resizeLayout();
 window.addEventListener('resize',resizeLayout);
@@ -400,7 +399,6 @@ function startGame(){
   document.getElementById('welcome').style.display='none';
   document.getElementById('game-screen').style.display='flex';
   resizeLayout();
-  alert('felt w='+document.getElementById('felt').offsetWidth+' h='+document.getElementById('felt').offsetHeight+' scale='+document.getElementById('felt').style.transform);
   document.getElementById('round-overlay').classList.remove('show');
   document.getElementById('end-overlay').classList.remove('show');
   startRound();
