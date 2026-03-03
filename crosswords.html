@@ -952,8 +952,8 @@ function buildGrid() {
 // CELL CLICK
 // ═══════════════════════════════════════════════
 function onCellClick(r, c) {
-  document.body.classList.add('cw-active');
-  alert('cw-active: ' + document.body.classList.contains('cw-active'));
+  var hdr = document.querySelector('header');
+  if(hdr) hdr.style.display='none';
   if (!isStarted) startTimer();
 
   const key = `${r},${c}`;
@@ -1485,8 +1485,9 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
 });
   // снять фокус при клике вне кроссворда
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('.cw-section, .clues-panel')) {
-      document.body.classList.remove('cw-active');
+    if (!e.target.closest('.grid-wrapper, .clues-panel')) {
+      var hdr = document.querySelector('header');
+      if(hdr) hdr.style.display='';
     }
   });
 </script>
