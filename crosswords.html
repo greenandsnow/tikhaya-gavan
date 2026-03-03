@@ -1493,9 +1493,9 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
 });
   // снять фокус при клике вне кроссворда
   document.addEventListener('click', function(e) {
-    if (e.target.closest('.grid-wrapper, #mobile-keyboard, .clues-panel, .top-bar, .btn')) {
+    if (e.target.closest('.grid-wrapper, #mobile-keyboard, .clues-panel')) {
       cwHideHeader();
-    } else {
+    } else if (!e.target.closest('.top-bar')) {
       cwShowHeader();
     }
   });
