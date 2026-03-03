@@ -952,8 +952,7 @@ function buildGrid() {
 // CELL CLICK
 // ═══════════════════════════════════════════════
 function onCellClick(r, c) {
-  var hdr = document.querySelector('header');
-  if(hdr) hdr.style.display='none';
+  cwHideHeader();
   if (!isStarted) startTimer();
 
   const key = `${r},${c}`;
@@ -1484,18 +1483,31 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
   if (!isStarted && key !== 'Backspace') startTimer();
 });
   // снять фокус при клике вне кроссворда
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.grid-wrapper, .clues-panel, #hidden-input')) {
-      var hdr = document.querySelector('header');
-      if(hdr) hdr.style.display='';
-    }
-  });
-  document.addEventListener('keydown', function(e) {
+  var cwHeaderHidden = false;
+  function cwHideHeader() {
     var hdr = document.querySelector('header');
-    if(document.activeElement && document.activeElement.id==='hidden-input'){
-      if(hdr) hdr.style.display='none';
+    if(hdr) hdr.style.display='none';
+    cwHeaderHidden = true;
+  }
+  function cwShowHeader() {
+    var hdr = document.querySelector('header');
+    if(hdr) hdr.style.display='';
+    cwHeaderHidden = false;
+  }
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.grid-wrapper')) {
+      cwHideHeader();
+    } else if (!e.target.closest('.clues-panel')) {
+      cwShowHeader();
     }
   });
+  document.addEventListener('touchstart', function(e) {
+    if (e.target.closest('.grid-wrapper')) {
+      cwHideHeader();
+    } else if (!e.target.closest('.clues-panel')) {
+      cwShowHeader();
+    }
+  }, {passive: true});
 </script>
 </body>
 </html>
