@@ -27,7 +27,7 @@ nav ul{list-style:none;display:flex;gap:.2rem}
 nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-light);font-size:.82rem;border-radius:6px;transition:color .2s,background .2s}
 nav a:hover{color:var(--sea);background:var(--sea-pale)}
 nav a.active{color:var(--sea);font-weight:600}
-.burger{display:flex;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
 .burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
 body.game-active header{display:none}
 body.game-active{padding-top:0}
@@ -123,8 +123,6 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
 /* ── TOUCH CARD ── */
 .card.touch-selected{box-shadow:0 0 0 3px #ffd700,0 4px 16px rgba(0,0,0,0.4)!important;transform:translateY(-4px)}
 .page-title{font-family:"Jost",sans-serif;font-size:1.5rem;font-weight:600;color:var(--sea);letter-spacing:.03em;padding:1.5rem 2rem .5rem;max-width:1600px;margin:0 auto}
-.burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
-.burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}
 </style>
 </head>
 <body>
