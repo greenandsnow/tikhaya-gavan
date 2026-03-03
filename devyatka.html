@@ -33,6 +33,8 @@ nav ul{list-style:none;display:flex;gap:.2rem}
 nav a{display:block;padding:.4rem .75rem;text-decoration:none;color:var(--text-light);font-size:.82rem;border-radius:6px;transition:color .2s,background .2s}
 nav a:hover{color:var(--sea);background:var(--sea-pale)}
 nav a.active{color:var(--sea);font-weight:600}
+body.game-active header{display:none}
+body.game-active{padding-top:0}
 .burger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
 .burger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px}
 @media(max-width:768px){
@@ -374,7 +376,7 @@ function makeDeck(){
 function initTable(){table={};SUITS_DISPLAY.forEach(function(s){table[s]={low:[],high:[],open:false};});}
 
 function startGame(){
-  clearTimeout(aiTimer);gameOver=false;round=0;
+  clearTimeout(aiTimer);gameOver=false;round=0;document.body.classList.add('game-active');
   players=PLAYER_NAMES.map(function(n,i){return{name:n,coins:START_COINS,hand:[],isHuman:i===0};});
   document.getElementById('welcome').style.display='none';
   document.getElementById('game-screen').style.display='flex';
@@ -853,7 +855,7 @@ function setMsg(t,hl){
   el.textContent=t;el.className='pmsg'+(hl?' hl':'');
 }
 function showWelcome(){
-  clearTimeout(aiTimer);gameOver=true;setYourTurn(false);
+  clearTimeout(aiTimer);gameOver=true;setYourTurn(false);document.body.classList.remove('game-active');
   document.getElementById('welcome').style.display='flex';
   document.getElementById('game-screen').style.display='none';
   document.getElementById('round-overlay').classList.remove('show');
