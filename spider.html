@@ -260,8 +260,12 @@ function calcCardSize(){
   var felt=document.getElementById('felt');
   if(!felt)return;
   var W=felt.clientWidth-16;
-  var cw=Math.floor((W-4)/10)-2;
-  cw=Math.max(60,Math.min(130,cw));
+  var cwByW=Math.floor((W-4)/10)-2;
+  cwByW=Math.max(50,Math.min(130,cwByW));
+  var H=felt.clientHeight-16;
+  var cwByH=Math.floor((H-19*18)/1.4);
+  cwByH=Math.max(50,Math.min(130,cwByH));
+  var cw=Math.min(cwByW,cwByH);
   var ch=Math.round(cw*1.4);
   document.documentElement.style.setProperty('--cw',cw+'px');
   document.documentElement.style.setProperty('--ch',ch+'px');
