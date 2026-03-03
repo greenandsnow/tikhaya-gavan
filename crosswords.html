@@ -1492,19 +1492,12 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
     cwHeaderHidden = false;
   }
   document.addEventListener('click', function(e) {
-    if (e.target.closest('.grid-wrapper')) {
+    if (e.target.closest('.grid-wrapper, #mobile-keyboard, .clues-panel')) {
       cwHideHeader();
-    } else if (!e.target.closest('.clues-panel')) {
+    } else {
       cwShowHeader();
     }
   });
-  document.addEventListener('touchstart', function(e) {
-    if (e.target.closest('.grid-wrapper')) {
-      cwHideHeader();
-    } else if (!e.target.closest('.clues-panel')) {
-      cwShowHeader();
-    }
-  }, {passive: true});
 </script>
 </body>
 </html>
