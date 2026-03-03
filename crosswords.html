@@ -1440,3 +1440,9 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
     deleteLetter();
   } else if (/^[А-ЯЁ]$/.test(key)) {
     enterLetter(key);
+  }
+  if (!isStarted && key !== 'Backspace') startTimer();
+});
+</script>
+</body>
+</html>
