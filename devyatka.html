@@ -358,17 +358,13 @@ body.game-active{padding-top:0}
 function resizeLayout(){
   var felt=document.getElementById('felt');
   if(!felt)return;
-  var bar=document.querySelector('.game-bar');
-  var barH=bar?bar.offsetHeight:40;
   var availW=window.innerWidth;
-  var availH=window.innerHeight-barH;
   var baseW=1200;
-  var scaleW=availW/baseW;
-  var scale=Math.min(scaleW,1);
-  felt.style.transformOrigin='top center';
+  var scale=Math.min(availW/baseW,1);
+  felt.style.transformOrigin='top left';
   felt.style.transform='scale('+scale+')';
-  var scaledH=felt.offsetHeight*scale;
-  felt.style.marginBottom=Math.round(scaledH-felt.offsetHeight)+'px';
+  felt.style.width=(100/scale)+'%';
+  felt.style.marginBottom='';
 }
 resizeLayout();
 window.addEventListener('resize',resizeLayout);
