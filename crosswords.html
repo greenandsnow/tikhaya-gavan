@@ -927,7 +927,8 @@ let currentWeek = 1;
   buildGrid();
   buildClueLists();
   updateWordCount();
-  loadProgress();
+  const resumed = loadProgress();
+  if (resumed && isStarted) startTimer();
   focusInput();
 })();
 
