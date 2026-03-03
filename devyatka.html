@@ -115,7 +115,7 @@ body.game-active{padding-top:0}
 .opp-info{font-size:.62rem;color:rgba(255,255,255,.48);margin-top:.1rem}
 
 /* ── ЦЕНТР — стол ── */
-.center-area{position:absolute;top:calc(50% - 5vh);left:50%;transform:translate(-50%,-50%);z-index:3}
+.center-area{position:absolute;top:calc(52% - 5vh);left:50%;transform:translate(-50%,-50%);z-index:3}
 .table-suits{display:flex;flex-direction:column;gap:5px}
 .suit-row{display:flex;align-items:center;gap:4px}
 .suit-sym{width:24px;text-align:center;font-size:1.1rem;flex-shrink:0;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
@@ -360,7 +360,7 @@ function resizeLayout(){
   var scale=Math.min(1, h/820);
   var cw=Math.round(90*scale);
   var ch=Math.round(cw*1.4);
-  var hw=Math.round(108*scale);
+  var hw=Math.round(90*scale);
   var hh=Math.round(hw*1.4);
   var bw=Math.round(44*scale);
   var bh=Math.round(bw*1.41);
