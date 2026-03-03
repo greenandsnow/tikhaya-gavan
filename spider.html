@@ -227,12 +227,6 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
   </div>
 </div>
 
-<div class="rotate-screen" id="rotate-screen">
-  <div class="rotate-icon">📱</div>
-  <div class="rotate-text">Поверните телефон</div>
-  <div class="rotate-sub">Игра работает в альбомной ориентации</div>
-</div>
-
 <script>
 var RANK_CODES = {A:'A','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','10':'0',J:'J',Q:'Q',K:'K'};
 var SUIT_CODES = {'♠':'S','♥':'H','♦':'D','♣':'C'};
@@ -304,7 +298,6 @@ function startGame(suits){
   stockPile=deck;
   timerInterval=setInterval(function(){seconds++;var m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');document.getElementById('timer-val').textContent=m+':'+s;},1000);
   setTimeout(function(){calcCardSize();render();checkOrientation();},50);
-  if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))enterFullscreen();
 }
 
 function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}document.body.classList.remove('game-active');
@@ -588,28 +581,6 @@ function showStuck(){
 function toggleRules(){var b=document.getElementById('rules-box');b.style.display=b.style.display==='block'?'none':'block';}
 
 window.addEventListener('resize',function(){if(document.getElementById('game-screen').style.display==='flex')render();});
-
-// ═══ ПОЛНЫЙ ЭКРАН + ОРИЕНТАЦИЯ ═══
-function enterFullscreen(){
-  var el=document.documentElement;
-  try{
-    if(el.requestFullscreen)el.requestFullscreen();
-    else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
-  }catch(e){}
-  try{
-    if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(function(){});
-  }catch(e){}
-}
-
-function checkOrientation(){
-  var gameActive=document.getElementById('game-screen').style.display==='flex';
-  if(!gameActive){document.getElementById('rotate-screen').classList.remove('show');return;}
-  var isPortrait=window.innerHeight>window.innerWidth;
-  document.getElementById('rotate-screen').classList.toggle('show',isPortrait);
-}
-
-window.addEventListener('orientationchange',function(){setTimeout(function(){checkOrientation();render();},300);});
-window.addEventListener('resize',checkOrientation);
 
 // ═══ TOUCH ═══
 var touchState=null;
