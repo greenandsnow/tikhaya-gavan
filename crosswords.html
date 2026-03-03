@@ -654,7 +654,7 @@
     </div>
     <div class="top-bar-spacer"></div>
     <button class="btn btn-outline btn-sm" onclick="openHintModal()">💡 Подсказка</button>
-    <button class="btn btn-outline btn-sm" onclick="resetPuzzle()">↺ Начать заново</button>
+    <button class="btn btn-outline btn-sm" onclick="cwShowHeader();window.scrollTo(0,0)">☰ Меню</button>
   </div>
 
   <!-- Active clue bar -->
@@ -1302,6 +1302,7 @@ function checkComplete() {
     document.getElementById('complete-score').textContent = score;
     setTimeout(function() {
       document.getElementById('complete-overlay').classList.add('show');
+      cwShowHeader(); window.scrollTo(0,0);
     }, 300);
   }
 }
@@ -1492,7 +1493,7 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
     cwHeaderHidden = false;
   }
   document.addEventListener('click', function(e) {
-    if (e.target.closest('.grid-wrapper, #mobile-keyboard, .clues-panel')) {
+    if (e.target.closest('.grid-wrapper, #mobile-keyboard, .clues-panel, .top-bar, .btn')) {
       cwHideHeader();
     } else {
       cwShowHeader();
