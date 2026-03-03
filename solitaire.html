@@ -217,22 +217,28 @@ function calcLayout(){
   var felt = document.getElementById('felt');
   var W = felt.offsetWidth, H = felt.offsetHeight;
   var p = L.pad, g = L.gap;
-  // CW чтобы 7 колонн влезли
-  var cwByW = Math.floor((W - 2*p - 6*g) / 7);
-  var maxRows = 13; var minOffset = 18;
-  var cwByH = Math.floor((H - CH - L.gap*2 - L.pad*2 - maxRows*minOffset) / 1.4 + minOffset);
-  CW = Math.min(80, cwByW, Math.max(40, cwByH));
-  CH = Math.round(CW * 1.4);
+  var cwByW = Math.min(120, Math.floor((W - 2*p - 6*g) / 7));
+  var CWt = cwByW, CHt, offDown, offUp, colY;
+  for(var iter=0; iter<30; iter++){
+    CHt = Math.round(CWt * 1.4);
+    colY = p + CHt + g*2;
+    offDown = Math.max(10, Math.round(CHt * 0.18));
+    var avail = H - colY - CHt - 4;
+    offUp = Math.max(14, Math.min(Math.round(CHt * 0.38), Math.floor(avail / 12)));
+    if(colY + 6*offDown + 12*offUp + CHt <= H) break;
+    CWt = Math.floor(CWt * 0.93);
+    if(CWt < 42){ CWt = 42; break; }
+  }
+  CW = CWt; CH = CHt;
+  L.offsetDown = offDown;
+  L.offsetUp = offUp;
   var step = Math.floor((W - 2*p) / 7);
   for(var i=0;i<7;i++) L.colX[i] = p + i*step;
-  L.colY = p + CH + g*2;
+  L.colY = colY;
   L.stockX = p; L.stockY = p;
   L.wasteX = p + CW + g; L.wasteY = p;
   for(var i=0;i<4;i++) L.foundX[3-i] = W - p - CW - i*(CW+g);
   L.foundY = p;
-  var avail = H - L.colY - CH - 10;
-  L.offsetDown = 20;
-  L.offsetUp = Math.max(24, Math.min(50, Math.floor(avail/8)));
 }
 
 // ══ ПРАВИЛА ══
