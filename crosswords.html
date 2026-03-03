@@ -430,6 +430,20 @@
       border-top: 1px solid var(--sand-dark);
       padding: 1.5rem 2rem;
     }
+    /* скрыть хедер при активном кроссворде */
+    body.cw-active header { display: none; }
+    body.cw-active { padding-top: 0; }
+    /* компактный футер */
+    @media(max-width: 768px) {
+      footer { padding: 0.4rem 1rem; }
+      .footer-links { display: none; }
+      .footer-email { display: none; }
+      .footer-copy { font-size: 0.7rem; }
+      /* фиксировать кроссворд */
+      .game-area { display: flex; flex-direction: column; gap: 1rem; }
+      .grid-wrapper { position: sticky; top: 0; z-index: 50; background: var(--white); }
+      body.cw-active .grid-wrapper { position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 50; }
+    }
     .footer-inner {
       max-width: 1400px; margin: 0 auto;
       display: flex; flex-wrap: wrap;
@@ -938,6 +952,7 @@ function buildGrid() {
 // CELL CLICK
 // ═══════════════════════════════════════════════
 function onCellClick(r, c) {
+  document.body.classList.add('cw-active');
   if (!isStarted) startTimer();
 
   const key = `${r},${c}`;
@@ -1467,6 +1482,12 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
   }
   if (!isStarted && key !== 'Backspace') startTimer();
 });
+  // снять фокус при клике вне кроссворда
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.cw-section, .clues-panel')) {
+      document.body.classList.remove('cw-active');
+    }
+  });
 </script>
 </body>
 </html>
