@@ -1485,9 +1485,15 @@ document.getElementById('mobile-keyboard').addEventListener('click', function(e)
 });
   // снять фокус при клике вне кроссворда
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('.grid-wrapper, .clues-panel')) {
+    if (!e.target.closest('.grid-wrapper, .clues-panel, #hidden-input')) {
       var hdr = document.querySelector('header');
       if(hdr) hdr.style.display='';
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    var hdr = document.querySelector('header');
+    if(document.activeElement && document.activeElement.id==='hidden-input'){
+      if(hdr) hdr.style.display='none';
     }
   });
 </script>
