@@ -425,8 +425,10 @@ function startPointerDrag(e,col,idx){
   // Позиция курсора относительно первой карты
   var clientX=e.clientX||(e.touches&&e.touches[0].clientX)||0;
   var clientY=e.clientY||(e.touches&&e.touches[0].clientY)||0;
-  el.style.left=(clientX-cw/2)+'px';
-  el.style.top=(clientY-ch/4)+'px';
+  el.style.left='0px';
+  el.style.top='0px';
+  el.style.willChange='transform';
+  el.style.transform='translate('+(clientX-cw/2)+'px,'+(clientY-ch/4)+'px)';
 
   dragState={col:col,idx:idx};
   selected=null;
@@ -438,8 +440,7 @@ function movePointerDrag(e){
   if(!pointerDrag)return;
   var clientX=e.clientX||(e.touches&&e.touches[0].clientX)||0;
   var clientY=e.clientY||(e.touches&&e.touches[0].clientY)||0;
-  pointerDrag.el.style.left=(clientX-pointerDrag.cw/2)+'px';
-  pointerDrag.el.style.top=(clientY-pointerDrag.ch/4)+'px';
+  pointerDrag.el.style.transform='translate('+(clientX-pointerDrag.cw/2)+'px,'+(clientY-pointerDrag.ch/4)+'px)';
 }
 
 function endPointerDrag(e){
