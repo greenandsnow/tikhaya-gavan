@@ -1,16 +1,50 @@
 // api/news.js
 // GET /api/news          — published новости за сегодня
 // GET /api/news?date=... — за конкретную дату
-// GET /api/news?status=draft — для админки (нужен service key)
+// GET /api/news?status=draft — для админки
+// POST /api/news { urls: [...] } — проверка ссылок
 
 module.exports = async function handler(req, res) {
+
+  // ── POST: проверка ссылок ──
+  if (req.method === 'POST') {
+    try {
+      var urls = req.body && req.body.urls;
+      if (!Array.isArray(urls) || urls.length === 0) return res.status(400).json({ error: 'urls required' });
+      if (urls.length > 20) urls = urls.slice(0, 20);
+
+      var results = {};
+      await Promise.all(urls.map(async function(url) {
+        try {
+          var controller = new AbortController();
+          var timeout = setTimeout(function() { controller.abort(); }, 5000);
+          var r = await fetch(url, {
+            method: 'HEAD',
+            signal: controller.signal,
+            redirect: 'follow',
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+          });
+          clearTimeout(timeout);
+          results[url] = (r.status >= 200 && r.status < 400) ? 'ok' : 'dead';
+        } catch(e) {
+          results[url] = 'dead';
+        }
+      }));
+
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(200).json(results);
+    } catch(err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // ── GET: новости ──
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
     var supabaseUrl = process.env.SUPABASE_URL;
     var serviceKey = process.env.SUPABASE_SERVICE_KEY;
 
-    // Дата UTC (как в базе)
     var now = new Date();
     var todayUTC = now.getUTCFullYear() + '-'
       + String(now.getUTCMonth() + 1).padStart(2, '0') + '-'
@@ -32,7 +66,6 @@ module.exports = async function handler(req, res) {
     });
     var news = await r.json();
 
-    // Если за сегодня нет published — попробовать вчера
     if ((!news || news.length === 0) && !req.query.date && status === 'published') {
       var yesterday = new Date();
       yesterday.setUTCDate(yesterday.getUTCDate() - 1);
