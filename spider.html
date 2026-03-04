@@ -250,6 +250,7 @@ var RANK_VAL={A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q
 
 // Drag state
 var dragState=null;
+var pointerDrag=null;
 
 function calcCardSize(){
   var felt=document.getElementById('felt');
@@ -323,7 +324,7 @@ function render(){
   // Columns
   var cEl=document.getElementById('columns');cEl.innerHTML='';
   for(var c=0;c<10;c++){
-    var colDiv=document.createElement('div');colDiv.className='column';
+    var colDiv=document.createElement('div');colDiv.className='column';colDiv.setAttribute('data-col-target',c);
     var inner=document.createElement('div');inner.className='column-inner';
     var col=gameColumns[c];
     if(col.length===0){
@@ -331,8 +332,7 @@ function render(){
       empty.style.width=cw+'px';empty.style.height=ch+'px';
       (function(cc){
         empty.onclick=function(){onEmptyColClick(cc);};
-        empty.addEventListener('dragover',function(e){e.preventDefault();});
-        empty.addEventListener('drop',function(e){e.preventDefault();onDropToCol(cc);});
+        empty.setAttribute('data-col-target',c);
       })(c);
       inner.appendChild(empty);inner.style.height=ch+'px';
     } else {
@@ -361,15 +361,15 @@ function render(){
           // Touch handlers
           div.addEventListener('touchstart',function(e){onTouchStart(e,cc,ii);},{passive:false});
           div.addEventListener('touchend',function(e){onTouchEnd(e,cc,ii);},{passive:false});
-          // Drag handlers
+          // Pointer drag handlers
           if(card.faceUp){
-            div.draggable=true;
-            div.addEventListener('dragstart',function(e){onDragStart(e,cc,ii);});
-            div.addEventListener('dragend',function(e){onDragEnd(e);});
+            div.addEventListener('mousedown',function(e){
+              if(e.button!==0)return;
+              e.preventDefault();
+              e.stopPropagation();
+              startPointerDrag(e,cc,ii);
+            });
           }
-          div.addEventListener('dragover',function(e){e.preventDefault();div.classList.add('drag-over');});
-          div.addEventListener('dragleave',function(){div.classList.remove('drag-over');});
-          div.addEventListener('drop',function(e){e.preventDefault();div.classList.remove('drag-over');onDropToCol(cc);});
         })(c,i);
         inner.appendChild(div);
         if(i<col.length-1)top+=card.faceUp?OFFSET_UP:OFFSET_DOWN;
@@ -393,30 +393,91 @@ function render(){
   }
 }
 
-// ═══ DRAG ═══
-function onDragStart(e,col,idx){
-  if(!isMoveable(col,idx)){e.preventDefault();return;}
+// ═══ POINTER DRAG ═══
+var pointerDrag=null; // {col,idx,el,offsetX,offsetY}
+
+function startPointerDrag(e,col,idx){
+  if(!isMoveable(col,idx))return;
+  e.preventDefault();
+  var sz=calcCardSize();
+  var cw=sz?sz.cw:80,ch=sz?sz.ch:112;
+  var OFFSET_UP=32;
+  var cards=gameColumns[col].slice(idx);
+
+  // Создать плавающий элемент со стопкой карт
+  var el=document.createElement('div');
+  el.style.cssText='position:fixed;z-index:9999;pointer-events:none;';
+  var stackH=ch+(cards.length-1)*OFFSET_UP;
+  el.style.width=cw+'px';
+  el.style.height=stackH+'px';
+
+  for(var i=0;i<cards.length;i++){
+    var cardDiv=document.createElement('div');
+    cardDiv.style.cssText='position:absolute;width:'+cw+'px;height:'+ch+'px;top:'+(i*OFFSET_UP)+'px;border-radius:6px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.4);';
+    var img=document.createElement('img');
+    img.src=cardImg(cards[i].rank,cards[i].suit);
+    img.style.cssText='width:100%;height:100%;display:block;';
+    cardDiv.appendChild(img);
+    el.appendChild(cardDiv);
+  }
+  document.body.appendChild(el);
+
+  // Позиция курсора относительно первой карты
+  var clientX=e.clientX||(e.touches&&e.touches[0].clientX)||0;
+  var clientY=e.clientY||(e.touches&&e.touches[0].clientY)||0;
+  el.style.left=(clientX-cw/2)+'px';
+  el.style.top=(clientY-ch/4)+'px';
+
   dragState={col:col,idx:idx};
-  selected={col:col,idx:idx};
-  e.dataTransfer.effectAllowed='move';
-  e.dataTransfer.setData('text/plain','drag');
-  // Убрать браузерный ghost-образ
-  var ghost=document.createElement('canvas');
-  ghost.width=1;ghost.height=1;
-  document.body.appendChild(ghost);
-  e.dataTransfer.setDragImage(ghost,0,0);
-  setTimeout(function(){document.body.removeChild(ghost);render();},0);
-}
-function onDragEnd(e){
-  dragState=null;
+  selected=null;
+  pointerDrag={col:col,idx:idx,el:el,cw:cw,ch:ch};
   render();
 }
-function onDropToCol(toCol){
-  if(!dragState)return;
-  if(tryMove(dragState.col,dragState.idx,toCol)){selected=null;}
+
+function movePointerDrag(e){
+  if(!pointerDrag)return;
+  var clientX=e.clientX||(e.touches&&e.touches[0].clientX)||0;
+  var clientY=e.clientY||(e.touches&&e.touches[0].clientY)||0;
+  pointerDrag.el.style.left=(clientX-pointerDrag.cw/2)+'px';
+  pointerDrag.el.style.top=(clientY-pointerDrag.ch/4)+'px';
+}
+
+function endPointerDrag(e){
+  if(!pointerDrag)return;
+  var el=pointerDrag.el;
+  var clientX=e.clientX||(e.changedTouches&&e.changedTouches[0].clientX)||0;
+  var clientY=e.clientY||(e.changedTouches&&e.changedTouches[0].clientY)||0;
+
+  // Убрать плавающий элемент
+  el.style.pointerEvents='none';
+  document.body.removeChild(el);
+
+  // Найти целевую колонку под курсором
+  var target=document.elementFromPoint(clientX,clientY);
+  var toCol=null;
+  if(target){
+    var colEl=target.closest('[data-col-target]');
+    if(colEl) toCol=parseInt(colEl.getAttribute('data-col-target'));
+  }
+
+  if(toCol!==null && toCol!==pointerDrag.col){
+    if(tryMove(pointerDrag.col,pointerDrag.idx,toCol)){selected=null;}
+  }
+
   dragState=null;
+  pointerDrag=null;
   render();
 }
+
+document.addEventListener('mousemove',movePointerDrag);
+document.addEventListener('mouseup',endPointerDrag);
+document.addEventListener('touchmove',function(e){
+  if(pointerDrag){e.preventDefault();movePointerDrag(e);}
+  else if(touchState&&touchState.moved){e.preventDefault();}
+},{passive:false});
+document.addEventListener('touchend',function(e){
+  if(pointerDrag){endPointerDrag(e);}
+});
 
 // ═══ CLICK ═══
 function onCardClick(col,idx){
@@ -598,13 +659,25 @@ function onTouchStart(e,col,idx){
   e.preventDefault();
   var touch=e.touches[0];
   touchState={col:col,idx:idx,startX:touch.clientX,startY:touch.clientY,moved:false};
+  // Запустить pointer drag через 150ms если палец не убрали
+  touchState.dragTimer=setTimeout(function(){
+    if(touchState&&touchState.col===col){
+      touchState.isDrag=true;
+      startPointerDrag(e,col,idx);
+    }
+  },150);
 }
 
 function onTouchEnd(e,col,idx){
   if(!touchState)return;
   e.preventDefault();
+  clearTimeout(touchState.dragTimer);
+  if(pointerDrag){
+    // drag уже обрабатывается в document touchend
+    touchState=null;
+    return;
+  }
   if(!touchState.moved){
-    // Это тап — работаем как клик
     onCardClick(col,idx);
   }
   touchState=null;
@@ -619,7 +692,6 @@ function onTouchMove(e){
   if(dx>8||dy>8)touchState.moved=true;
 }
 
-document.addEventListener('touchmove',function(e){if(touchState&&touchState.moved)e.preventDefault();},{passive:false});
 </script>
 <script>
 if('serviceWorker' in navigator){
