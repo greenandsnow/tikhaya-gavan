@@ -377,7 +377,7 @@ var D = { on:false, card:null, src:null, ci:-1, stackFrom:undefined,
 function resetDrag(){
   D.on=false; D.card=null; D.src=null; D.ci=-1;
   D.stackFrom=undefined; D._moved=false; D._hlId=null;
-  document.getElementById('ghost').style.display='none';
+  var g=document.getElementById('ghost'); g.style.opacity='0'; g.style.transform='';
   clearHL();
 }
 
@@ -385,7 +385,7 @@ function buildGhost(stackCards){
   var stackH = CH + (stackCards.length-1)*L.offsetUp;
   var g = document.getElementById('ghost');
   g.innerHTML='';
-  g.style.cssText='display:none;position:fixed;pointer-events:none;z-index:9999;width:'+CW+'px;height:'+stackH+'px;transform:rotate(2deg)';
+  g.style.cssText='display:block;opacity:0;position:fixed;pointer-events:none;z-index:9999;width:'+CW+'px;height:'+stackH+'px;will-change:transform;';
   for(var i=0;i<stackCards.length;i++){
     var d=document.createElement('div');
     d.style.cssText='position:absolute;width:'+CW+'px;height:'+CH+'px;top:'+(i*L.offsetUp)+'px;left:0;border-radius:7px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.55)';
@@ -440,19 +440,21 @@ function onDragStart(e, src, ci){
   D.on=true; D.card=card; D.src=src; D.ci=ci;
   D._startX=p.x; D._startY=p.y; D._moved=false; D._hlId=null;
   buildGhost(stackCards);
+  // Скрыть исходную карту сразу без ожидания mousemove
+  render();
   e.preventDefault();
 }
 
 function onDragMove(e){
   if(!D.on) return;
   var p = pxy(e);
+  var g = document.getElementById('ghost');
   if(!D._moved){
     if(Math.abs(p.x-D._startX)<5 && Math.abs(p.y-D._startY)<5) return;
     D._moved=true;
-    document.getElementById('ghost').style.display='block';
+    g.style.opacity='1';
   }
-  var g = document.getElementById('ghost');
-  g.style.left=(p.x-CW/2)+'px'; g.style.top=(p.y-CH/3)+'px';
+  g.style.transform='translate('+(p.x-CW/2)+'px,'+(p.y-CH/3)+'px)';
   // Подсветка цели
   var t = findTarget(p.x, p.y, D.card, D.src, D.ci);
   var nid = t?(t.type==='f'?'fs'+t.fi:'cs'+t.ci):null;
@@ -597,6 +599,7 @@ function render(){
       var isTop=(i===show-1);
       var el=mkCard(felt,cardImg(wc.r,wc.s),L.wasteX+xOff[i],L.wasteY,200+i,isTop);
       if(isTop){
+        if(D.on && D.src==='waste') el.style.opacity='0';
         (function(el2){ attachDrag(el2,'waste',-1); })(el);
       }
     }
@@ -618,7 +621,7 @@ function render(){
       var src2=cd.up?cardImg(cd.r,cd.s):backImg();
       var el=mkCard(felt,src2,L.colX[ci],y,300+idx,false);
       if(D.on && D.src==='col' && D.ci===ci && D.stackFrom!==undefined && idx>=D.stackFrom)
-        el.style.opacity='0.3';
+        el.style.opacity='0';
       if(cd.up){
         el.style.cursor='grab';
         (function(ci2,el2){ attachDrag(el2,'col',ci2); })(ci,el);
