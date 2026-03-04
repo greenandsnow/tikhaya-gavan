@@ -338,7 +338,7 @@ async function openModal(idx) {
   var urlStatus = {};
   if (allUrls.length > 0) {
     try {
-      var cr = await fetch('/api/check-url', {
+      var cr = await fetch('/api/news', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({urls: allUrls})
