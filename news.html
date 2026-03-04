@@ -326,8 +326,27 @@ async function loadNews(date) {
   }
 }
 
-function openModal(idx) {
+async function openModal(idx) {
   var n = newsData[idx]; if(!n)return;
+
+  // Собрать все URL источников для проверки
+  var allUrls = [];
+  for (var s=0; s<(n.sources||[]).length; s++) {
+    if (!n.sources[s].hidden && n.sources[s].url) allUrls.push(n.sources[s].url);
+  }
+  // Проверить ссылки через сервер
+  var urlStatus = {};
+  if (allUrls.length > 0) {
+    try {
+      var cr = await fetch('/api/check-url', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({urls: allUrls})
+      });
+      urlStatus = await cr.json();
+    } catch(e) { /* если сервер не ответил — показываем все */ }
+  }
+
   var blocks = '';
   // Стандартные 4 лагеря
   for (var k=0;k<ORDER.length;k++) {
@@ -343,7 +362,7 @@ function openModal(idx) {
             '<div class="src-body">'+
               '<div class="src-title">'+esc(s.title)+'</div>'+
               (s.excerpt?'<div class="src-excerpt">'+esc(s.excerpt)+'</div>':'')+
-              '<a href="'+esc(s.url)+'" target="_blank" rel="noopener" class="src-link">Читать первоисточник ↗</a>'+
+              (urlStatus[s.url]==='dead' ? '' : '<a href="'+esc(s.url)+'" target="_blank" rel="noopener" class="src-link">Читать первоисточник ↗</a>')+
             '</div>'+
           '</div>';
         break;
@@ -366,7 +385,7 @@ function openModal(idx) {
           '<div class="src-body">'+
             '<div class="src-title">'+esc(s2.title)+'</div>'+
             (s2.excerpt?'<div class="src-excerpt">'+esc(s2.excerpt)+'</div>':'')+
-            '<a href="'+esc(s2.url)+'" target="_blank" rel="noopener" class="src-link">Читать первоисточник ↗</a>'+
+            (urlStatus[s2.url]==='dead' ? '' : '<a href="'+esc(s2.url)+'" target="_blank" rel="noopener" class="src-link">Читать первоисточник ↗</a>')+
           '</div>'+
         '</div>';
     }
