@@ -433,7 +433,11 @@ function startPointerDrag(e,col,idx){
   dragState={col:col,idx:idx};
   selected=null;
   pointerDrag={col:col,idx:idx,el:el,cw:cw,ch:ch};
-  render();
+  // Скрыть исходные карты напрямую через DOM — без полного render()
+  var allCards=document.querySelectorAll('[data-col="'+col+'"][data-idx]');
+  allCards.forEach(function(d){
+    if(parseInt(d.getAttribute('data-idx'))>=idx) d.style.opacity='0';
+  });
 }
 
 function movePointerDrag(e){
