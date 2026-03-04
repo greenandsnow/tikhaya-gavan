@@ -344,7 +344,9 @@ function render(){
         var card=col[i];
         var div=document.createElement('div');
         var isSel=selected&&selected.col===c&&selected.idx===i;
+        var isDragged=dragState&&dragState.col===c&&i>=dragState.idx;
         div.className='card'+(isSel?' selected':'');
+        if(isDragged) div.style.opacity='0';
         div.setAttribute('data-col',c);
         div.setAttribute('data-idx',i);
         div.style.top=top+'px';div.style.width=cw+'px';div.style.height=ch+'px';
@@ -396,16 +398,9 @@ function onDragStart(e,col,idx){
   if(!isMoveable(col,idx)){e.preventDefault();return;}
   dragState={col:col,idx:idx};
   selected={col:col,idx:idx};
-  // Скрыть исходные карты сразу чтобы не было двойного отображения
   e.dataTransfer.effectAllowed='move';
   e.dataTransfer.setData('text/plain','drag');
-  setTimeout(function(){
-    // Скрыть все карты начиная с idx в колонке col
-    var colEls = document.querySelectorAll('[data-col="'+col+'"][data-idx]');
-    colEls.forEach(function(el){
-      if(parseInt(el.getAttribute('data-idx'))>=idx) el.style.opacity='0';
-    });
-  },0);
+  setTimeout(function(){render();},0);
 }
 function onDragEnd(e){
   dragState=null;
