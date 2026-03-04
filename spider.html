@@ -400,7 +400,12 @@ function onDragStart(e,col,idx){
   selected={col:col,idx:idx};
   e.dataTransfer.effectAllowed='move';
   e.dataTransfer.setData('text/plain','drag');
-  setTimeout(function(){render();},0);
+  // Убрать браузерный ghost-образ
+  var ghost=document.createElement('canvas');
+  ghost.width=1;ghost.height=1;
+  document.body.appendChild(ghost);
+  e.dataTransfer.setDragImage(ghost,0,0);
+  setTimeout(function(){document.body.removeChild(ghost);render();},0);
 }
 function onDragEnd(e){
   dragState=null;
