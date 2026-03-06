@@ -305,11 +305,26 @@
     .modal p { font-size: 0.88rem; color: var(--text-light); margin-bottom: 1.25rem; line-height: 1.5; }
     .modal-buttons { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
-    /* ── APPSTORE BANNER ── */
-    .appstore-below-grid {
+    /* ── PROMO ROW ── */
+    .promo-row {
+      display: flex;
+      gap: 1.25rem;
       margin-top: 1rem;
       margin-bottom: 1.25rem;
     }
+    .promo-row .appstore-banner,
+    .promo-row .ad-slot {
+      flex: 1;
+      margin-bottom: 0;
+      box-sizing: border-box;
+    }
+    .promo-row .ad-slot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── APPSTORE BANNER ── */
     .appstore-banner {
       background: linear-gradient(135deg, var(--sea) 0%, var(--sea-light) 100%);
       border-radius: 12px;
@@ -716,22 +731,24 @@
         </div>
       </div>
 
-      <!-- Ad slot -->
-      <div class="ad-slot">
-        Место для рекламы
-      </div>
     </div>
+
   </div>
 
-  <!-- AppStore banner (под сеткой) -->
-  <div class="appstore-banner appstore-below-grid">
-    <div class="appstore-banner-text">
-      <h3>Хотите больше кроссвордов?</h3>
-      <p>50 кроссвордов в мобильном приложении — с подсказками, очками и офлайн-режимом</p>
+  <!-- Рекламная строка под игровой областью -->
+  <div class="promo-row">
+    <div class="appstore-banner appstore-under-grid">
+      <div class="appstore-banner-text">
+        <h3>Хотите больше кроссвордов?</h3>
+        <p>50 кроссвордов в мобильном приложении — с подсказками, очками и офлайн-режимом</p>
+      </div>
+      <a href="#" class="appstore-btn">
+        🍎 App Store
+      </a>
     </div>
-    <a href="#" class="appstore-btn">
-      🍎 App Store
-    </a>
+    <div class="ad-slot ad-under-clues">
+      Место для рекламы
+    </div>
   </div>
 </main>
 
