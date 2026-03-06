@@ -306,6 +306,10 @@
     .modal-buttons { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
     /* ── APPSTORE BANNER ── */
+    .appstore-below-grid {
+      margin-top: 1rem;
+      margin-bottom: 1.25rem;
+    }
     .appstore-banner {
       background: linear-gradient(135deg, var(--sea) 0%, var(--sea-light) 100%);
       border-radius: 12px;
@@ -621,6 +625,7 @@
       <div class="complete-stats">
         <div class="complete-stat"><span class="complete-stat-label">Время</span><span class="complete-stat-value" id="complete-time">00:00</span></div>
         <div class="complete-stat"><span class="complete-stat-label">Очки</span><span class="complete-stat-value" id="complete-score">100</span></div>
+        <div class="complete-stat"><span class="complete-stat-label">Накоплено</span><span class="complete-stat-value" id="complete-total-score">0</span></div>
       </div>
       <p class="complete-next">Следующий кроссворд выйдет в пятницу</p>
       <button class="btn btn-sea complete-ok" onclick="closeComplete()">Ок</button>
@@ -642,6 +647,14 @@
       <div>
         <div class="stat-label">Очки</div>
         <div class="stat-value" id="score">100</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="stat-block">
+      <span class="stat-icon">🏆</span>
+      <div>
+        <div class="stat-label">Итого</div>
+        <div class="stat-value" id="total-score-bar">0</div>
       </div>
     </div>
     <div class="divider"></div>
@@ -672,17 +685,6 @@
     </div>
 
     <div>
-      <!-- AppStore banner -->
-      <div class="appstore-banner">
-        <div class="appstore-banner-text">
-          <h3>Хотите больше кроссвордов?</h3>
-          <p>50 кроссвордов в мобильном приложении — с подсказками, очками и офлайн-режимом</p>
-        </div>
-        <a href="#" class="appstore-btn">
-          🍎 App Store
-        </a>
-      </div>
-
       <!-- Clues panel -->
       <div class="clues-panel">
         <div class="clues-section">
@@ -693,11 +695,6 @@
           <div class="clues-header">↓ По вертикали</div>
           <div class="clues-list" id="down-list"></div>
         </div>
-      </div>
-
-      <!-- Ad slot -->
-      <div class="ad-slot">
-        Место для рекламы
       </div>
 
       <!-- How to play -->
@@ -718,7 +715,23 @@
           </ul>
         </div>
       </div>
+
+      <!-- Ad slot -->
+      <div class="ad-slot">
+        Место для рекламы
+      </div>
     </div>
+  </div>
+
+  <!-- AppStore banner (под сеткой) -->
+  <div class="appstore-banner appstore-below-grid">
+    <div class="appstore-banner-text">
+      <h3>Хотите больше кроссвордов?</h3>
+      <p>50 кроссвордов в мобильном приложении — с подсказками, очками и офлайн-режимом</p>
+    </div>
+    <a href="#" class="appstore-btn">
+      🍎 App Store
+    </a>
   </div>
 </main>
 
@@ -822,7 +835,8 @@ function saveProgress() {
     lockedCells: lockedCells,
     seconds: seconds,
     score: score,
-    isStarted: isStarted
+    isStarted: isStarted,
+    isComplete: isComplete
   }));
 }
 
@@ -877,6 +891,7 @@ function loadProgress() {
         document.getElementById('score').textContent = score;
       }
       if (data.isStarted) isStarted = true;
+      if (data.isComplete) isComplete = true;
       return true;
     }
   } catch(e) {}
@@ -928,7 +943,9 @@ let currentWeek = 1;
   buildClueLists();
   updateWordCount();
   const resumed = loadProgress();
-  if (resumed && isStarted) startTimer();
+  document.getElementById('total-score-bar').textContent = getTotalScore();
+  if (resumed && isStarted && !isComplete) startTimer();
+  if (resumed && isComplete) showCompleteBanner();
   focusInput();
 })();
 
@@ -1321,12 +1338,17 @@ function checkComplete() {
   if (allDone) {
     isComplete = true;
     stopTimer();
+    var totalScore = addToTotalScore(score);
+    saveProgress();
     playFanfare();
     document.getElementById('complete-time').textContent = formatTime(seconds);
     document.getElementById('complete-score').textContent = score;
+    var tsEl = document.getElementById('complete-total-score');
+    if (tsEl) tsEl.textContent = totalScore;
     setTimeout(function() {
       document.getElementById('complete-overlay').classList.add('show');
       cwShowHeader(); window.scrollTo(0,0);
+      showCompleteBanner();
     }, 300);
   }
 }
@@ -1350,6 +1372,23 @@ function startTimer() {
   }
 }
 function stopTimer() { clearInterval(timerInterval); }
+
+function showCompleteBanner() {
+  // Кроссворд уже решён — показываем надпись вместо подсказки
+  var clueBar = document.querySelector('.clue-bar');
+  if (clueBar) {
+    clueBar.innerHTML = '<span style="color:#2e7d32;font-weight:700;font-size:1rem;">✅ Кроссворд решён. Следующий — в пятницу вечером</span>';
+  }
+}
+
+function getTotalScore() {
+  return parseInt(localStorage.getItem('crossword_total_score') || '0');
+}
+function addToTotalScore(pts) {
+  var total = getTotalScore() + pts;
+  localStorage.setItem('crossword_total_score', total);
+  return total;
+}
 function formatTime(s) {
   const m = Math.floor(s / 60).toString().padStart(2, '0');
   const sec = (s % 60).toString().padStart(2, '0');
