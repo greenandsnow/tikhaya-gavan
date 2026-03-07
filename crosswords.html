@@ -312,16 +312,19 @@
       margin-top: 1rem;
       margin-bottom: 1.25rem;
     }
-    .promo-row .appstore-banner,
-    .promo-row .ad-slot {
+    .promo-row > * {
       flex: 1;
-      margin-bottom: 0;
+      margin-bottom: 0 !important;
       box-sizing: border-box;
+    }
+    .promo-row .appstore-banner {
+      flex-wrap: nowrap;
     }
     .promo-row .ad-slot {
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 100%;
     }
 
     /* ── APPSTORE BANNER ── */
