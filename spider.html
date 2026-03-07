@@ -300,7 +300,7 @@ function startGame(suits){
   setTimeout(function(){calcCardSize();render();checkOrientation();},50);
 }
 
-function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';}document.body.classList.remove('game-active');
+function showWelcome(){clearInterval(timerInterval);document.getElementById('win-overlay').classList.remove('show');document.getElementById('stuck-overlay').classList.remove('show');document.getElementById('welcome').style.display='flex';document.getElementById('game-screen').style.display='none';document.body.classList.remove('game-active');}
 
 function render(){
   var sz=calcCardSize();
