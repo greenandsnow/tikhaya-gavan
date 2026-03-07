@@ -43,6 +43,8 @@ body.game-active{padding-top:0}
 .mode-icon{font-size:1.6rem;margin-bottom:.3rem}
 .mode-name{font-size:.95rem;font-weight:600;color:var(--text);display:block}
 .mode-desc{font-size:.72rem;color:var(--text-light)}
+.back-to-games{display:inline-block;font-size:.78rem;color:var(--stone);text-decoration:none;margin-bottom:.75rem;opacity:.7;}
+.back-to-games:hover{color:var(--sea);opacity:1;}
 .rules-toggle{font-size:.78rem;color:var(--sea);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'Jost',sans-serif}
 .rules-box{display:none;text-align:left;background:var(--sand);border-radius:10px;padding:.85rem;margin-top:.6rem;font-size:.78rem;color:var(--text-light);line-height:1.7}
 .rules-box ul{padding-left:1.1rem}
@@ -158,6 +160,7 @@ nav a{font-size:1rem;padding:.6rem .5rem;width:100%}
         <span class="mode-desc">Пики и червы · Сложнее</span>
       </button>
     </div>
+    <a href="/games" class="back-to-games">← К играм</a>
     <button class="rules-toggle" onclick="toggleRules()">📖 Правила игры</button>
     <div class="rules-box" id="rules-box">
       <ul>
