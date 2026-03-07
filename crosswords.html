@@ -648,7 +648,7 @@
 
 <main>
   <div class="page-title">Кроссворды</div>
-  <div class="page-subtitle">Кроссворд недели — бесплатно. Новый каждую пятницу.</div>
+  <div class="page-subtitle">Кроссворд недели — бесплатно. Новый каждую субботу.</div>
 
   <!-- Complete banner -->
   <!-- Complete modal (overlay) -->
@@ -662,7 +662,7 @@
         <div class="complete-stat"><span class="complete-stat-label">Очки</span><span class="complete-stat-value" id="complete-score">100</span></div>
         <div class="complete-stat"><span class="complete-stat-label">Накоплено</span><span class="complete-stat-value" id="complete-total-score">0</span></div>
       </div>
-      <p class="complete-next">Следующий кроссворд выйдет в пятницу</p>
+      <p class="complete-next">Следующий кроссворд выйдет в субботу</p>
       <button class="btn btn-sea complete-ok" onclick="closeComplete()">Ок</button>
     </div>
   </div>
@@ -1412,7 +1412,7 @@ function showCompleteBanner() {
   // Кроссворд уже решён — показываем надпись вместо подсказки
   var clueBar = document.querySelector('.clue-bar');
   if (clueBar) {
-    clueBar.innerHTML = '<span style="color:#2e7d32;font-weight:700;font-size:1rem;">✅ Кроссворд решён. Следующий — в пятницу вечером</span>';
+    clueBar.innerHTML = '<span style="color:#2e7d32;font-weight:700;font-size:1rem;">✅ Кроссворд решён. Следующий кроссворд — в субботу</span>';
   }
 }
 
