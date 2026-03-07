@@ -312,19 +312,36 @@
       margin-top: 1rem;
       margin-bottom: 1.25rem;
     }
-    .promo-row > * {
+    .promo-block {
       flex: 1;
-      margin-bottom: 0 !important;
-      box-sizing: border-box;
-    }
-    .promo-row .appstore-banner {
-      flex-wrap: nowrap;
-    }
-    .promo-row .ad-slot {
+      background: linear-gradient(135deg, var(--sea) 0%, var(--sea-light) 100%);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
       display: flex;
       align-items: center;
+      gap: 1rem;
+      box-sizing: border-box;
+    }
+    .promo-block-text {
+      flex: 1;
+    }
+    .promo-block-text h3 {
+      color: white;
+      font-size: 1rem;
+      margin: 0 0 0.25rem 0;
+    }
+    .promo-block-text p {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.82rem;
+      margin: 0;
+    }
+    .promo-block-ad {
+      background: var(--sand-dark);
+      border: 1px dashed var(--stone);
+      background: none;
       justify-content: center;
-      min-height: 100%;
+      color: var(--stone);
+      font-size: 0.75rem;
     }
 
     /* ── APPSTORE BANNER ── */
@@ -740,16 +757,14 @@
 
   <!-- Рекламная строка под игровой областью -->
   <div class="promo-row">
-    <div class="appstore-banner appstore-under-grid">
-      <div class="appstore-banner-text">
+    <div class="promo-block">
+      <div class="promo-block-text">
         <h3>Хотите больше кроссвордов?</h3>
         <p>50 кроссвордов в мобильном приложении — с подсказками, очками и офлайн-режимом</p>
       </div>
-      <a href="#" class="appstore-btn">
-        🍎 App Store
-      </a>
+      <a href="#" class="appstore-btn">🍎 App Store</a>
     </div>
-    <div class="ad-slot ad-under-clues">
+    <div class="promo-block promo-block-ad">
       Место для рекламы
     </div>
   </div>
